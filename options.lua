@@ -161,7 +161,11 @@ Storyline_API.options.init = function()
 	StorylineOptionsPanel.HideOriginalFrames:SetChecked(Storyline_Data.config.hideOriginalFrames);
 	StorylineOptionsPanel.HideOriginalFrames:SetScript("OnClick", function(self)
 		Storyline_Data.config.hideOriginalFrames = self:GetChecked() == true;
-		ReloadUI();
+		if Storyline_Data.config.hideOriginalFrames then
+			Storyline_API.layout.hideDefaultFrames();
+		else
+			Storyline_API.layout.showDefaultFrames();
+		end
 	end);
 	if Storyline_Data.config.hideOriginalFrames == nil then
 		Storyline_Data.config.hideOriginalFrames = true;
