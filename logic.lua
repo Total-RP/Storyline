@@ -194,10 +194,10 @@ end
 local function modelsLoaded()
 	if Storyline_NPCFrameModelsYou.modelLoaded and Storyline_NPCFrameModelsMe.modelLoaded then
 
-		Storyline_NPCFrameModelsYou.model = Storyline_NPCFrameModelsYou:GetModel();
-		Storyline_NPCFrameModelsMe.model = Storyline_NPCFrameModelsMe:GetModel();
+		--Storyline_NPCFrameModelsYou.model = Storyline_NPCFrameModelsYou:GetModel();
+		--Storyline_NPCFrameModelsMe.model = Storyline_NPCFrameModelsMe:GetModel();
 
-		local savedDataMe, savedDataYou, dataMe, dataYou = getDataStuctures(Storyline_NPCFrameModelsMe.model, Storyline_NPCFrameModelsYou.model);
+		--local savedDataMe, savedDataYou, dataMe, dataYou = getDataStuctures(Storyline_NPCFrameModelsMe.model, Storyline_NPCFrameModelsYou.model);
 
 		setModelHeight(getBestValue("scale", savedDataMe, dataMe, DEFAULT_SCALE.me), true, false);
 		setModelFeet(getBestValue("feet", savedDataMe, dataMe, DEFAULT_SCALE.me), true, false);
@@ -205,7 +205,7 @@ local function modelsLoaded()
 		setModelOffset(getBestValue("offset", savedDataMe, dataMe, DEFAULT_SCALE.me), true, false);
 		setModelFacing(getBestValue("facing", savedDataMe, dataMe, DEFAULT_SCALE.me), true, false);
 
-		if Storyline_NPCFrameModelsYou.model:len() > 0 then
+		if true or Storyline_NPCFrameModelsYou.model:len() > 0 then
 			setModelOffset(getBestValue("offset", savedDataYou, dataYou, DEFAULT_SCALE.you), false, false);
 			setModelFacing(getBestValue("facing", savedDataYou, dataYou, DEFAULT_SCALE.you), false, false);
 			setModelFeet(getBestValue("feet", savedDataYou, dataYou, DEFAULT_SCALE.you), false, false);
