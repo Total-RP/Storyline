@@ -150,7 +150,9 @@ local function playAndStand(model, sequence, duration)
 end
 
 function Storyline_API.playSelfAnim(sequence)
-	playAndStand(Storyline_NPCFrameModelsMe, sequence, getDuration(Storyline_NPCFrameModelsMe:GetModel(), sequence));
+	-- TODO GetModel is no longer available in Legion
+	-- playAndStand(Storyline_NPCFrameModelsMe, sequence, getDuration(Storyline_NPCFrameModelsMe:GetModel(), sequence));
+	playAndStand(Storyline_NPCFrameModelsMe, sequence, getDuration(nil, sequence));
 end
 
 local function playTargetAnim(sequence)

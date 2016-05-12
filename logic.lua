@@ -194,6 +194,7 @@ end
 local function modelsLoaded()
 	if Storyline_NPCFrameModelsYou.modelLoaded and Storyline_NPCFrameModelsMe.modelLoaded then
 
+		-- TODO GetModel is no longer available in Legion
 		--Storyline_NPCFrameModelsYou.model = Storyline_NPCFrameModelsYou:GetModel();
 		--Storyline_NPCFrameModelsMe.model = Storyline_NPCFrameModelsMe:GetModel();
 

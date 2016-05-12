@@ -108,7 +108,7 @@ function Storyline_API.selectMultipleAvailable(button)
 	local height = 40;
 	for i = 1, GetNumGossipAvailableQuests() do
 		local title, lvl, isTrivial, frequency, isRepeatable, isLegendary =
-		data[(i * 6) - 5], data[(i * 6) - 4], data[(i * 6) - 3], data[(i * 6) - 2], data[(i * 6) - 1], data[(i * 6)];
+		data[(i * 7) - 6], data[(i * 7) - 5], data[(i * 7) - 4], data[(i * 7) - 3], data[(i * 7) - 2], data[(i * 7) - 1];
 		previous = getSelectionFontString(previous);
 		previous.Text:SetText(getBindingIcon(i) .. getQuestIcon(frequency, isRepeatable, isLegendary, isTrivial) .. " " .. title);
 		previous:SetScript("OnClick", function(self)

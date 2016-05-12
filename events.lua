@@ -825,7 +825,8 @@ eventHandlers["QUEST_COMPLETE"] = function(eventInfo)
 		contentHeight = contentHeight + gridHeight;
 	end
 
-	local texture, name, isTradeskillSpell, isSpellLearned, hideSpellLearnText, isBoostSpell, garrFollowerID = GetRewardSpell();
+	-- TODO GetRewardSpell removed in Legion. Look for what they are using now and adapt this
+	--[[local texture, name, isTradeskillSpell, isSpellLearned, hideSpellLearnText, isBoostSpell, garrFollowerID = GetRewardSpell();
 	local spellReward = texture and (not isBoostSpell or IsCharacterNewlyBoosted()) and (not garrFollowerID or not C_Garrison.IsFollowerCollected(garrFollowerID));
 
 	if spellReward then
@@ -870,7 +871,7 @@ eventHandlers["QUEST_COMPLETE"] = function(eventInfo)
 			contentHeight = contentHeight + 40;
 			previousForChoice = questItem;
 		end
-	end
+	end]]
 
 	showQuestPortraitFrame();
 
