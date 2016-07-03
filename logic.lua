@@ -26,7 +26,7 @@ local showStorylineFame = Storyline_API.layout.showStorylineFame;
 local hideStorylineFrame = Storyline_API.layout.hideStorylineFrame;
 
 -- WOW API
-local strsplit, pairs = strsplit, pairs;
+local strsplit, pairs, tostring = strsplit, pairs, tostring;
 local UnitIsUnit, UnitExists, UnitName = UnitIsUnit, UnitExists, UnitName;
 local IsAltKeyDown, IsShiftKeyDown = IsAltKeyDown, IsShiftKeyDown;
 local InterfaceOptionsFrame_OpenToCategory = InterfaceOptionsFrame_OpenToCategory;
@@ -58,26 +58,28 @@ local DEFAULT_SCALE = {
 };
 DEFAULT_SCALE.you = DEFAULT_SCALE.me;
 
+local scalingLib = LibStub:GetLibrary("TRP-Dialog-Scaling-DB");
+local animationLib = LibStub:GetLibrary("TRP-Dialog-Animation-DB");
+
 --*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
--- LOGIC
+-- NPC Blacklisting
 --*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
 
-local function closeDialog()
-	if Storyline_NPCFrameChat.eventInfo and Storyline_NPCFrameChat.eventInfo.cancelMethod then
-		Storyline_NPCFrameChat.eventInfo.cancelMethod();
-	end
-	hideStorylineFrame();
+local Storyline_NPC_BLACKLIST = {"94399"}
+
+--*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
+-- DATA SAVING
+--*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
+
+local function getBestValue(dataName, savedData, data, default)
+	if savedData and savedData[dataName] then return savedData[dataName] end
+	if data and data[dataName] then return data[dataName] end
+	return default[dataName];
 end
 
-local function resetDialog()
-	Storyline_NPCFrameObjectivesContent:Hide();
-	Storyline_NPCFrameChat.currentIndex = 0;
-	playNext(Storyline_NPCFrameModelsYou);
-end
-
-local function getDataStuctures(modelMeName, modelYouName)
-	local key, invertedKey = modelMeName .. "~" .. modelYouName, modelYouName .. "~" .. modelMeName;
-	local savedDataMe, savedDataYou, dataMe, dataYou;
+local function getDataStuctures(modelMeID, modelYouID)
+	local key, invertedKey = modelMeID .. "~" .. modelYouID, modelYouID .. "~" .. modelMeID;
+	local savedDataMe, savedDataYou;
 
 	if Storyline_Data.scaling[key] then
 		savedDataMe = Storyline_Data.scaling[key].me;
@@ -86,13 +88,8 @@ local function getDataStuctures(modelMeName, modelYouName)
 		savedDataMe = Storyline_Data.scaling[invertedKey].you;
 		savedDataYou = Storyline_Data.scaling[invertedKey].me;
 	end
-	if Storyline_SCALE_MAPPING[key] then
-		dataMe = Storyline_SCALE_MAPPING[key].me;
-		dataYou = Storyline_SCALE_MAPPING[key].you;
-	elseif Storyline_SCALE_MAPPING[invertedKey] then
-		dataMe = Storyline_SCALE_MAPPING[invertedKey].you;
-		dataYou = Storyline_SCALE_MAPPING[invertedKey].me;
-	end
+
+	local dataMe, dataYou = scalingLib:GetModelScaling(modelMeID, modelYouID);
 
 	return savedDataMe, savedDataYou, dataMe, dataYou;
 end
@@ -149,68 +146,30 @@ local function saveStructureData(dataName, isMe, value)
 	structure[meYou][dataName] = value;
 end
 
-local function setModelHeight(scale, isMe, save)
-	local frame = (isMe and Storyline_NPCFrameModelsMe or Storyline_NPCFrameModelsYou);
-	frame.scale = scale;
-	frame:InitializeCamera(scale);
-	if save then
-		saveStructureData("scale", isMe, scale);
-	end
-end
-
-local function setModelFacing(facing, isMe, save)
-	local frame = (isMe and Storyline_NPCFrameModelsMe or Storyline_NPCFrameModelsYou);
-	frame.facing = facing;
-	frame:SetFacing(facing * (isMe and 1 or -1));
-	if save then
-		saveStructureData("facing", isMe, facing);
-	end
-end
-
-local function setModelFeet(feet, isMe, save)
-	local frame = (isMe and Storyline_NPCFrameModelsMe or Storyline_NPCFrameModelsYou);
-	frame.feet = feet;
-	frame:SetHeightFactor(feet);
-	if save then
-		saveStructureData("feet", isMe, feet);
-	end
-end
-
-local function setModelOffset(offset, isMe, save)
-	local frame = (isMe and Storyline_NPCFrameModelsMe or Storyline_NPCFrameModelsYou);
-	frame.offset = offset;
-	frame:SetTargetDistance(offset * (isMe and 1 or -1));
-	if save then
-		saveStructureData("offset", isMe, offset);
-	end
-end
-
-local function getBestValue(dataName, savedData, data, default)
-	if savedData and savedData[dataName] then return savedData[dataName] end
-	if data and data[dataName] then return data[dataName] end
-	return default[dataName];
-end
+--*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
+-- LOADING & START DIALOG
+--*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
 
 local function modelsLoaded()
 	if Storyline_NPCFrameModelsYou.modelLoaded and Storyline_NPCFrameModelsMe.modelLoaded then
 
-		-- TODO GetModel is no longer available in Legion
-		--Storyline_NPCFrameModelsYou.model = Storyline_NPCFrameModelsYou:GetModel();
-		--Storyline_NPCFrameModelsMe.model = Storyline_NPCFrameModelsMe:GetModel();
+		Storyline_NPCFrameModelsYou.modelFileID = tostring(Storyline_NPCFrameModelsYou:GetModelFileID());
+		Storyline_NPCFrameModelsMe.modelFileID = tostring(Storyline_NPCFrameModelsMe:GetModelFileID());
 
-		--local savedDataMe, savedDataYou, dataMe, dataYou = getDataStuctures(Storyline_NPCFrameModelsMe.model, Storyline_NPCFrameModelsYou.model);
+		print("Me ID: " .. tostring(Storyline_NPCFrameModelsMe.modelFileID), "Me ID: " .. tostring(Storyline_NPCFrameModelsYou.modelFileID)); -- TODO: remove
 
-		setModelHeight(getBestValue("scale", savedDataMe, dataMe, DEFAULT_SCALE.me), true, false);
-		setModelFeet(getBestValue("feet", savedDataMe, dataMe, DEFAULT_SCALE.me), true, false);
+		local savedDataMe, savedDataYou, dataMe, dataYou = getDataStuctures(Storyline_NPCFrameModelsMe.model, Storyline_NPCFrameModelsYou.model);
 
-		setModelOffset(getBestValue("offset", savedDataMe, dataMe, DEFAULT_SCALE.me), true, false);
-		setModelFacing(getBestValue("facing", savedDataMe, dataMe, DEFAULT_SCALE.me), true, false);
+		scalingLib:SetModelHeight(getBestValue("scale", savedDataMe, dataMe, DEFAULT_SCALE.me), Storyline_NPCFrameModelsMe);
+		scalingLib:SetModelFeet(getBestValue("feet", savedDataMe, dataMe, DEFAULT_SCALE.me), Storyline_NPCFrameModelsMe);
+		scalingLib:SetModelOffset(getBestValue("offset", savedDataMe, dataMe, DEFAULT_SCALE.me), Storyline_NPCFrameModelsMe, true);
+		scalingLib:SetModelFacing(getBestValue("facing", savedDataMe, dataMe, DEFAULT_SCALE.me), Storyline_NPCFrameModelsMe, true);
 
 		if true or Storyline_NPCFrameModelsYou.model:len() > 0 then
-			setModelOffset(getBestValue("offset", savedDataYou, dataYou, DEFAULT_SCALE.you), false, false);
-			setModelFacing(getBestValue("facing", savedDataYou, dataYou, DEFAULT_SCALE.you), false, false);
-			setModelFeet(getBestValue("feet", savedDataYou, dataYou, DEFAULT_SCALE.you), false, false);
-			setModelHeight(getBestValue("scale", savedDataYou, dataYou, DEFAULT_SCALE.you), false, false);
+			scalingLib:SetModelHeight(getBestValue("scale", savedDataYou, dataYou, DEFAULT_SCALE.you), Storyline_NPCFrameModelsYou);
+			scalingLib:SetModelFeet(getBestValue("feet", savedDataYou, dataYou, DEFAULT_SCALE.you), Storyline_NPCFrameModelsYou);
+			scalingLib:SetModelOffset(getBestValue("offset", savedDataYou, dataYou, DEFAULT_SCALE.you), Storyline_NPCFrameModelsYou, false);
+			scalingLib:SetModelFacing(getBestValue("facing", savedDataYou, dataYou, DEFAULT_SCALE.you), Storyline_NPCFrameModelsYou, false);
 		else
 			Storyline_NPCFrameModelsMe:SetAnimation(520);
 		end
@@ -408,6 +367,19 @@ end
 --*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
 -- INIT
 --*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
+
+local function closeDialog()
+	if Storyline_NPCFrameChat.eventInfo and Storyline_NPCFrameChat.eventInfo.cancelMethod then
+		Storyline_NPCFrameChat.eventInfo.cancelMethod();
+	end
+	hideStorylineFrame();
+end
+
+local function resetDialog()
+	Storyline_NPCFrameObjectivesContent:Hide();
+	Storyline_NPCFrameChat.currentIndex = 0;
+	playNext(Storyline_NPCFrameModelsYou);
+end
 
 Storyline_API.addon = LibStub("AceAddon-3.0"):NewAddon("Storyline", "AceConsole-3.0");
 

@@ -89,73 +89,24 @@ Storyline_API.getQuestLevelColor = getQuestLevelColor;
 -- SOME ANIMATION
 --*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
 
-local Storyline_ANIM_MAPPING, Storyline_DEFAULT_ANIM_MAPPING = Storyline_ANIM_MAPPING, Storyline_DEFAULT_ANIM_MAPPING;
-local Storyline_ANIMATION_SEQUENCE_DURATION = Storyline_ANIMATION_SEQUENCE_DURATION;
-local Storyline_ANIMATION_SEQUENCE_DURATION_BY_MODEL = Storyline_ANIMATION_SEQUENCE_DURATION_BY_MODEL;
+local animationLib = LibStub:GetLibrary("TRP-Dialog-Animation-DB");
+
 local Storyline_NPCFrameModelsMe, Storyline_NPCFrameModelsYou = Storyline_NPCFrameModelsMe, Storyline_NPCFrameModelsYou;
-
-function Storyline_API.getAnimationByModel(model, animationType)
-	if model then
-		if Storyline_ANIM_MAPPING[model] and Storyline_ANIM_MAPPING[model][animationType] then
-			return Storyline_ANIM_MAPPING[model][animationType];
-		end
-	end
-	return Storyline_DEFAULT_ANIM_MAPPING[animationType];
-end
-
-local function playAnim(model, sequence)
-	model:SetAnimation(sequence);
-	if model.debug then
-		model.debug:SetText(sequence);
-	end
-end
-
-function Storyline_API.playAnimationDelay(model, sequence, duration, delay, token)
-	if delay == 0 then
-		playAnim(model, sequence)
-	else
-		model.token = token;
-		after(delay, function()
-			if model.token == token then
-				playAnim(model, sequence);
-			end
-		end)
-	end
-
-	return delay + duration;
-end
-
-local DEFAULT_SEQUENCE_TIME = 4;
 
 local function getDuration(model, sequence)
 	sequence = tostring(sequence);
 	if Storyline_Data.debug.timing[model] and Storyline_Data.debug.timing[model][sequence] then
 		return Storyline_Data.debug.timing[model][sequence];
-	elseif Storyline_ANIMATION_SEQUENCE_DURATION_BY_MODEL[model] and Storyline_ANIMATION_SEQUENCE_DURATION_BY_MODEL[model][sequence] then
-		return Storyline_ANIMATION_SEQUENCE_DURATION_BY_MODEL[model][sequence];
 	end
-	return Storyline_ANIMATION_SEQUENCE_DURATION[sequence] or DEFAULT_SEQUENCE_TIME;
+	return animationLib:GetAnimationDuration(model, sequence);
 end
 Storyline_API.getDuration = getDuration;
 
-local function playAndStand(model, sequence, duration)
-	local token = getId();
-	model.token = token
-	playAnim(model, sequence);
-	after(duration, function()
-		if model.token == token then
-			playAnim(model, 0);
-		end
-	end);
-end
-
 function Storyline_API.playSelfAnim(sequence)
-	-- TODO GetModel is no longer available in Legion
-	-- playAndStand(Storyline_NPCFrameModelsMe, sequence, getDuration(Storyline_NPCFrameModelsMe:GetModel(), sequence));
-	playAndStand(Storyline_NPCFrameModelsMe, sequence, getDuration(nil, sequence));
+	animationLib:PlayAnimationAndStand(Storyline_NPCFrameModelsMe, sequence, getDuration(Storyline_NPCFrameModelsMe:GetModel(), sequence, getId()));
 end
 
 local function playTargetAnim(sequence)
-	playAndStand(Storyline_NPCFrameModelsYou, sequence, getDuration(Storyline_NPCFrameModelsYou:GetModel(), sequence));
+	animationLib:PlayAnimationAndStand(Storyline_NPCFrameModelsYou, sequence, getDuration(Storyline_NPCFrameModelsYou:GetModel(), sequence, getId()));
 end
 Storyline_NPCFrameDebugSequenceYou.playTargetAnim = playTargetAnim;

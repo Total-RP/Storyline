@@ -17,6 +17,8 @@
 --	limitations under the License.
 ----------------------------------------------------------------------------------
 
+local animationLib = LibStub:GetLibrary("TRP-Dialog-Animation-DB");
+
 -- Storyline API
 local configureHoverFrame = Storyline_API.lib.configureHoverFrame;
 local setTooltipForSameFrame, setTooltipAll = Storyline_API.lib.setTooltipForSameFrame, Storyline_API.lib.setTooltipAll;
@@ -28,7 +30,7 @@ local getTextureString, colorCodeFloat = Storyline_API.lib.getTextureString, Sto
 local getId = Storyline_API.lib.generateID;
 local loc = Storyline_API.locale.getText;
 local format = format;
-local playSelfAnim, getDuration, playAnimationDelay = Storyline_API.playSelfAnim, Storyline_API.getDuration, Storyline_API.playAnimationDelay;
+local playSelfAnim, getDuration = Storyline_API.playSelfAnim, Storyline_API.getDuration;
 local getQuestIcon, getQuestActiveIcon = Storyline_API.getQuestIcon, Storyline_API.getQuestActiveIcon;
 local getQuestTriviality = Storyline_API.getQuestTriviality;
 local selectMultipleAvailableGreetings = Storyline_API.selectMultipleAvailableGreetings;
@@ -40,7 +42,6 @@ local selectMultipleAvailable = Storyline_API.selectMultipleAvailable;
 local selectFirstAvailable = Storyline_API.selectFirstAvailable;
 local selectFirstGossip, selectMultipleGossip = Storyline_API.selectFirstGossip, Storyline_API.selectMultipleGossip;
 local selectMultipleRewards, selectFirstGreetingActive = Storyline_API.selectMultipleRewards, Storyline_API.selectFirstGreetingActive;
-local getAnimationByModel = Storyline_API.getAnimationByModel;
 local getBindingIcon = Storyline_API.getBindingIcon;
 local hideStorylineFrame = Storyline_API.layout.hideStorylineFrame;
 
@@ -943,7 +944,7 @@ local function playText(textIndex, targetModel)
 	else
 		Storyline_NPCFrameChatText:SetText(text);
 		text:gsub("[%.%?%!]+", function(finder)
-			animTab[#animTab + 1] = getAnimationByModel(targetModel.model, finder:sub(1, 1));
+			animTab[#animTab + 1] = animationLib:GetDialogAnimation(targetModel.model, finder:sub(1, 1));
 			animTab[#animTab + 1] = 0;
 		end);
 	end
@@ -958,7 +959,7 @@ local function playText(textIndex, targetModel)
 	end
 
 	for _, sequence in pairs(animTab) do
-		delay = playAnimationDelay(targetModel, sequence, getDuration(targetModel.model, sequence), delay, textLineToken);
+		delay = animationLib:PlayAnimationDelay(targetModel, sequence, getDuration(targetModel.model, sequence), delay, textLineToken);
 	end
 
 	Storyline_NPCFrameChat.start = 0;
