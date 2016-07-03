@@ -440,15 +440,14 @@ function Storyline_API.addon:OnEnable()
 	Storyline_NPCFrameChatNext:RegisterForClicks("LeftButtonUp", "RightButtonUp");
 	Storyline_NPCFrameChatNext:SetScript("OnClick", function(self, button)
 		if button == "RightButton" then
-			if Storyline_NPCFrameChat.start and Storyline_NPCFrameChat.start < Storyline_NPCFrameChatText:GetText():len() then
-				Storyline_NPCFrameChat.start = Storyline_NPCFrameChatText:GetText():len();  -- Stop current text animation
+			-- If we are not already on the last text, jump to it
+			if Storyline_NPCFrameChat.currentIndex < #Storyline_NPCFrameChat.texts then
+				Storyline_NPCFrameChat.currentIndex = #Storyline_NPCFrameChat.texts - 1; -- Set current text index to the one before the last one
+				playNext(Storyline_NPCFrameModelsYou); -- Play the next text (the last one)
+			else
+				-- If we were on the last text, use playNext to trigger the finish method (best available action)
+				playNext(Storyline_NPCFrameModelsYou);
 			end
-			Storyline_NPCFrameChat.currentIndex = #Storyline_NPCFrameChat.texts - 1; -- Set current text index to the one before the last one
-			playNext(Storyline_NPCFrameModelsYou); -- Play the next text (the last one)
-			if Storyline_NPCFrameChat.start and Storyline_NPCFrameChat.start < Storyline_NPCFrameChatText:GetText():len() then
-				Storyline_NPCFrameChat.start = Storyline_NPCFrameChatText:GetText():len();  -- Stop current text animation
-			end
-			playNext(Storyline_NPCFrameModelsYou); -- Execute next action (display gossip options, quest objectives, quest rewards or close dialog)
 		else
 			if Storyline_NPCFrameChat.start and Storyline_NPCFrameChat.start < Storyline_NPCFrameChatText:GetText():len() then
 				Storyline_NPCFrameChat.start = Storyline_NPCFrameChatText:GetText():len();

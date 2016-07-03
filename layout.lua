@@ -21,6 +21,11 @@ local HideUIPanel = HideUIPanel;
 
 local Storyline_NPCFrame = Storyline_NPCFrame;
 
+local defaultFramesWeWantToReplace = {
+	"QuestFrame",
+	"GossipFrame",
+};
+
 Storyline_API.layout = {};
 
 ---
@@ -131,33 +136,17 @@ local addToLayoutEngine = function(frameName)
 	frame:SetParent(UIParent);
 end
 
-Storyline_API.layout.showDefaultFrames = function()
-	for _, frame in pairs({
-		"QuestFrame",
-		"GossipFrame"
-	}) do
-		addToLayoutEngine(frame);
+---
+-- The quest reward frame is somehow decoupled from the quest frame
+-- and is still shown out of the frame.
+-- The workaround is to hide it everytime ¯\_(ツ)_/¯
+Storyline_API.layout.hideQuestRewardFrameIfNeed = function()
+	if Storyline_Data.config.hideOriginalFrames then
+		QuestInfoRewardsFrame:Hide();
+	else
+		QuestInfoRewardsFrame:Show();
 	end
 end
-
-Storyline_API.layout.showDefaultFrameOnce = function(frameName)
-	local frame = _G[frameName];
-	addToLayoutEngine(frameName);
-	frame:Show();
-	UpdateUIPanelPositions(frame);
-	removeFrameFromUILayoutEngine(frameName);
-end
-
----
--- Remove the default quest frame and dialog frames from the array of frames
--- managed by the game UI layout engine.
--- When function will call for those frames to be placed by the UI layout engine
--- it will fail silently and the frames will not be shown at all.
-local hideDefaultFrames = function()
-	removeFrameFromUILayoutEngine("QuestFrame")
-	removeFrameFromUILayoutEngine("GossipFrame")
-end
-Storyline_API.layout.hideDefaultFrames = hideDefaultFrames;
 
 
 ---
@@ -203,6 +192,35 @@ local toggleStorylineFrame = function(showFrame)
 	end
 end
 Storyline_API.layout.toggleStorylineFrame = toggleStorylineFrame;
+
+Storyline_API.layout.showDefaultFrames = function()
+	hideStorylineFrame();
+	for _, frame in pairs(defaultFramesWeWantToReplace) do
+		addToLayoutEngine(frame);
+	end
+end
+
+Storyline_API.layout.showDefaultFrameOnce = function(frameName)
+	local frame = _G[frameName];
+	addToLayoutEngine(frameName);
+	frame:Show();
+	UpdateUIPanelPositions(frame);
+	removeFrameFromUILayoutEngine(frameName);
+end
+
+---
+-- Remove the default quest frame and dialog frames from the array of frames
+-- managed by the game UI layout engine.
+-- When function will call for those frames to be placed by the UI layout engine
+-- it will fail silently and the frames will not be shown at all.
+local hideDefaultFrames = function()
+	hideStorylineFrame();
+	for _, frame in pairs(defaultFramesWeWantToReplace) do
+		_G[frame]:Hide();
+		removeFrameFromUILayoutEngine(frame)
+	end
+end
+Storyline_API.layout.hideDefaultFrames = hideDefaultFrames;
 
 ---
 -- When Storyline's frame is hidden, try to call the cancelMethod registered if it exists.

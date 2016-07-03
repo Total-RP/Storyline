@@ -43,6 +43,7 @@ local selectMultipleRewards, selectFirstGreetingActive = Storyline_API.selectMul
 local getAnimationByModel = Storyline_API.getAnimationByModel;
 local getBindingIcon = Storyline_API.getBindingIcon;
 local hideStorylineFrame = Storyline_API.layout.hideStorylineFrame;
+local hideQuestRewardFrameIfNeed = Storyline_API.layout.hideQuestRewardFrameIfNeed;
 
 -- WOW API
 local faction, faction_loc = UnitFactionGroup("player");
@@ -640,6 +641,7 @@ eventHandlers["QUEST_PROGRESS"] = function()
 end
 
 eventHandlers["QUEST_COMPLETE"] = function(eventInfo)
+	hideQuestRewardFrameIfNeed();
 	Storyline_NPCFrameRewards:Show();
 	setTooltipForSameFrame(Storyline_NPCFrameRewardsItem, "TOP", 0, 0, REWARDS, loc("SL_GET_REWARD"));
 
@@ -1094,17 +1096,39 @@ function Storyline_API.initEventsStructure()
 		["GOSSIP_SHOW"] = {
 			text = GetGossipText,
 			finishMethod = function()
-				if GetNumGossipAvailableQuests() > 1 and not Storyline_NPCFrameGossipChoices:IsVisible() then
-					Storyline_NPCFrameChatOption1:GetScript("OnClick")(Storyline_NPCFrameChatOption1);
-				elseif GetNumGossipActiveQuests() > 1 and not Storyline_NPCFrameGossipChoices:IsVisible() then
+				if GetNumGossipActiveQuests() >= 1 and not Storyline_NPCFrameGossipChoices:IsVisible() then
 					Storyline_NPCFrameChatOption2:GetScript("OnClick")(Storyline_NPCFrameChatOption2);
-				elseif GetNumGossipOptions() > 1 and not Storyline_NPCFrameGossipChoices:IsVisible() then
+				elseif GetNumGossipAvailableQuests() >= 1 and not Storyline_NPCFrameGossipChoices:IsVisible() then
+					Storyline_NPCFrameChatOption1:GetScript("OnClick")(Storyline_NPCFrameChatOption1);
+				elseif GetNumGossipOptions() >= 1 and not Storyline_NPCFrameGossipChoices:IsVisible() then
 					Storyline_NPCFrameChatOption3:GetScript("OnClick")(Storyline_NPCFrameChatOption3);
 				else
 					CloseGossip();
 				end
 			end,
-			finishText = GOODBYE,
+			finishText = function()
+				local finishText = GOODBYE;
+				if GetNumGossipActiveQuests() >= 1 and not Storyline_NPCFrameGossipChoices:IsVisible() then
+					if GetNumGossipActiveQuests() > 1 then
+						finishText = loc("SL_WELL");
+					else
+						finishText = GetGossipActiveQuests();
+					end
+				elseif GetNumGossipAvailableQuests() >= 1 and not Storyline_NPCFrameGossipChoices:IsVisible() then
+					if GetNumGossipAvailableQuests() > 1 then
+						finishText = loc("SL_WELL");
+					else
+						finishText = GetGossipAvailableQuests();
+					end
+				elseif GetNumGossipOptions() >= 1 and not Storyline_NPCFrameGossipChoices:IsVisible() then
+					if GetNumGossipOptions() > 1 then
+						finishText = loc("SL_WELL");
+					else
+						finishText = GetGossipOptions();
+					end
+				end
+				return finishText;
+			end,
 			cancelMethod = CloseGossip,
 		},
 		["REPLAY"] = {
