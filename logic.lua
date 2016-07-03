@@ -437,7 +437,7 @@ function Storyline_API.addon:OnEnable()
 	Storyline_API.consolePort.init();
 
 	Storyline_NPCFrameBG:SetDesaturated(true);
-	Storyline_NPCFrameChatNext:RegisterForClicks("LeftButtonUp", "RightButtonUp");
+	Storyline_NPCFrameChatNext:RegisterForClicks("LeftButtonUp", "RightButtonUp", "MiddleButtonUp");
 	Storyline_NPCFrameChatNext:SetScript("OnClick", function(self, button)
 		if button == "RightButton" then
 			-- If we are not already on the last text, jump to it
@@ -448,6 +448,8 @@ function Storyline_API.addon:OnEnable()
 				-- If we were on the last text, use playNext to trigger the finish method (best available action)
 				playNext(Storyline_NPCFrameModelsYou);
 			end
+		elseif button == "MiddleButton" then
+			closeDialog();
 		else
 			if Storyline_NPCFrameChat.start and Storyline_NPCFrameChat.start < Storyline_NPCFrameChatText:GetText():len() then
 				Storyline_NPCFrameChat.start = Storyline_NPCFrameChatText:GetText():len();
