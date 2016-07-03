@@ -182,16 +182,8 @@ Storyline_API.options.init = function()
 	StorylineOptionsPanel.UseLayoutEngine:SetScript("OnClick", function(self)
 		-- Set config variable to status of checkbox
 		Storyline_Data.config.useLayoutEngine = self:GetChecked() == true;
-		if Storyline_Data.config.useLayoutEngine then
-			-- This option require a ReloadUI() to be effective
-			ReloadUI();
-		else
-			-- We don't need to reload the UI when disabling the option, just call unregisterFromUILayoutEngine()
-			Storyline_API.layout.unregisterFromUILayoutEngine();
-
-			-- Re-enable the lock frame option
-			StorylineOptionsPanel.LockFrame:Enable();
-		end
+		-- This option require a ReloadUI() to be effective
+		ReloadUI();
 	end);
 
 
