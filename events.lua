@@ -1336,15 +1336,7 @@ function Storyline_API.initEventsStructure()
 
 	for event, info in pairs(EVENT_INFO) do
 		registerHandler(event, function()
-			if not Storyline_Data.config.forceGossip and event == "GOSSIP_SHOW" then
-				after(GOSSIP_DELAY, function()
-					if GossipFrame:IsVisible() then
-						startDialog("npc", info.text(), event, info);
-					end
-				end);
-			else
-				startDialog("npc", info.text(), event, info);
-			end
+			startDialog("npc", info.text(), event, info);
 		end);
 	end
 
