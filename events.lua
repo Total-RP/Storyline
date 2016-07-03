@@ -30,7 +30,7 @@ local getTextureString, colorCodeFloat = Storyline_API.lib.getTextureString, Sto
 local getId = Storyline_API.lib.generateID;
 local loc = Storyline_API.locale.getText;
 local format = format;
-local playSelfAnim, getDuration = Storyline_API.playSelfAnim, Storyline_API.getDuration;
+local playSelfAnim = Storyline_API.playSelfAnim;
 local getQuestIcon, getQuestActiveIcon = Storyline_API.getQuestIcon, Storyline_API.getQuestActiveIcon;
 local getQuestTriviality = Storyline_API.getQuestTriviality;
 local selectMultipleAvailableGreetings = Storyline_API.selectMultipleAvailableGreetings;
@@ -959,7 +959,7 @@ local function playText(textIndex, targetModel)
 	end
 
 	for _, sequence in pairs(animTab) do
-		delay = animationLib:PlayAnimationDelay(targetModel, sequence, getDuration(targetModel.model, sequence), delay, textLineToken);
+		delay = animationLib:PlayAnimationDelay(targetModel, sequence, animationLib:GetAnimationDuration(targetModel.model, sequence), delay, textLineToken);
 	end
 
 	Storyline_NPCFrameChat.start = 0;

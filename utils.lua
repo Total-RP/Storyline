@@ -93,20 +93,11 @@ local animationLib = LibStub:GetLibrary("TRP-Dialog-Animation-DB");
 
 local Storyline_NPCFrameModelsMe, Storyline_NPCFrameModelsYou = Storyline_NPCFrameModelsMe, Storyline_NPCFrameModelsYou;
 
-local function getDuration(model, sequence)
-	sequence = tostring(sequence);
-	if Storyline_Data.debug.timing[model] and Storyline_Data.debug.timing[model][sequence] then
-		return Storyline_Data.debug.timing[model][sequence];
-	end
-	return animationLib:GetAnimationDuration(model, sequence);
-end
-Storyline_API.getDuration = getDuration;
-
 function Storyline_API.playSelfAnim(sequence)
-	animationLib:PlayAnimationAndStand(Storyline_NPCFrameModelsMe, sequence, getDuration(Storyline_NPCFrameModelsMe:GetModel(), sequence, getId()));
+	animationLib:PlayAnimationAndStand(Storyline_NPCFrameModelsMe, sequence, animationLib:GetAnimationDuration(tostring(Storyline_NPCFrameModelsMe:GetModelFileID()), sequence), getId());
 end
 
 local function playTargetAnim(sequence)
-	animationLib:PlayAnimationAndStand(Storyline_NPCFrameModelsYou, sequence, getDuration(Storyline_NPCFrameModelsYou:GetModel(), sequence, getId()));
+	animationLib:PlayAnimationAndStand(Storyline_NPCFrameModelsYou, sequence, animationLib:GetAnimationDuration(tostring(Storyline_NPCFrameModelsYou:GetModelFileID()), sequence), getId());
 end
 Storyline_NPCFrameDebugSequenceYou.playTargetAnim = playTargetAnim;

@@ -969,7 +969,7 @@ function Lib:GetModelScaling(model1, model2)
 
 	local inverted = model2 .. "~" .. model1;
 	if SCALE_MAPPING[inverted] then
-		return SCALE_MAPPING[inverted].you or DEFAULT_SCALE.you, SCALE_MAPPING[key].me or DEFAULT_SCALE.me, true;
+		return SCALE_MAPPING[inverted].you or DEFAULT_SCALE.you, SCALE_MAPPING[inverted].me or DEFAULT_SCALE.me, true;
 	end
 
 	return DEFAULT_SCALE.me, DEFAULT_SCALE.you;

@@ -359,6 +359,7 @@ ANIM_MAPPING["124118"] = ALL_TO_TALK;
 --*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
 
 local after, tostring = C_Timer.After, tostring;
+local type = type;
 
 function Lib:PlayAnim(model, sequence)
 	model:SetAnimation(sequence);
@@ -401,7 +402,7 @@ function Lib:GetAnimationDuration(model, sequence)
 end
 
 function Lib:GetDialogAnimation(model, animationType)
-	if model then
+	if type(model) == "string" then
 		if ANIM_MAPPING[model] and ANIM_MAPPING[model][animationType] then
 			return ANIM_MAPPING[model][animationType];
 		end

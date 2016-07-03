@@ -59,7 +59,6 @@ local DEFAULT_SCALE = {
 DEFAULT_SCALE.you = DEFAULT_SCALE.me;
 
 local scalingLib = LibStub:GetLibrary("TRP-Dialog-Scaling-DB");
-local animationLib = LibStub:GetLibrary("TRP-Dialog-Animation-DB");
 
 --*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
 -- NPC Blacklisting
@@ -153,10 +152,10 @@ end
 local function modelsLoaded()
 	if Storyline_NPCFrameModelsYou.modelLoaded and Storyline_NPCFrameModelsMe.modelLoaded then
 
-		Storyline_NPCFrameModelsYou.modelFileID = tostring(Storyline_NPCFrameModelsYou:GetModelFileID());
-		Storyline_NPCFrameModelsMe.modelFileID = tostring(Storyline_NPCFrameModelsMe:GetModelFileID());
+		Storyline_NPCFrameModelsYou.model = tostring(Storyline_NPCFrameModelsYou:GetModelFileID());
+		Storyline_NPCFrameModelsMe.model = tostring(Storyline_NPCFrameModelsMe:GetModelFileID());
 
-		print("Me ID: " .. tostring(Storyline_NPCFrameModelsMe.modelFileID), "Me ID: " .. tostring(Storyline_NPCFrameModelsYou.modelFileID)); -- TODO: remove
+		print("Me ID: " .. tostring(Storyline_NPCFrameModelsMe.model), "Me ID: " .. tostring(Storyline_NPCFrameModelsYou.model)); -- TODO: remove
 
 		local savedDataMe, savedDataYou, dataMe, dataYou = getDataStuctures(Storyline_NPCFrameModelsMe.model, Storyline_NPCFrameModelsYou.model);
 
