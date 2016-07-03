@@ -37,6 +37,8 @@ local DEFAULT_SCALE = {
 };
 DEFAULT_SCALE.you = DEFAULT_SCALE.me;
 
+Lib.DEFAULT_SCALE = DEFAULT_SCALE;
+
 local SCALE_MAPPING = {
 
 	--*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
@@ -961,13 +963,19 @@ local SCALE_MAPPING = {
 -- Scaling API
 --*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
 
+function Lib:GetModelKeys(model1, model2)
+	local key = (model1 or "") .. "~" .. (model2 or "");
+	local inverted = (model2 or "") .. "~" .. (model1 or "");
+	return key, inverted;
+end
+
 function Lib:GetModelScaling(model1, model2)
-	local key = model1 .. "~" .. model2;
+	local key, inverted = self:GetModelKeys(model1, model2)
+
 	if SCALE_MAPPING[key] then
 		return SCALE_MAPPING[key].me or DEFAULT_SCALE.me, SCALE_MAPPING[key].you or DEFAULT_SCALE.you, false;
 	end
 
-	local inverted = model2 .. "~" .. model1;
 	if SCALE_MAPPING[inverted] then
 		return SCALE_MAPPING[inverted].you or DEFAULT_SCALE.you, SCALE_MAPPING[inverted].me or DEFAULT_SCALE.me, true;
 	end

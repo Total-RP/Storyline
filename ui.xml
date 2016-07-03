@@ -231,7 +231,7 @@
 		</Layers>
 		<Frames>
 
-			<Frame name="Storyline_NPCFrameModels" frameStrata="MEDIUM">
+			<Frame name="Storyline_NPCFrameModels" parentKey="models" frameStrata="MEDIUM">
 				<Size x="0" y="0"/>
 				<Anchors>
 					<Anchor point="TOP" x="0" y="-20"/>
@@ -246,7 +246,7 @@
 							<Anchor point="CENTER" x="0" y="0"/>
 						</Anchors>
 					</Frame>
-					<CinematicModel name="Storyline_NPCFrameModelsMe" setAllPoints="true">
+					<CinematicModel name="Storyline_NPCFrameModelsMe" parentKey="me" setAllPoints="true">
 						<Frames>
 							<Button name="Storyline_NPCFrameModelsMeScrollZone" enableMouse="true">
 								<Anchors>
@@ -258,7 +258,7 @@
 							</Button>
 						</Frames>
 					</CinematicModel>
-					<CinematicModel name="Storyline_NPCFrameModelsYou" setAllPoints="true">
+					<CinematicModel name="Storyline_NPCFrameModelsYou" parentKey="you" setAllPoints="true">
 						<Frames>
 							<Button name="Storyline_NPCFrameModelsYouScrollZone" enableMouse="true">
 								<Anchors>
@@ -292,7 +292,7 @@
 				</Frames>
 			</Frame>
 
-			<Frame name="Storyline_NPCFrameChat" frameStrata="HIGH">
+			<Frame name="Storyline_NPCFrameChat" parentKey="chat" frameStrata="HIGH">
 				<Backdrop bgFile="Interface\DialogFrame\UI-DialogBox-Background" edgeFile="Interface\GLUES\COMMON\TextPanel-Border" tile="true">
 					<EdgeSize>
 						<AbsValue val="16"/>
@@ -328,7 +328,7 @@
 							</Anchors>
 							<Color r="1" g="0.75" b="0.0"/>
 						</FontString>
-						<FontString name="Storyline_NPCFrameChatText" text="[NAME]" inherits="GameFontNormalLarge" justifyH="LEFT" justifyV="TOP">
+						<FontString name="Storyline_NPCFrameChatText" parentKey="text" text="[NAME]" inherits="GameFontNormalLarge" justifyH="LEFT" justifyV="TOP">
 							<Anchors>
 								<Anchor point="TOPLEFT" relativeTo="Storyline_NPCFrameChatName" relativePoint="BOTTOMLEFT" x="0" y="-10"/>
 							</Anchors>
@@ -354,7 +354,7 @@
 							</OnLoad>
 						</Scripts>
 					</Frame>
-					<Button name="Storyline_NPCFrameChatNext" inherits="Storyline_InvisibleButton" setAllPoints="true" frameLevel="4">
+					<Button name="Storyline_NPCFrameChatNext" parentKey="next" inherits="Storyline_InvisibleButton" setAllPoints="true" frameLevel="4">
 						<Scripts>
 							<OnEnter>
 								Storyline_NPCFrameChatHighlight:Show();
@@ -364,7 +364,7 @@
 							</OnLeave>
 						</Scripts>
 					</Button>
-					<Button name="Storyline_NPCFrameChatPrevious" frameLevel="5">
+					<Button name="Storyline_NPCFrameChatPrevious" parentKey="previous" frameLevel="5">
 						<Size x="35" y="35"/>
 						<Anchors>
 							<Anchor point="BOTTOMRIGHT" x="-5" y="5"/>

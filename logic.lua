@@ -18,9 +18,11 @@
 ----------------------------------------------------------------------------------
 
 -- Storyline API
+local wipe, tContains = wipe, tContains;
+local UnitGUID = UnitGUID;
 local setTooltipForSameFrame, setTooltipAll = Storyline_API.lib.setTooltipForSameFrame, Storyline_API.lib.setTooltipAll;
 local registerHandler = Storyline_API.lib.registerHandler;
-local loc = Storyline_API.locale.getText;
+local loc, tsize = Storyline_API.locale.getText, Storyline_API.lib.tsize;
 local playNext = Storyline_API.playNext;
 local showStorylineFame = Storyline_API.layout.showStorylineFame;
 local hideStorylineFrame = Storyline_API.layout.hideStorylineFrame;
@@ -32,15 +34,15 @@ local IsAltKeyDown, IsShiftKeyDown = IsAltKeyDown, IsShiftKeyDown;
 local InterfaceOptionsFrame_OpenToCategory = InterfaceOptionsFrame_OpenToCategory;
 
 -- UI
-local Storyline_NPCFrame = Storyline_NPCFrame;
-local Storyline_NPCFrameChat, Storyline_NPCFrameChatText = Storyline_NPCFrameChat, Storyline_NPCFrameChatText;
-local Storyline_NPCFrameChatNext, Storyline_NPCFrameChatPrevious = Storyline_NPCFrameChatNext, Storyline_NPCFrameChatPrevious;
-local Storyline_NPCFrameModelsYou, Storyline_NPCFrameModelsMe = Storyline_NPCFrameModelsYou, Storyline_NPCFrameModelsMe;
+local npcFrame = Storyline_NPCFrame;
 local Storyline_NPCFrameDebugText, Storyline_NPCFrameChatName, Storyline_NPCFrameBanner = Storyline_NPCFrameDebugText, Storyline_NPCFrameChatName, Storyline_NPCFrameBanner;
 local Storyline_NPCFrameTitle, Storyline_NPCFrameDebugModelYou, Storyline_NPCFrameDebugModelMe = Storyline_NPCFrameTitle, Storyline_NPCFrameDebugModelYou, Storyline_NPCFrameDebugModelMe;
 
 local Storyline_NPCFrameDebugMeFeetSlider, Storyline_NPCFrameDebugYouFeetSlider = Storyline_NPCFrameDebugMeFeetSlider, Storyline_NPCFrameDebugYouFeetSlider;
 local Storyline_NPCFrameDebugMeOffsetSlider, Storyline_NPCFrameDebugYouOffsetSlider = Storyline_NPCFrameDebugMeOffsetSlider, Storyline_NPCFrameDebugYouOffsetSlider;
+
+local scalingLib = LibStub:GetLibrary("TRP-Dialog-Scaling-DB");
+local scalingDB;
 
 -- Constants
 local DEBUG = true;
@@ -48,91 +50,97 @@ local LINE_FEED_CODE = string.char(10);
 local CARRIAGE_RETURN_CODE = string.char(13);
 local WEIRD_LINE_BREAK = LINE_FEED_CODE .. CARRIAGE_RETURN_CODE .. LINE_FEED_CODE;
 local CHAT_MARGIN = 70;
-local DEFAULT_SCALE = {
-	me = {
-		scale = 1.45,
-		feet = 0.4,
-		offset = 0.215,
-		facing = 0.75
-	}
-};
-DEFAULT_SCALE.you = DEFAULT_SCALE.me;
-
-local scalingLib = LibStub:GetLibrary("TRP-Dialog-Scaling-DB");
+local DEFAULT_SCALE = scalingLib.DEFAULT_SCALE;
 
 --*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
 -- NPC Blacklisting
 --*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
 
-local Storyline_NPC_BLACKLIST = {"94399"}
+local Storyline_NPC_BLACKLIST = {"94399"} -- Garrison mission table
 
 --*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
--- DATA SAVING
+-- DATA SAVING & RESTORING
 --*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
 
-local function getBestValue(dataName, savedData, data, default)
-	if savedData and savedData[dataName] then return savedData[dataName] end
-	if data and data[dataName] then return data[dataName] end
-	return default[dataName];
+---
+-- Get the best structure to use.
+-- @param dataKey
+-- @param firstPriority
+-- @param secondPriority
+-- @param fallback
+--
+local function getBestValue(dataKey, firstPriority, secondPriority, fallback)
+	if firstPriority and firstPriority[dataKey] then return firstPriority[dataKey] end
+	if secondPriority and secondPriority[dataKey] then return secondPriority[dataKey] end
+	return fallback[dataKey];
 end
 
-local function getDataStuctures(modelMeID, modelYouID)
-	local key, invertedKey = modelMeID .. "~" .. modelYouID, modelYouID .. "~" .. modelMeID;
-	local savedDataMe, savedDataYou;
+---
+-- Get the scaling structures (saved and defaults)
+-- @param modelMeID
+-- @param modelYouID
+--
+local function getScalingStuctures(modelMeID, modelYouID)
+	local key, invertedKey = scalingLib:GetModelKeys(modelMeID, modelYouID);
 
-	if Storyline_Data.scaling[key] then
-		savedDataMe = Storyline_Data.scaling[key].me;
-		savedDataYou = Storyline_Data.scaling[key].you;
-	elseif Storyline_Data.scaling[invertedKey] then
-		savedDataMe = Storyline_Data.scaling[invertedKey].you;
-		savedDataYou = Storyline_Data.scaling[invertedKey].me;
+	-- Saved structure
+	local savedDataMe, savedDataYou;
+	if scalingDB[key] then
+		savedDataMe = scalingDB[key].me;
+		savedDataYou = scalingDB[key].you;
+	elseif scalingDB[invertedKey] then
+		savedDataMe = scalingDB[invertedKey].you;
+		savedDataYou = scalingDB[invertedKey].me;
 	end
 
+	-- Default structure
 	local dataMe, dataYou = scalingLib:GetModelScaling(modelMeID, modelYouID);
 
 	return savedDataMe, savedDataYou, dataMe, dataYou;
 end
 
-local function resetStructure(resetMe)
-	local modelMeName, modelYouName = Storyline_NPCFrameModelsMe.model, Storyline_NPCFrameModelsYou.model;
-	local key, invertedKey = modelMeName .. "~" .. modelYouName, modelYouName .. "~" .. modelMeName;
-	if Storyline_Data.scaling[key] then
-		if resetMe and Storyline_Data.scaling[key].me then
-			wipe(Storyline_Data.scaling[key].me);
-			Storyline_Data.scaling[key].me = nil;
-		elseif not resetMe and Storyline_Data.scaling[key].you then
-			wipe(Storyline_Data.scaling[key].you);
-			Storyline_Data.scaling[key].you = nil;
-		end
-		if not Storyline_Data.scaling[key].me and not Storyline_Data.scaling[key].you then
-			Storyline_Data.scaling[key] = nil;
-		end
-	end
-	if Storyline_Data.scaling[invertedKey] then
-		if not resetMe and Storyline_Data.scaling[invertedKey].me then
-			wipe(Storyline_Data.scaling[invertedKey].me);
-			Storyline_Data.scaling[invertedKey].me = nil;
-		elseif resetMe and Storyline_Data.scaling[invertedKey].you then
-			wipe(Storyline_Data.scaling[invertedKey].you);
-			Storyline_Data.scaling[invertedKey].you = nil;
-		end
-		if not Storyline_Data.scaling[invertedKey].me and not Storyline_Data.scaling[invertedKey].you then
-			Storyline_Data.scaling[invertedKey] = nil;
+---
+-- Reset a scaling field in the saved structures for a modelID tuple.
+-- @param field typically "me" or "you"
+--
+local function resetStructure(field)
+	local key, invertedKey = scalingLib:GetModelKeys(npcFrame.models.me.model, npcFrame.models.you.model);
+
+	local structure = scalingDB[key] or scalingDB[invertedKey];
+	if structure then
+		if structure[field] then
+			wipe(structure[field]);
+			structure[field] = nil;
+			-- If after removing the field the save structure is empty, we remove it.
+			if tsize(structure) == 0 then
+				scalingDB[key] = nil;
+				scalingDB[invertedKey] = nil;
+			end
 		end
 	end
 end
 
-local function getSavedStructure()
-	local modelMeName, modelYouName = Storyline_NPCFrameModelsMe.model, Storyline_NPCFrameModelsYou.model;
-	local key, invertedKey = modelMeName .. "~" .. modelYouName, modelYouName .. "~" .. modelMeName;
-	if not Storyline_Data.scaling[key] and not Storyline_Data.scaling[invertedKey] then
-		Storyline_Data.scaling[key] = {};
+---
+-- Get the saved structure for the current two displayed models.
+-- If the structure does not exist, create it.
+--
+local function getInitializedSavedStructure()
+	local key, invertedKey = scalingLib:GetModelKeys(npcFrame.models.me.model, npcFrame.models.you.model);
+
+	if not scalingDB[key] and not scalingDB[invertedKey] then
+		scalingDB[key] = {};
 	end
-	return Storyline_Data.scaling[key] or Storyline_Data.scaling[invertedKey], Storyline_Data.scaling[key] == nil;
+	return scalingDB[key] or scalingDB[invertedKey], scalingDB[key] == nil;
 end
 
+---
+-- Save a scaling information for the current two displayed models.
+-- @param dataName
+-- @param isMe
+-- @param value
+--
 local function saveStructureData(dataName, isMe, value)
-	local structure, isInverted = getSavedStructure();
+	local structure, isInverted = getInitializedSavedStructure();
 	local meYou;
 	if (isMe and not isInverted) or (not isMe and isInverted) then
 		meYou = "me";
@@ -149,45 +157,68 @@ end
 -- LOADING & START DIALOG
 --*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
 
+local function loadScalingParameters(savedData, defaultData, meYou, facing)
+	scalingLib:SetModelHeight(getBestValue("scale", savedData, defaultData, DEFAULT_SCALE[meYou]), npcFrame.models[meYou]);
+	scalingLib:SetModelFeet(getBestValue("feet", savedData, defaultData, DEFAULT_SCALE[meYou]), npcFrame.models[meYou]);
+	scalingLib:SetModelOffset(getBestValue("offset", savedData, defaultData, DEFAULT_SCALE[meYou]), npcFrame.models[meYou], facing);
+	scalingLib:SetModelFacing(getBestValue("facing", savedData, defaultData, DEFAULT_SCALE[meYou]), npcFrame.models[meYou], facing);
+end
+
+---
+-- Called when the two models are loaded.
+-- This method initializes all scaling parameters.
+--
 local function modelsLoaded()
-	if Storyline_NPCFrameModelsYou.modelLoaded and Storyline_NPCFrameModelsMe.modelLoaded then
+	if npcFrame.models.you.modelLoaded and npcFrame.models.me.modelLoaded then
 
-		Storyline_NPCFrameModelsYou.model = tostring(Storyline_NPCFrameModelsYou:GetModelFileID());
-		Storyline_NPCFrameModelsMe.model = tostring(Storyline_NPCFrameModelsMe:GetModelFileID());
+		npcFrame.models.you.model = npcFrame.models.you:GetModelFileID();
+		if npcFrame.models.you.model then
+			npcFrame.models.you.model = tostring(npcFrame.models.you.model);
+		end
+		npcFrame.models.me.model = npcFrame.models.me:GetModelFileID();
+		if npcFrame.models.me.model then
+			npcFrame.models.me.model = tostring(npcFrame.models.me.model);
+		end
 
-		print("Me ID: " .. tostring(Storyline_NPCFrameModelsMe.model), "Me ID: " .. tostring(Storyline_NPCFrameModelsYou.model)); -- TODO: remove
 
-		local savedDataMe, savedDataYou, dataMe, dataYou = getDataStuctures(Storyline_NPCFrameModelsMe.model, Storyline_NPCFrameModelsYou.model);
+		local savedDataMe, savedDataYou, dataMe, dataYou = getScalingStuctures(npcFrame.models.me.model, npcFrame.models.you.model);
 
-		scalingLib:SetModelHeight(getBestValue("scale", savedDataMe, dataMe, DEFAULT_SCALE.me), Storyline_NPCFrameModelsMe);
-		scalingLib:SetModelFeet(getBestValue("feet", savedDataMe, dataMe, DEFAULT_SCALE.me), Storyline_NPCFrameModelsMe);
-		scalingLib:SetModelOffset(getBestValue("offset", savedDataMe, dataMe, DEFAULT_SCALE.me), Storyline_NPCFrameModelsMe, true);
-		scalingLib:SetModelFacing(getBestValue("facing", savedDataMe, dataMe, DEFAULT_SCALE.me), Storyline_NPCFrameModelsMe, true);
+		-- Configuration for model Me.
+		loadScalingParameters(savedDataMe, dataMe, "me", true);
 
-		if true or Storyline_NPCFrameModelsYou.model:len() > 0 then
-			scalingLib:SetModelHeight(getBestValue("scale", savedDataYou, dataYou, DEFAULT_SCALE.you), Storyline_NPCFrameModelsYou);
-			scalingLib:SetModelFeet(getBestValue("feet", savedDataYou, dataYou, DEFAULT_SCALE.you), Storyline_NPCFrameModelsYou);
-			scalingLib:SetModelOffset(getBestValue("offset", savedDataYou, dataYou, DEFAULT_SCALE.you), Storyline_NPCFrameModelsYou, false);
-			scalingLib:SetModelFacing(getBestValue("facing", savedDataYou, dataYou, DEFAULT_SCALE.you), Storyline_NPCFrameModelsYou, false);
+		-- Configuration for model You, if available.
+		if npcFrame.models.you.model then
+			loadScalingParameters(savedDataYou, dataYou, "you", false);
 		else
-			Storyline_NPCFrameModelsMe:SetAnimation(520);
+			-- If there is no You model, play the read animation for the Me model.
+			npcFrame.models.me:SetAnimation(520);
 		end
 
-		if Storyline_NPCFrameModelsYou.model then
-			Storyline_NPCFrameDebugModelYou:SetText(Storyline_NPCFrameModelsYou.model:gsub("\\", "\\\\"));
+		-- Place the modelIDs in the debug frame
+		if npcFrame.models.you.model then
+			Storyline_NPCFrameDebugModelYou:SetText(npcFrame.models.you.model);
 		end
-		if Storyline_NPCFrameModelsMe.model then
-			Storyline_NPCFrameDebugModelMe:SetText(Storyline_NPCFrameModelsMe.model:gsub("\\", "\\\\"));
+		if npcFrame.models.me.model then
+			Storyline_NPCFrameDebugModelMe:SetText(npcFrame.models.me.model);
 		end
 	end
 end
 
+---
+-- Start a dialog with unit ID targetType
+-- @param targetType
+-- @param fullText
+-- @param event
+-- @param eventInfo
+--
 function Storyline_API.startDialog(targetType, fullText, event, eventInfo)
 	Storyline_NPCFrameDebugText:SetText(event);
 
+	-- Get NPC_ID
 	local guid = UnitGUID(targetType);
 	local type, zero, server_id, instance_id, zone_uid, npc_id, spawn_uid = strsplit("-", guid or "");
-	Storyline_NPCFrameModelsYou.npc_id = npc_id;
+	npcFrame.models.you.npc_id = npc_id;
+
 	-- Dirty if to fix the flavor text appearing on naval mission table because Blizzard…
 	if tContains(Storyline_NPC_BLACKLIST, npc_id) or tContains(Storyline_Data.npc_blacklist, npc_id)then
 		SelectGossipOption(1);
@@ -219,17 +250,17 @@ function Storyline_API.startDialog(targetType, fullText, event, eventInfo)
 		Storyline_NPCFrameBanner:Hide();
 	end
 
-	Storyline_NPCFrameModelsMe.modelLoaded = false;
-	Storyline_NPCFrameModelsYou.modelLoaded = false;
-	Storyline_NPCFrameModelsYou.model = "";
-	Storyline_NPCFrameModelsMe.model = "";
-	Storyline_NPCFrameModelsMe:SetUnit("player", false);
+	npcFrame.models.me.modelLoaded = false;
+	npcFrame.models.you.modelLoaded = false;
+	npcFrame.models.you.model = "";
+	npcFrame.models.me.model = "";
+	npcFrame.models.me:SetUnit("player", false);
 
 	if UnitExists(targetType) and not UnitIsUnit("player", "npc") then
-		Storyline_NPCFrameModelsYou:SetUnit(targetType, false);
+		npcFrame.models.you:SetUnit(targetType, false);
 	else
-		Storyline_NPCFrameModelsYou:SetUnit("none");
-		Storyline_NPCFrameModelsYou.modelLoaded = true;
+		npcFrame.models.you:SetUnit("none");
+		npcFrame.models.you.modelLoaded = true;
 	end
 
 	fullText = fullText:gsub(LINE_FEED_CODE .. "+", "\n");
@@ -239,15 +270,15 @@ function Storyline_API.startDialog(targetType, fullText, event, eventInfo)
 	if texts[#texts]:len() == 0 then
 		texts[#texts] = nil;
 	end
-	Storyline_NPCFrameChat.texts = texts;
-	Storyline_NPCFrameChat.currentIndex = 0;
-	Storyline_NPCFrameChat.eventInfo = eventInfo;
-	Storyline_NPCFrameChat.event = event;
+	npcFrame.chat.texts = texts;
+	npcFrame.chat.currentIndex = 0;
+	npcFrame.chat.eventInfo = eventInfo;
+	npcFrame.chat.event = event;
 	Storyline_NPCFrameObjectivesContent:Hide();
-	Storyline_NPCFrameChatPrevious:Hide();
+	npcFrame.chat.previous:Hide();
 	showStorylineFame();
 
-	playNext(Storyline_NPCFrameModelsYou);
+	playNext(npcFrame.models.you);
 end
 
 --*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
@@ -257,13 +288,13 @@ end
 local ANIMATION_TEXT_SPEED = 80;
 
 local function onUpdateChatText(self, elapsed)
-	if self.start and Storyline_NPCFrameChatText:GetText() and Storyline_NPCFrameChatText:GetText():len() > 0 then
+	if self.start and npcFrame.chat.text:GetText() and npcFrame.chat.text:GetText():len() > 0 then
 		self.start = self.start + (elapsed * (ANIMATION_TEXT_SPEED * Storyline_Data.config.textSpeedFactor or 0.5));
-		if Storyline_Data.config.textSpeedFactor == 0 or self.start >= Storyline_NPCFrameChatText:GetText():len() then
+		if Storyline_Data.config.textSpeedFactor == 0 or self.start >= npcFrame.chat.text:GetText():len() then
 			self.start = nil;
-			Storyline_NPCFrameChatText:SetAlphaGradient(Storyline_NPCFrameChatText:GetText():len(), 1);
+			npcFrame.chat.text:SetAlphaGradient(npcFrame.chat.text:GetText():len(), 1);
 		else
-			Storyline_NPCFrameChatText:SetAlphaGradient(self.start, 30);
+			npcFrame.chat.text:SetAlphaGradient(self.start, 30);
 		end
 	end
 end
@@ -277,82 +308,82 @@ local function debugInit()
 		Storyline_NPCFrameDebug:Hide();
 	end
 	Storyline_NPCFrameDebugMeResetButton:SetScript("OnClick", function(self)
-		resetStructure(true);
+		resetStructure("me");
 		modelsLoaded();
 	end);
 	Storyline_NPCFrameDebugYouResetButton:SetScript("OnClick", function(self)
-		resetStructure(false);
+		resetStructure("you");
 		modelsLoaded();
 	end);
 
 	-- Scrolling on the 3D model frame to adjust the size of the models
-	Storyline_NPCFrameModelsMeScrollZone:EnableMouseWheel(true);
-	Storyline_NPCFrameModelsMeScrollZone:SetScript("OnMouseWheel", function(self, delta)
-		if IsAltKeyDown() then
-			if IsShiftKeyDown() then -- If shift key down adjust my model
-			setModelHeight(Storyline_NPCFrameModelsMe.scale - 0.1 * delta, true, true);
-			else
-				setModelHeight(Storyline_NPCFrameModelsMe.scale - 0.01 * delta, true, true);
-			end
-		elseif IsControlKeyDown() then
-			if IsShiftKeyDown() then -- If shift key down adjust my model
-			setModelFacing(Storyline_NPCFrameModelsMe.facing - 0.2 * delta, true, true);
-			else
-				setModelFacing(Storyline_NPCFrameModelsMe.facing - 0.02 * delta, true, true);
-			end
-		end
-	end);
-	Storyline_NPCFrameModelsMeScrollZone:RegisterForClicks("LeftButtonUp", "RightButtonUp");
-	Storyline_NPCFrameModelsMeScrollZone:SetScript("OnClick", function(self, button)
-		local factor = button == "LeftButton" and 1 or -1;
-		if IsAltKeyDown() then
-			if IsShiftKeyDown() then -- If shift key down adjust my model
-			setModelOffset(Storyline_NPCFrameModelsMe.offset - 0.1 * factor, true, true);
-			else
-				setModelOffset(Storyline_NPCFrameModelsMe.offset - 0.01 * factor, true, true);
-			end
-		elseif IsControlKeyDown() then
-			if IsShiftKeyDown() then -- If shift key down adjust my model
-			setModelFeet(Storyline_NPCFrameModelsMe.feet - 0.1 * factor, true, true);
-			else
-				setModelFeet(Storyline_NPCFrameModelsMe.feet - 0.01 * factor, true, true);
-			end
-		end
-	end);
-
-	Storyline_NPCFrameModelsYouScrollZone:EnableMouseWheel(true);
-	Storyline_NPCFrameModelsYouScrollZone:SetScript("OnMouseWheel", function(self, delta)
-		if IsAltKeyDown() then
-			if IsShiftKeyDown() then -- If shift key down adjust my model
-			setModelHeight(Storyline_NPCFrameModelsYou.scale - 0.1 * delta, false, true);
-			else
-				setModelHeight(Storyline_NPCFrameModelsYou.scale - 0.01 * delta, false, true);
-			end
-		elseif IsControlKeyDown() then
-			if IsShiftKeyDown() then -- If shift key down adjust my model
-			setModelFacing(Storyline_NPCFrameModelsYou.facing - 0.2 * delta, false, true);
-			else
-				setModelFacing(Storyline_NPCFrameModelsYou.facing - 0.02 * delta, false, true);
-			end
-		end
-	end);
-	Storyline_NPCFrameModelsYouScrollZone:RegisterForClicks("LeftButtonUp", "RightButtonUp");
-	Storyline_NPCFrameModelsYouScrollZone:SetScript("OnClick", function(self, button)
-		local factor = button == "LeftButton" and 1 or -1;
-		if IsAltKeyDown() then
-			if IsShiftKeyDown() then -- If shift key down adjust my model
-			setModelOffset(Storyline_NPCFrameModelsYou.offset - 0.1 * factor, false, true);
-			else
-				setModelOffset(Storyline_NPCFrameModelsYou.offset - 0.01 * factor, false, true);
-			end
-		elseif IsControlKeyDown() then
-			if IsShiftKeyDown() then -- If shift key down adjust my model
-			setModelFeet(Storyline_NPCFrameModelsYou.feet - 0.1 * factor, false, true);
-			else
-				setModelFeet(Storyline_NPCFrameModelsYou.feet - 0.01 * factor, false, true);
-			end
-		end
-	end);
+--	Storyline_NPCFrameModelsMeScrollZone:EnableMouseWheel(true);
+--	Storyline_NPCFrameModelsMeScrollZone:SetScript("OnMouseWheel", function(self, delta)
+--		if IsAltKeyDown() then
+--			if IsShiftKeyDown() then -- If shift key down adjust my model
+--			setModelHeight(Storyline_NPCFrameModelsMe.scale - 0.1 * delta, true, true);
+--			else
+--				setModelHeight(Storyline_NPCFrameModelsMe.scale - 0.01 * delta, true, true);
+--			end
+--		elseif IsControlKeyDown() then
+--			if IsShiftKeyDown() then -- If shift key down adjust my model
+--			setModelFacing(Storyline_NPCFrameModelsMe.facing - 0.2 * delta, true, true);
+--			else
+--				setModelFacing(Storyline_NPCFrameModelsMe.facing - 0.02 * delta, true, true);
+--			end
+--		end
+--	end);
+--	Storyline_NPCFrameModelsMeScrollZone:RegisterForClicks("LeftButtonUp", "RightButtonUp");
+--	Storyline_NPCFrameModelsMeScrollZone:SetScript("OnClick", function(self, button)
+--		local factor = button == "LeftButton" and 1 or -1;
+--		if IsAltKeyDown() then
+--			if IsShiftKeyDown() then -- If shift key down adjust my model
+--			setModelOffset(Storyline_NPCFrameModelsMe.offset - 0.1 * factor, true, true);
+--			else
+--				setModelOffset(Storyline_NPCFrameModelsMe.offset - 0.01 * factor, true, true);
+--			end
+--		elseif IsControlKeyDown() then
+--			if IsShiftKeyDown() then -- If shift key down adjust my model
+--			setModelFeet(Storyline_NPCFrameModelsMe.feet - 0.1 * factor, true, true);
+--			else
+--				setModelFeet(Storyline_NPCFrameModelsMe.feet - 0.01 * factor, true, true);
+--			end
+--		end
+--	end);
+--
+--	Storyline_NPCFrameModelsYouScrollZone:EnableMouseWheel(true);
+--	Storyline_NPCFrameModelsYouScrollZone:SetScript("OnMouseWheel", function(self, delta)
+--		if IsAltKeyDown() then
+--			if IsShiftKeyDown() then -- If shift key down adjust my model
+--			setModelHeight(Storyline_NPCFrameModelsYou.scale - 0.1 * delta, false, true);
+--			else
+--				setModelHeight(Storyline_NPCFrameModelsYou.scale - 0.01 * delta, false, true);
+--			end
+--		elseif IsControlKeyDown() then
+--			if IsShiftKeyDown() then -- If shift key down adjust my model
+--			setModelFacing(Storyline_NPCFrameModelsYou.facing - 0.2 * delta, false, true);
+--			else
+--				setModelFacing(Storyline_NPCFrameModelsYou.facing - 0.02 * delta, false, true);
+--			end
+--		end
+--	end);
+--	Storyline_NPCFrameModelsYouScrollZone:RegisterForClicks("LeftButtonUp", "RightButtonUp");
+--	Storyline_NPCFrameModelsYouScrollZone:SetScript("OnClick", function(self, button)
+--		local factor = button == "LeftButton" and 1 or -1;
+--		if IsAltKeyDown() then
+--			if IsShiftKeyDown() then -- If shift key down adjust my model
+--			setModelOffset(Storyline_NPCFrameModelsYou.offset - 0.1 * factor, false, true);
+--			else
+--				setModelOffset(Storyline_NPCFrameModelsYou.offset - 0.01 * factor, false, true);
+--			end
+--		elseif IsControlKeyDown() then
+--			if IsShiftKeyDown() then -- If shift key down adjust my model
+--			setModelFeet(Storyline_NPCFrameModelsYou.feet - 0.1 * factor, false, true);
+--			else
+--				setModelFeet(Storyline_NPCFrameModelsYou.feet - 0.01 * factor, false, true);
+--			end
+--		end
+--	end);
 
 	-- Debug for scaling
 	Storyline_API.addon:RegisterChatCommand("storydebug", function()
@@ -368,15 +399,15 @@ end
 --*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
 
 local function closeDialog()
-	if Storyline_NPCFrameChat.eventInfo and Storyline_NPCFrameChat.eventInfo.cancelMethod then
-		Storyline_NPCFrameChat.eventInfo.cancelMethod();
+	if npcFrame.chat.eventInfo and npcFrame.chat.eventInfo.cancelMethod then
+		npcFrame.chat.eventInfo.cancelMethod();
 	end
 	hideStorylineFrame();
 end
 
 local function resetDialog()
 	Storyline_NPCFrameObjectivesContent:Hide();
-	Storyline_NPCFrameChat.currentIndex = 0;
+	npcFrame.chat.currentIndex = 0;
 	playNext(Storyline_NPCFrameModelsYou);
 end
 
@@ -387,11 +418,12 @@ function Storyline_API.addon:OnEnable()
 	if not Storyline_Data then
 		Storyline_Data = {};
 	end
-	if not Storyline_Data.debug then
-		Storyline_Data.debug = {};
-	end
 	if not Storyline_Data.scaling then
 		Storyline_Data.scaling = {};
+	end
+	scalingDB = Storyline_Data.scaling;
+	if not Storyline_Data.debug then
+		Storyline_Data.debug = {};
 	end
 	if not Storyline_Data.debug.timing then
 		Storyline_Data.debug.timing = {};
@@ -409,32 +441,32 @@ function Storyline_API.addon:OnEnable()
 	Storyline_API.consolePort.init();
 
 	Storyline_NPCFrameBG:SetDesaturated(true);
-	Storyline_NPCFrameChatNext:RegisterForClicks("LeftButtonUp", "RightButtonUp");
-	Storyline_NPCFrameChatNext:SetScript("OnClick", function(self, button)
+	npcFrame.chat.next:RegisterForClicks("LeftButtonUp", "RightButtonUp");
+	npcFrame.chat.next:SetScript("OnClick", function(self, button)
 		if button == "RightButton" then
-			if Storyline_NPCFrameChat.start and Storyline_NPCFrameChat.start < Storyline_NPCFrameChatText:GetText():len() then
-				Storyline_NPCFrameChat.start = Storyline_NPCFrameChatText:GetText():len();  -- Stop current text animation
+			if npcFrame.chat.start and npcFrame.chat.start < npcFrame.chat.text:GetText():len() then
+				npcFrame.chat.start = npcFrame.chat.text:GetText():len();  -- Stop current text animation
 			end
-			Storyline_NPCFrameChat.currentIndex = #Storyline_NPCFrameChat.texts - 1; -- Set current text index to the one before the last one
-			playNext(Storyline_NPCFrameModelsYou); -- Play the next text (the last one)
-			if Storyline_NPCFrameChat.start and Storyline_NPCFrameChat.start < Storyline_NPCFrameChatText:GetText():len() then
-				Storyline_NPCFrameChat.start = Storyline_NPCFrameChatText:GetText():len();  -- Stop current text animation
+			npcFrame.chat.currentIndex = #npcFrame.chat.texts - 1; -- Set current text index to the one before the last one
+			playNext(npcFrame.models.you); -- Play the next text (the last one)
+			if npcFrame.chat.start and npcFrame.chat.start < npcFrame.chat.text:GetText():len() then
+				npcFrame.chat.start = npcFrame.chat.text:GetText():len();  -- Stop current text animation
 			end
-			playNext(Storyline_NPCFrameModelsYou); -- Execute next action (display gossip options, quest objectives, quest rewards or close dialog)
+			playNext(npcFrame.models.you); -- Execute next action (display gossip options, quest objectives, quest rewards or close dialog)
 		else
-			if Storyline_NPCFrameChat.start and Storyline_NPCFrameChat.start < Storyline_NPCFrameChatText:GetText():len() then
-				Storyline_NPCFrameChat.start = Storyline_NPCFrameChatText:GetText():len();
+			if npcFrame.chat.start and npcFrame.chat.start < npcFrame.chat.text:GetText():len() then
+				npcFrame.chat.start = npcFrame.chat.text:GetText():len();
 			else
-				playNext(Storyline_NPCFrameModelsYou);
+				playNext(npcFrame.models.you);
 			end
 		end
 	end);
-	Storyline_NPCFrameChatPrevious:SetScript("OnClick", resetDialog);
-	Storyline_NPCFrameChat:SetScript("OnUpdate", onUpdateChatText);
+	npcFrame.chat.previous:SetScript("OnClick", resetDialog);
+	npcFrame.chat:SetScript("OnUpdate", onUpdateChatText);
 	Storyline_NPCFrameClose:SetScript("OnClick", closeDialog);
 	Storyline_NPCFrameRewardsItem:SetScale(1.5);
 
-	Storyline_NPCFrame:SetScript("OnKeyDown", function(self, key)
+	npcFrame:SetScript("OnKeyDown", function(self, key)
 		if not Storyline_Data.config.useKeyboard then
 			self:SetPropagateKeyboardInput(true);
 			return;
@@ -442,10 +474,10 @@ function Storyline_API.addon:OnEnable()
 
 		if key == "SPACE" then
 			self:SetPropagateKeyboardInput(false);
-			Storyline_NPCFrameChatNext:Click(IsShiftKeyDown() and "RightButton" or "LeftButton");
+			npcFrame.chat.next:Click(IsShiftKeyDown() and "RightButton" or "LeftButton");
 		elseif key == "BACKSPACE" then
 			self:SetPropagateKeyboardInput(false);
-			Storyline_NPCFrameChatPrevious:Click();
+			npcFrame.chat.previous:Click();
 		elseif key == "ESCAPE" then
 			closeDialog();
 		else
@@ -511,10 +543,10 @@ function Storyline_API.addon:OnEnable()
 
 	end);
 
-	Storyline_NPCFrameModelsYou.animTab = {};
-	Storyline_NPCFrameModelsMe.animTab = {};
+	npcFrame.models.you.animTab = {};
+	npcFrame.models.me.animTab = {};
 
-	Storyline_NPCFrameModelsYou:SetScript("OnUpdate", function(self, elapsed)
+	npcFrame.models.you:SetScript("OnUpdate", function(self, elapsed)
 		if self.spin then
 			self.spinAngle = self.spinAngle - (elapsed / 2);
 			self:SetFacing(self.spinAngle);
@@ -525,13 +557,13 @@ function Storyline_API.addon:OnEnable()
 	Storyline_API.initEventsStructure();
 
 	-- 3D models loaded
-	Storyline_NPCFrameModelsMe:SetScript("OnModelLoaded", function()
-		Storyline_NPCFrameModelsMe.modelLoaded = true;
+	npcFrame.models.me:SetScript("OnModelLoaded", function()
+		npcFrame.models.me.modelLoaded = true;
 		modelsLoaded();
 	end);
 
-	Storyline_NPCFrameModelsYou:SetScript("OnModelLoaded", function()
-		Storyline_NPCFrameModelsYou.modelLoaded = true;
+	npcFrame.models.you:SetScript("OnModelLoaded", function()
+		npcFrame.models.you.modelLoaded = true;
 		modelsLoaded();
 	end);
 
@@ -545,17 +577,17 @@ function Storyline_API.addon:OnEnable()
 
 	-- Resizing
 	local resizeChat = function()
-		Storyline_NPCFrameChatText:SetWidth(Storyline_NPCFrame:GetWidth() - 150);
-		Storyline_NPCFrameChat:SetHeight(Storyline_NPCFrameChatText:GetHeight() + CHAT_MARGIN + 5);
-		Storyline_NPCFrameGossipChoices:SetWidth(Storyline_NPCFrame:GetWidth() - 400);
+		npcFrame.chat.text:SetWidth(npcFrame:GetWidth() - 150);
+		npcFrame.chat:SetHeight(npcFrame.chat.text:GetHeight() + CHAT_MARGIN + 5);
+		Storyline_NPCFrameGossipChoices:SetWidth(npcFrame:GetWidth() - 400);
 	end
-	Storyline_NPCFrameChatText:SetWidth(550);
+	npcFrame.chat.text:SetWidth(550);
 	Storyline_NPCFrameResizeButton.onResizeStop = function(width, height)
 		resizeChat();
 		Storyline_Data.config.width = width;
 		Storyline_Data.config.height = height;
 	end;
-		Storyline_NPCFrame:SetSize(Storyline_Data.config.width or 700, Storyline_Data.config.height or 450);
+	npcFrame:SetSize(Storyline_Data.config.width or 700, Storyline_Data.config.height or 450);
 	resizeChat();
 
 	-- Debug
@@ -573,15 +605,15 @@ function Storyline_API.addon:OnEnable()
 	setTooltipAll(Storyline_NPCFrameConfigButton, "TOP", 0, 0, loc("SL_CONFIG"));
 
 
-	Storyline_NPCFrame:RegisterForDrag("LeftButton");
+	npcFrame:RegisterForDrag("LeftButton");
 
-	Storyline_NPCFrame:SetScript("OnDragStart", function(self)
+	npcFrame:SetScript("OnDragStart", function(self)
 		if not Storyline_API.layout.isFrameLocked() then
 			self:StartMoving();
 		end
 	end);
 
-	Storyline_NPCFrame:SetScript("OnDragStop", function(self)
+	npcFrame:SetScript("OnDragStop", function(self)
 		self:StopMovingOrSizing();
 	end);
 
