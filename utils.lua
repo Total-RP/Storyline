@@ -23,6 +23,20 @@ local getId = Storyline_API.lib.generateID;
 -- WOW API
 local after, tostring = C_Timer.After, tostring;
 
+---
+-- I am using this little local function because I always forget a print or two :P
+-- Debug messages will only be printed if the debug option is true
+-- So if I happen to forget one call to debug() someday, it will print nothing for normal users :P
+--
+-- @param message
+--
+local debug = function(message)
+	if Storyline_Data.config.debug then
+		print(message);
+	end
+end
+Storyline_API.debug = debug;
+
 --*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
 -- UTILS
 --*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*

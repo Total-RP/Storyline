@@ -21,31 +21,13 @@ local HideUIPanel = HideUIPanel;
 
 local Storyline_NPCFrame = Storyline_NPCFrame;
 
+
+local defaultFramesWeWantToReplace = {
+	"QuestFrame",
+	"GossipFrame",
+};
+
 Storyline_API.layout = {};
-
----
--- I am using this little local function because I always forget a print or two :P
--- Debug messages will only be printed if the global variable TRP3_DEBUG is true (set via private debugging add-on)
--- So if I happen to forget one call to debug() someday, it will print nothing for normal users :P
---
--- @param message
---
-local debug = function(message)
-	if TRP3_DEBUG then
-		print(message);
-	end
-end
-
----
--- Remove the default quest frame and dialog frames from the array of frames
--- managed by the game UI layout engine.
--- When function will call for those frames to be placed by the UI layout engine
--- it will fail silently and the frames will not be shown at all.
-local hideDefaultFrames = function()
-	UIPanelWindows["QuestFrame"] = nil;
-	UIPanelWindows["GossipFrame"] = nil;
-end
-Storyline_API.layout.hideDefaultFrames = hideDefaultFrames;
 
 ---
 -- Lock the frame so it cannot be dragged.
@@ -101,6 +83,9 @@ local registerToUILayoutEngine = function()
 end
 Storyline_API.layout.registerToUILayoutEngine = registerToUILayoutEngine;
 
+local hiddenFrames = CreateFrame("FRAME");
+hiddenFrames:Hide();
+
 ---
 -- Remove Storyline frame from the array of frames managed by the game UI layout engine.
 -- We should no longer call upon the UI layout engine to open Storyline inside the add-on,
@@ -114,6 +99,43 @@ local unregisterFromUILayoutEngine = function()
 	Storyline_NPCFrameResizeButton:Show();
 end
 Storyline_API.layout.unregisterFromUILayoutEngine = unregisterFromUILayoutEngine;
+
+local framesUILayoutEngineSettings = {};
+
+local removeFrameFromUILayoutEngine = function(frameName)
+	local info = UIPanelWindows[frameName];
+	if not info then return end
+
+	framesUILayoutEngineSettings[frameName] = info;
+
+	local frame = _G[frameName];
+	frame:SetAttribute("UIPanelLayout-defined", false);
+	UIPanelWindows[frameName] = nil;
+	frame:SetParent(hiddenFrames);
+end
+
+local addToLayoutEngine = function(frameName)
+	local frame = _G[frameName];
+	UIPanelWindows[frameName] = framesUILayoutEngineSettings[frameName];
+	frame:SetAttribute("UIPanelLayout-defined", true);
+	for name, value in pairs(UIPanelWindows[frameName]) do
+		frame:SetAttribute("UIPanelLayout-" .. name, value);
+	end
+	frame:SetParent(UIParent);
+end
+
+---
+-- The quest reward frame is somehow decoupled from the quest frame
+-- and is still shown out of the frame.
+-- The workaround is to hide it everytime ¯\_(ツ)_/¯
+Storyline_API.layout.hideQuestRewardFrameIfNeed = function()
+	if Storyline_Data.config.hideOriginalFrames then
+		QuestInfoRewardsFrame:Hide();
+	else
+		QuestInfoRewardsFrame:Show();
+	end
+end
+
 
 ---
 -- Return true if we are using the UI layout engine
@@ -159,6 +181,38 @@ local toggleStorylineFrame = function(showFrame)
 end
 Storyline_API.layout.toggleStorylineFrame = toggleStorylineFrame;
 
+Storyline_API.layout.showDefaultFrames = function()
+	hideStorylineFrame();
+	for _, frame in pairs(defaultFramesWeWantToReplace) do
+		addToLayoutEngine(frame);
+	end
+end
+
+
+---
+-- Remove the default quest frame and dialog frames from the array of frames
+-- managed by the game UI layout engine.
+-- When function will call for those frames to be placed by the UI layout engine
+-- it will fail silently and the frames will not be shown at all.
+local hideDefaultFrames = function()
+	hideStorylineFrame();
+	for _, frame in pairs(defaultFramesWeWantToReplace) do
+		_G[frame]:Hide();
+		removeFrameFromUILayoutEngine(frame)
+	end
+end
+Storyline_API.layout.hideDefaultFrames = hideDefaultFrames;
+
+Storyline_API.lib.registerHandler("PLAYER_ENTERING_WORLD", function()
+	if Storyline_Data.config.disableInInstances and Storyline_Data.config.hideOriginalFrames then
+		if IsInInstance() then
+			Storyline_API.layout.showDefaultFrames();
+		else
+			Storyline_API.layout.hideDefaultFrames();
+		end
+	end
+end)
+
 ---
 -- When Storyline's frame is hidden, try to call the cancelMethod registered if it exists.
 -- This is for when Storyline's frame is hidden by an external event (probably the UI layout engine)
@@ -167,5 +221,8 @@ Storyline_NPCFrame:SetScript("OnHide", function()
 	if Storyline_NPCFrameChat.eventInfo and Storyline_NPCFrameChat.eventInfo.cancelMethod then
 		Storyline_NPCFrameChat.eventInfo.cancelMethod();
 		Storyline_NPCFrameChat.eventInfo = nil;
+	end
+	if useUILayoutEngine then
+		CloseGossip(); -- Force CloseGossip() when Storyline is close if using the layout engine to prevent issue with NPC dialogs.
 	end
 end)

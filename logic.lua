@@ -442,15 +442,14 @@ function Storyline_API.addon:OnEnable()
 	mainFrame.chat.next:RegisterForClicks("LeftButtonUp", "RightButtonUp");
 	mainFrame.chat.next:SetScript("OnClick", function(self, button)
 		if button == "RightButton" then
-			if mainFrame.chat.start and mainFrame.chat.start < mainFrame.chat.text:GetText():len() then
-				mainFrame.chat.start = mainFrame.chat.text:GetText():len();  -- Stop current text animation
+			-- If we are not already on the last text, jump to it
+			if mainFrame.chat.currentIndex < #mainFrame.chat.texts then
+				mainFrame.chat.currentIndex = #mainFrame.chat.texts - 1; -- Set current text index to the one before the last one
+				playNext(mainFrame.models.you); -- Play the next text (the last one)
+			else
+				-- If we were on the last text, use playNext to trigger the finish method (best available action)
+				playNext(mainFrame.models.you);
 			end
-			mainFrame.chat.currentIndex = #mainFrame.chat.texts - 1; -- Set current text index to the one before the last one
-			playNext(mainFrame.models.you); -- Play the next text (the last one)
-			if mainFrame.chat.start and mainFrame.chat.start < mainFrame.chat.text:GetText():len() then
-				mainFrame.chat.start = mainFrame.chat.text:GetText():len();  -- Stop current text animation
-			end
-			playNext(mainFrame.models.you); -- Execute next action (display gossip options, quest objectives, quest rewards or close dialog)
 		else
 			if mainFrame.chat.start and mainFrame.chat.start < mainFrame.chat.text:GetText():len() then
 				mainFrame.chat.start = mainFrame.chat.text:GetText():len();
