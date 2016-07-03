@@ -291,6 +291,8 @@ Storyline_API.options.init = function()
 		Storyline_Data.config.debug = self:GetChecked() == true;
 		if Storyline_Data.config.debug then
 			Storyline_NPCFrameDebug:Show();
+		else
+			Storyline_NPCFrameDebug:Hide();
 		end
 	end);
 	if Storyline_Data.config.debug == nil then
