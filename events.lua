@@ -44,6 +44,7 @@ local getAnimationByModel = Storyline_API.getAnimationByModel;
 local getBindingIcon = Storyline_API.getBindingIcon;
 local hideStorylineFrame = Storyline_API.layout.hideStorylineFrame;
 local hideQuestRewardFrameIfNeed = Storyline_API.layout.hideQuestRewardFrameIfNeed;
+local debug = Storyline_API.debug;
 
 -- WOW API
 local faction, faction_loc = UnitFactionGroup("player");
@@ -1014,7 +1015,106 @@ function Storyline_API.initEventsStructure()
 		},
 		["QUEST_GREETING"] = {
 			text = GetGreetingText,
-			finishMethod = CloseQuest,
+			finishMethod = function()
+				debug("QUEST_GREETING – Calling finish method");
+				-- I'm tidying frames into local variable here so the code is more readable
+				local activeQuestChoicesFrame = Storyline_NPCFrameChatOption1;
+				local availableQuestChoicesFrame = Storyline_NPCFrameChatOption2;
+				local firstChoiceAvailableInPopup = Storyline_ChoiceString0;
+
+				-- We will try to pick the best choice available in the current situation
+				-- Meaning completing quest first and then picking up new quest
+				-- First we open the choices popup (only if not alreayd opened)
+				if not Storyline_NPCFrameGossipChoices:IsVisible() then
+					debug("QUEST_GREETING – Finish method : Gossip choice frame not shown.");
+					-- If we have active quests that are completed, they are the first to be picked
+					if GetNumActiveQuests() >= 1  then
+						-- Iterate through the active quests to check if one is completed
+						for i = 1, GetNumActiveQuests() do
+							local _, isCompleted = GetActiveTitle(i);
+							if isCompleted then
+								debug("QUEST_GREETING – Finish method : Active quest found with at least one completed.");
+								return activeQuestChoicesFrame:GetScript("OnClick")(activeQuestChoicesFrame);
+							end
+						end
+					end
+
+					-- Next if we have quest available we pick them
+					if GetNumAvailableQuests() >= 1 then
+						debug("QUEST_GREETING – Finish method : Available quest found.");
+						return availableQuestChoicesFrame:GetScript("OnClick")(availableQuestChoicesFrame);
+					end
+
+					-- Finally if we have active quests, but none are completed, they are the last to be picked
+					if GetNumActiveQuests() >= 1 then
+						debug("QUEST_GREETING – Finish method : Active quest found (none are completed).");
+						return activeQuestChoicesFrame:GetScript("OnClick")(activeQuestChoicesFrame);
+					end
+
+				else
+					-- The choice popup is open, we will use the first choice in the popup
+					if firstChoiceAvailableInPopup and firstChoiceAvailableInPopup:getScript("OnClick") then
+						debug("QUEST_GREETING – Finish method : Choice popup opened, picked first choice available");
+						return firstChoiceAvailableInPopup:getScript("OnClick")();
+					end
+				end
+
+				-- Our fallback is always to close the dialog if no correct action was to be found
+				debug("QUEST_GREETING – Finish method : No quest options found, fallback to closing dialog.");
+				CloseQuest()
+			end,
+			finishText = function()
+				-- The default finish text is goodbye.
+				local finishText = GOODBYE;
+
+				-- We will now check if we have dialog options available
+				-- The priority is first completed active quest, then quests available and then non-completed active quests
+				-- We'll do that in a reverse order so the text that stays in finishText at the end is the one
+				-- with the higher priority
+
+				-- Lets cache some value so we don't call the same functions multiple times
+				local numActiveQuests = GetNumActiveQuests();
+				local numAvailableQuests = GetNumAvailableQuests();
+				local multipleChoicesText = loc("SL_WELL");
+
+				local haveFoundCompletedQuests = false;
+
+				-- If we have active quests they are the first picked
+				if numActiveQuests >= 1  then
+					-- If we have more than one choice, use the multiple choices text
+					if numActiveQuests > 1 then
+						finishText = multipleChoicesText;
+					else
+					-- If we only have one quest, use the quest title for the text
+						finishText = GetActiveTitle(1);
+					end
+
+					-- Iterate through the active quests to check if one is completed
+					for i = 1, numActiveQuests do
+						local _, isCompleted = GetActiveTitle(i);
+						if isCompleted then
+							-- If one of the quest is completed, we remember that we found one
+							-- So we can give it full priority
+							haveFoundCompletedQuests = true;
+							break;
+						end
+					end
+				end
+
+				-- If we have available quests and we have not found a completed quest before
+				-- we can use the available quests for the text.
+				if numAvailableQuests >= 1 and not haveFoundCompletedQuests then
+					-- If we have more than one choice, use the multiple choices text
+					if numAvailableQuests > 1 then
+						finishText = multipleChoicesText;
+					else
+						-- If we only have one quest, use the quest title for the text
+						finishText = GetAvailableTitle(1);
+					end
+				end
+
+				return finishText;
+			end,
 			cancelMethod = CloseQuest,
 			titleGetter = GetTitleText,
 		},
@@ -1096,37 +1196,127 @@ function Storyline_API.initEventsStructure()
 		["GOSSIP_SHOW"] = {
 			text = GetGossipText,
 			finishMethod = function()
-				if GetNumGossipActiveQuests() >= 1 and not Storyline_NPCFrameGossipChoices:IsVisible() then
-					Storyline_NPCFrameChatOption2:GetScript("OnClick")(Storyline_NPCFrameChatOption2);
-				elseif GetNumGossipAvailableQuests() >= 1 and not Storyline_NPCFrameGossipChoices:IsVisible() then
-					Storyline_NPCFrameChatOption1:GetScript("OnClick")(Storyline_NPCFrameChatOption1);
-				elseif GetNumGossipOptions() >= 1 and not Storyline_NPCFrameGossipChoices:IsVisible() then
-					Storyline_NPCFrameChatOption3:GetScript("OnClick")(Storyline_NPCFrameChatOption3);
+				debug("GOSSIP_SHOW – Calling finish method");
+
+				-- I'm tidying frames into local variable here so the code is more readable
+				local activeQuestChoicesFrame = Storyline_NPCFrameChatOption2;
+				local availableQuestChoicesFrame = Storyline_NPCFrameChatOption1;
+				local availableGossipChoicesFrame = Storyline_NPCFrameChatOption3;
+				local firstChoiceAvailableInPopup = Storyline_ChoiceString0;
+
+				-- We will try to pick the best choice available in the current situation
+				-- Meaning completing quest first, then picking up new quest
+				-- then gossip choices and finally active but not completed quests
+				-- First we open the choices popup (only if not alreayd opened)
+				if not Storyline_NPCFrameGossipChoices:IsVisible() then
+					debug("GOSSIP_SHOW – Finish method : Gossip choice frame not shown.");
+
+					-- If we have active quests that are completed, they are the first to be picked
+					if GetNumGossipActiveQuests() >= 1 then
+						-- Iterate through the active quests to check if one is completed
+						local data = { GetGossipActiveQuests() };
+						for i = 1, GetNumGossipActiveQuests() do
+							local isCompleted = data[(i * 5) - 1];
+							if isCompleted then
+								debug("GOSSIP_SHOW – Finish method : Active quest found with at least one completed.");
+								return activeQuestChoicesFrame:GetScript("OnClick")(activeQuestChoicesFrame);
+							end
+						end
+					end
+
+					-- Next if we have quest available we pick them
+					if GetNumGossipAvailableQuests() >= 1 then
+						debug("GOSSIP_SHOW – Finish method : Available quest found.");
+						return availableQuestChoicesFrame:GetScript("OnClick")(availableQuestChoicesFrame);
+					end
+
+					if GetNumGossipOptions() >= 1 then
+						debug("GOSSIP_SHOW – Finish method : Available gossip choices found.");
+						return availableGossipChoicesFrame:GetScript("OnClick")(availableGossipChoicesFrame);
+					end
+
+					-- Next if we have active quests, but none are completed, they are the last to be picked
+					if GetNumActiveQuests() >= 1 then
+						debug("GOSSIP_SHOW – Finish method : Active quest found (none are completed).");
+						return activeQuestChoicesFrame:GetScript("OnClick")(activeQuestChoicesFrame);
+					end
 				else
-					CloseGossip();
+					-- The choice popup is open, we will use the first choice in the popup
+					if firstChoiceAvailableInPopup and firstChoiceAvailableInPopup.GetScript and firstChoiceAvailableInPopup:GetScript("OnClick") then
+						debug("GOSSIP_SHOW – Finish method : Choice popup opened, picked first choice available");
+						return firstChoiceAvailableInPopup:GetScript("OnClick")();
+					end
 				end
+
+				-- Our fallback is always to close the dialog if no correct action was to be found
+				debug("GOSSIP_SHOW – Finish method : No valid options found, fallback to closing dialog.");
+				CloseGossip();
 			end,
 			finishText = function()
+				-- The default finish text is goodbye.
 				local finishText = GOODBYE;
-				if GetNumGossipActiveQuests() >= 1 and not Storyline_NPCFrameGossipChoices:IsVisible() then
-					if GetNumGossipActiveQuests() > 1 then
-						finishText = loc("SL_WELL");
+
+				-- We will now check if we have dialog options available
+				-- The priority is first completed active quest, then quests available,
+				-- then gossip choices and finally non-completed active quests
+				-- We'll do that in a reverse order so the text that stays in finishText at the end is the one
+				-- with the higher priority.
+				-- (We'll only do active quest once, but remember if we found a completed quest)
+
+				-- Lets cache some value so we don't call the same functions multiple times
+				local numActiveQuests = GetNumGossipActiveQuests();
+				local numAvailableQuests = GetNumGossipAvailableQuests();
+				local numGossipOptions = GetNumGossipOptions();
+				local multipleChoicesText = loc("SL_WELL");
+
+				local haveFoundCompletedQuests = false;
+
+				-- If we have active quests they are the first picked
+				if numActiveQuests >= 1 then
+					-- If we have more than one choice, use the multiple choices text
+					if numActiveQuests > 1 then
+						finishText = multipleChoicesText;
 					else
+						-- If we only have one quest, use the quest title for the text
 						finishText = GetGossipActiveQuests();
 					end
-				elseif GetNumGossipAvailableQuests() >= 1 and not Storyline_NPCFrameGossipChoices:IsVisible() then
-					if GetNumGossipAvailableQuests() > 1 then
-						finishText = loc("SL_WELL");
-					else
-						finishText = GetGossipAvailableQuests();
+
+					-- Iterate through the active quests to check if one is completed
+					local data = { GetGossipActiveQuests() };
+					for i = 1, GetNumGossipActiveQuests() do
+						local isCompleted = data[(i * 5) - 1];
+						if isCompleted then
+							-- If one of the quest is completed, we remember that we found one
+							-- So we can give it full priority
+							haveFoundCompletedQuests = true;
+							break;
+						end
 					end
-				elseif GetNumGossipOptions() >= 1 and not Storyline_NPCFrameGossipChoices:IsVisible() then
-					if GetNumGossipOptions() > 1 then
+				end
+
+				-- If we have gossip options and we have not found a completed quest before
+				-- we can use the gossip text for the text.
+				if numGossipOptions >= 1 and not haveFoundCompletedQuests then
+					if numGossipOptions > 1 then
 						finishText = loc("SL_WELL");
 					else
 						finishText = GetGossipOptions();
 					end
 				end
+
+				-- If we have available quests and we have not found a completed quest before
+				-- we can use the available quests for the text.
+				if numAvailableQuests >= 1 and not haveFoundCompletedQuests then
+					-- If we have more than one choice, use the multiple choices text
+					if numAvailableQuests > 1 then
+						finishText = multipleChoicesText;
+					else
+						-- If we only have one quest, use the quest title for the text
+						finishText = GetGossipAvailableQuests();
+					end
+				end
+
+
 				return finishText;
 			end,
 			cancelMethod = CloseGossip,

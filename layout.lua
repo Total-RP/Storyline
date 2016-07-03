@@ -21,25 +21,14 @@ local HideUIPanel = HideUIPanel;
 
 local Storyline_NPCFrame = Storyline_NPCFrame;
 
+local debug = Storyline_API.debug;
+
 local defaultFramesWeWantToReplace = {
 	"QuestFrame",
 	"GossipFrame",
 };
 
 Storyline_API.layout = {};
-
----
--- I am using this little local function because I always forget a print or two :P
--- Debug messages will only be printed if the global variable TRP3_DEBUG is true (set via private debugging add-on)
--- So if I happen to forget one call to debug() someday, it will print nothing for normal users :P
---
--- @param message
---
-local debug = function(message)
-	if TRP3_DEBUG then
-		print(message);
-	end
-end
 
 ---
 -- Lock the frame so it cannot be dragged.
