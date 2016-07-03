@@ -215,13 +215,13 @@
 				</Texture>
 			</Layer>
 			<Layer level="OVERLAY" textureSubLevel="3">
-				<Texture name="Storyline_NPCFrameBanner" atlas="GarrMission_RewardsBanner-Desaturate" useAtlasSize="false">
+				<Texture name="Storyline_NPCFrameBanner" parentKey="banner" atlas="GarrMission_RewardsBanner-Desaturate" useAtlasSize="false">
 					<Size x="384" y="96"/>
 					<Anchors>
 						<Anchor point="TOP" x="0" y="0"/>
 					</Anchors>
 				</Texture>
-				<FontString name="Storyline_NPCFrameTitle" inherits="GameFontNormalLarge" justifyH="CENTER" justifyV="MIDDLE">
+				<FontString name="Storyline_NPCFrameTitle" parentKey="title" inherits="GameFontNormalLarge" justifyH="CENTER" justifyV="MIDDLE">
 					<Size x="230" y="50"/>
 					<Anchors>
 						<Anchor point="CENTER" x="0" y="8" relativeTo="Storyline_NPCFrameBanner" relativePoint="CENTER"/>
@@ -321,7 +321,7 @@
 						</Texture>
 					</Layer>
 					<Layer level="OVERLAY">
-						<FontString name="Storyline_NPCFrameChatName" text="[TEXT]" inherits="GameFontNormalLarge" justifyH="RIGHT" justifyV="TOP">
+						<FontString name="Storyline_NPCFrameChatName" parentKey="name" text="[TEXT]" inherits="GameFontNormalLarge" justifyH="RIGHT" justifyV="TOP">
 							<Anchors>
 								<Anchor point="TOPLEFT" x="50" y="-12"/>
 								<Anchor point="TOPRIGHT" x="-50" y="-12"/>

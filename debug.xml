@@ -19,7 +19,7 @@
 		limitations under the License.
 	-->
 
-	<Frame name="Storyline_NPCFrameDebug" parent="Storyline_NPCFrame" hidden="false">
+	<Frame name="Storyline_NPCFrameDebug" parentKey="debug" parent="Storyline_NPCFrame" hidden="false">
 		<Backdrop bgFile="Interface\DialogFrame\UI-DialogBox-Background" edgeFile="Interface\Tooltips\UI-Tooltip-Border" tile="true">
 			<EdgeSize>
 				<AbsValue val="16"/>
@@ -38,7 +38,7 @@
 		</Anchors>
 		<Layers>
 			<Layer>
-				<FontString name="Storyline_NPCFrameDebugText" inherits="GameFontNormalLarge" justifyH="LEFT" justifyV="TOP">
+				<FontString name="Storyline_NPCFrameDebugText" parentKey="text" inherits="GameFontNormalLarge" justifyH="LEFT" justifyV="TOP">
 					<Size x="0" y="20"/>
 					<Anchors>
 						<Anchor point="TOPLEFT" x="50" y="-10"/>
@@ -64,7 +64,7 @@
 		</Layers>
 		<Frames>
 
-			<EditBox name="Storyline_NPCFrameDebugModelMe" inherits="Storyline_TitledEditBox">
+			<EditBox name="Storyline_NPCFrameDebugModelMe" parentKey="me" inherits="Storyline_TitledEditBox">
 				<Size x="300" y="20"/>
 				<Anchors>
 					<Anchor point="TOPLEFT" relativePoint="BOTTOMLEFT" relativeTo="Storyline_NPCFrameDebugText" x="0" y="-10"/>
@@ -76,7 +76,7 @@
 				</Scripts>
 			</EditBox>
 
-			<EditBox name="Storyline_NPCFrameDebugModelYou" inherits="Storyline_TitledEditBox">
+			<EditBox name="Storyline_NPCFrameDebugModelYou" parentKey="you" inherits="Storyline_TitledEditBox">
 				<Size x="300" y="20"/>
 				<Anchors>
 					<Anchor point="TOPLEFT" relativePoint="BOTTOMLEFT" relativeTo="Storyline_NPCFrameDebugModelMe" x="0" y="-5"/>
