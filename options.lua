@@ -115,35 +115,6 @@ Storyline_API.options.init = function()
 	StorylineOptionsPanel.Locale.DropDown:SetSelectedValue(Storyline_Data.config.locale or Storyline_API.locale.DEFAULT_LOCALE);
 	init = false;
 
-	-- Text speed slider
-	local textSpeedFactor = Storyline_Data.config.textSpeedFactor or 0.5;
-	local textSpeedTextSampleAnimation = 0;
-	StorylineOptionsPanel.TextSpeed.Title:SetText(loc("SL_CONFIG_TEXTSPEED_TITLE"));
-	StorylineOptionsPanel.TextSpeed.TextSample:SetText(loc("SL_CONFIG_BIG_SAMPLE_TEXT"));
-	StorylineOptionsPanelTextSpeedSliderLow:SetText(loc("SL_CONFIG_TEXTSPEED_INSTANT"));
-	StorylineOptionsPanelTextSpeedSliderHigh:SetText(loc("SL_CONFIG_TEXTSPEED_HIGH"));
-	StorylineOptionsPanel.TextSpeed.Slider:SetScript("OnValueChanged", function(self, speed)
-		StorylineOptionsPanelTextSpeedSliderText:SetText(loc("SL_CONFIG_TEXTSPEED"):format(speed));
-		textSpeedFactor = speed;
-		Storyline_Data.config.textSpeedFactor = textSpeedFactor;
-		textSpeedTextSampleAnimation = 0;
-	end);
-	StorylineOptionsPanel.TextSpeed.Slider:SetValue(textSpeedFactor);
-
-	local ANIMATION_TEXT_SPEED = 80;
-	local function onUpdateTextSpeedSample(self, elapsed)
-		if textSpeedTextSampleAnimation == nil then return end
-		textSpeedTextSampleAnimation = textSpeedTextSampleAnimation + (elapsed * (ANIMATION_TEXT_SPEED * Storyline_Data.config.textSpeedFactor));
-		if textSpeedFactor == 0 or textSpeedTextSampleAnimation >= StorylineOptionsPanel.TextSpeed.TextSample:GetText():len() then
-			textSpeedTextSampleAnimation = nil;
-			StorylineOptionsPanel.TextSpeed.TextSample:SetAlphaGradient(StorylineOptionsPanel.TextSpeed.TextSample:GetText():len(), 1);
-		else
-			StorylineOptionsPanel.TextSpeed.TextSample:SetAlphaGradient(textSpeedTextSampleAnimation, 30);
-		end
-	end
-
-	StorylineOptionsPanel:SetScript("OnUpdate", onUpdateTextSpeedSample);
-
 	-- Force gossip option
 	StorylineOptionsPanel.ForceGossip.Text:SetText(loc("SL_CONFIG_FORCEGOSSIP"));
 	StorylineOptionsPanel.ForceGossip.tooltip = loc("SL_CONFIG_FORCEGOSSIP_TT");
@@ -222,6 +193,68 @@ Storyline_API.options.init = function()
 			StorylineOptionsPanel.LockFrame:Enable();
 		end
 	end);
+
+
+	-- Disable Storyline when inside instances
+	if Storyline_Data.config.disableInInstances == nil then
+		Storyline_Data.config.disableInInstances = false; -- By default, this option is disabled
+	end
+	StorylineOptionsPanel.DisableInInstances.Text:SetText("[PH] Disable Storyline in instances"); -- TODO localization
+	StorylineOptionsPanel.DisableInInstances.tooltip = "[PH] Disable Storyline in instances)"; -- TODO localization
+	StorylineOptionsPanel.DisableInInstances:SetScript("OnClick", function(self)
+		Storyline_Data.config.disableInInstances = self:GetChecked() == true;
+		Storyline_NPCFrameLock:SetChecked(Storyline_Data.config.disableInInstances);
+
+		if IsInInstance() then
+			if Storyline_Data.config.disableInInstances then
+				Storyline_API.layout.showDefaultFrames();
+			else
+				Storyline_API.layout.hideDefaultFrames();
+			end
+		end
+	end);
+	StorylineOptionsPanel.DisableInInstances:SetChecked(Storyline_Data.config.disableInInstances);
+
+	-- Disable Storyline for daily quests
+	if Storyline_Data.config.disableForDailies == nil then
+		Storyline_Data.config.disableForDailies = false; -- By default, this option is disabled
+	end
+	StorylineOptionsPanel.DisableForDailies.Text:SetText("[PH] Disable Storyline for daily quests"); -- TODO localization
+	StorylineOptionsPanel.DisableForDailies.tooltip = "[PH] Disable Storyline for daily quests)"; -- TODO localization
+	StorylineOptionsPanel.DisableForDailies:SetScript("OnClick", function(self)
+		Storyline_Data.config.disableForDailies = self:GetChecked() == true;
+		Storyline_NPCFrameLock:SetChecked(Storyline_Data.config.disableForDailies);
+	end);
+	StorylineOptionsPanel.DisableForDailies:SetChecked(Storyline_Data.config.disableForDailies);
+
+	-- Text speed slider
+	local textSpeedFactor = Storyline_Data.config.textSpeedFactor or 0.5;
+	local textSpeedTextSampleAnimation = 0;
+	StorylineOptionsPanel.TextSpeed.Title:SetText(loc("SL_CONFIG_TEXTSPEED_TITLE"));
+	StorylineOptionsPanel.TextSpeed.TextSample:SetText(loc("SL_CONFIG_BIG_SAMPLE_TEXT"));
+	StorylineOptionsPanelTextSpeedSliderLow:SetText(loc("SL_CONFIG_TEXTSPEED_INSTANT"));
+	StorylineOptionsPanelTextSpeedSliderHigh:SetText(loc("SL_CONFIG_TEXTSPEED_HIGH"));
+	StorylineOptionsPanel.TextSpeed.Slider:SetScript("OnValueChanged", function(self, speed)
+		StorylineOptionsPanelTextSpeedSliderText:SetText(loc("SL_CONFIG_TEXTSPEED"):format(speed));
+		textSpeedFactor = speed;
+		Storyline_Data.config.textSpeedFactor = textSpeedFactor;
+		textSpeedTextSampleAnimation = 0;
+	end);
+	StorylineOptionsPanel.TextSpeed.Slider:SetValue(textSpeedFactor);
+
+	local ANIMATION_TEXT_SPEED = 80;
+	local function onUpdateTextSpeedSample(self, elapsed)
+		if textSpeedTextSampleAnimation == nil then return end
+		textSpeedTextSampleAnimation = textSpeedTextSampleAnimation + (elapsed * (ANIMATION_TEXT_SPEED * Storyline_Data.config.textSpeedFactor));
+		if textSpeedFactor == 0 or textSpeedTextSampleAnimation >= StorylineOptionsPanel.TextSpeed.TextSample:GetText():len() then
+			textSpeedTextSampleAnimation = nil;
+			StorylineOptionsPanel.TextSpeed.TextSample:SetAlphaGradient(StorylineOptionsPanel.TextSpeed.TextSample:GetText():len(), 1);
+		else
+			StorylineOptionsPanel.TextSpeed.TextSample:SetAlphaGradient(textSpeedTextSampleAnimation, 30);
+		end
+	end
+
+	StorylineOptionsPanel:SetScript("OnUpdate", onUpdateTextSpeedSample);
 
 	-- Text options panel
 	StorylineTextOptionsPanel.Title:SetText(loc("SL_CONFIG_STYLING_OPTIONS"));

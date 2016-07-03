@@ -21,7 +21,6 @@ local HideUIPanel = HideUIPanel;
 
 local Storyline_NPCFrame = Storyline_NPCFrame;
 
-local debug = Storyline_API.debug;
 
 local defaultFramesWeWantToReplace = {
 	"QuestFrame",
@@ -189,13 +188,6 @@ Storyline_API.layout.showDefaultFrames = function()
 	end
 end
 
-Storyline_API.layout.showDefaultFrameOnce = function(frameName)
-	local frame = _G[frameName];
-	addToLayoutEngine(frameName);
-	frame:Show();
-	UpdateUIPanelPositions(frame);
-	removeFrameFromUILayoutEngine(frameName);
-end
 
 ---
 -- Remove the default quest frame and dialog frames from the array of frames
@@ -210,6 +202,16 @@ local hideDefaultFrames = function()
 	end
 end
 Storyline_API.layout.hideDefaultFrames = hideDefaultFrames;
+
+Storyline_API.lib.registerHandler("PLAYER_ENTERING_WORLD", function()
+	if Storyline_Data.config.disableInInstances and Storyline_Data.config.hideOriginalFrames then
+		if IsInInstance() then
+			Storyline_API.layout.showDefaultFrames();
+		else
+			Storyline_API.layout.hideDefaultFrames();
+		end
+	end
+end)
 
 ---
 -- When Storyline's frame is hidden, try to call the cancelMethod registered if it exists.

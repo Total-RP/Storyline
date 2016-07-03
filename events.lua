@@ -1336,6 +1336,11 @@ function Storyline_API.initEventsStructure()
 
 	for event, info in pairs(EVENT_INFO) do
 		registerHandler(event, function()
+			if Storyline_Data.config.disableInInstances then
+				if IsInInstance() then
+					return
+				end
+			end
 			startDialog("npc", info.text(), event, info);
 		end);
 	end

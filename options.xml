@@ -165,6 +165,17 @@
 					<Anchor point="TOPLEFT" relativeKey="$parent.LockFrame" relativePoint="BOTTOMLEFT" y="-10"/>
 				</Anchors>
 			</CheckButton>
+			<CheckButton parentKey="DisableInInstances" inherits="StorylineOptionsCheckboxWithTooltip">
+				<Anchors>
+					<Anchor point="TOP" relativeKey="$parent.HideOriginalFrames" relativePoint="TOP"/>
+					<Anchor point="LEFT" x="250"/>
+				</Anchors>
+			</CheckButton>
+			<CheckButton parentKey="DisableForDailies" inherits="StorylineOptionsCheckboxWithTooltip">
+				<Anchors>
+					<Anchor point="TOPLEFT" relativeKey="$parent.DisableInInstances" relativePoint="BOTTOMLEFT" y="-10"/>
+				</Anchors>
+			</CheckButton>
 			<Frame name="$parentTextSpeed" parentKey="TextSpeed" inherits="StorylineOptionsTitledFrameTemplate">
 				<Layers>
 					<Layer>
