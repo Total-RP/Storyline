@@ -1174,8 +1174,6 @@ function Storyline_API.initEventsStructure()
 					configureHoverFrame(Storyline_NPCFrameRewards.Content, Storyline_NPCFrameRewardsItem, "TOP");
 					setTooltipForSameFrame(Storyline_NPCFrameRewardsItem, "TOP", 0, 0);
 					Storyline_MainTooltip:Hide();
-					-- Call upon our ConsolePort support to move its custom cursor to the first reward available if it exists
-					Storyline_API.consolePort.moveCursorToFirstAvailableReward()
 					if GetNumQuestChoices() > 1 then
 						Storyline_NPCFrameChatNextText:SetText(loc("SL_SELECT_REWARD"));
 						Storyline_NPCFrameChatNext:Disable();

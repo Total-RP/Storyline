@@ -436,7 +436,6 @@ function Storyline_API.addon:OnEnable()
 	ForceGossip = function() return Storyline_Data.config.forceGossip == true end
 
 	Storyline_API.locale.init();
-	Storyline_API.consolePort.init();
 
 	Storyline_NPCFrameBG:SetDesaturated(true);
 	mainFrame.chat.next:RegisterForClicks("LeftButtonUp", "RightButtonUp", "MiddleButtonUp");
