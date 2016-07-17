@@ -146,14 +146,14 @@ end
 
 ---
 -- Show Storyline's frame using the right function according to the settings
-local showStorylineFame = function()
+local showStorylineFrame = function()
 	if useUILayoutEngine() then
 		ShowUIPanel(Storyline_NPCFrame);
 	else
 		Storyline_NPCFrame:Show();
 	end
 end
-Storyline_API.layout.showStorylineFame = showStorylineFame;
+Storyline_API.layout.showStorylineFrame = showStorylineFrame;
 
 ---
 -- Hide Storyline's frame using the right function according to the settings
@@ -174,7 +174,7 @@ local toggleStorylineFrame = function(showFrame)
 		showFrame = not Storyline_NPCFrame:IsShown();
 	end
 	if showFrame then
-		showStorylineFame();
+		showStorylineFrame();
 	else
 		hideStorylineFrame();
 	end

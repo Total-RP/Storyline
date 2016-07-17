@@ -320,6 +320,70 @@
 		</Layers>
 	</Frame>
 
+	<!-- Text area -->
+	<Frame name="Storyline_TextArea" virtual="true" enableMouse="true">
+		<Backdrop edgeFile="Interface\GLUES\COMMON\TextPanel-Border" bgFile="Interface\DialogFrame\UI-DialogBox-Background" tile="true">
+			<EdgeSize>
+				<AbsValue val="20"/>
+			</EdgeSize>
+			<TileSize>
+				<AbsValue val="200"/>
+			</TileSize>
+			<BackgroundInsets>
+				<AbsInset left="5" right="5" top="5" bottom="5"/>
+			</BackgroundInsets>
+		</Backdrop>
+		<Frames>
+			<ScrollFrame parentKey="scroll" name="$parentScroll" inherits="UIPanelScrollFrameTemplate">
+				<Anchors>
+					<Anchor point="TOP" x="0" y="-10"/>
+					<Anchor point="BOTTOM" x="0" y="10"/>
+					<Anchor point="LEFT" x="15" y="0"/>
+					<Anchor point="RIGHT" x="-18" y="0"/>
+				</Anchors>
+				<ScrollChild>
+					<EditBox name="$parentText" parentKey="text" multiLine="true" enableMouse="false" autoFocus="false">
+						<Scripts>
+							<OnShow>
+								self:SetWidth(self:GetParent():GetParent():GetWidth() - 40);
+							</OnShow>
+							<OnTextChanged>
+								if self:IsVisible() and self:GetCursorPosition() == string.len(self:GetText()) then
+								self:GetParent():SetVerticalScroll(self:GetParent():GetVerticalScrollRange());
+								end
+							</OnTextChanged>
+							<OnEscapePressed>
+								self:ClearFocus();
+							</OnEscapePressed>
+							<OnEditFocusGained>
+								self:HighlightText();
+								self:GetParent():GetParent().dummy:Hide();
+							</OnEditFocusGained>
+							<OnEditFocusLost>
+								self:HighlightText(0,0);
+								self:GetParent():GetParent().dummy:Show();
+							</OnEditFocusLost>
+						</Scripts>
+						<FontString inherits="ChatFontNormal"/>
+					</EditBox>
+				</ScrollChild>
+			</ScrollFrame>
+			<Button name="$parentFocusDummy" parentKey="dummy">
+				<Anchors>
+					<Anchor point="TOP" x="0" y="5"/>
+					<Anchor point="BOTTOM" x="0" y="-5"/>
+					<Anchor point="LEFT" x="0" y="0"/>
+					<Anchor point="RIGHT" x="-10" y="0"/>
+				</Anchors>
+				<Scripts>
+					<OnClick>
+						self:GetParent().scroll.text:SetFocus();
+					</OnClick>
+				</Scripts>
+			</Button>
+		</Frames>
+	</Frame>
+
 	<Script file="lib.lua"/>
 
 	<Frame parent="UIParent" name="Storyline_EventFrame">

@@ -24,13 +24,13 @@ local setTooltipForSameFrame, setTooltipAll = Storyline_API.lib.setTooltipForSam
 local registerHandler = Storyline_API.lib.registerHandler;
 local loc, tsize = Storyline_API.locale.getText, Storyline_API.lib.tsize;
 local playNext = Storyline_API.playNext;
-local showStorylineFame = Storyline_API.layout.showStorylineFame;
+local showStorylineFrame = Storyline_API.layout.showStorylineFrame;
 local hideStorylineFrame = Storyline_API.layout.hideStorylineFrame;
 
 -- WOW API
 local strsplit, pairs, tostring = strsplit, pairs, tostring;
 local UnitIsUnit, UnitExists, UnitName = UnitIsUnit, UnitExists, UnitName;
-local IsAltKeyDown, IsShiftKeyDown = IsAltKeyDown, IsShiftKeyDown;
+local IsAltKeyDown, IsShiftKeyDown, IsControlKeyDown = IsAltKeyDown, IsShiftKeyDown, IsControlKeyDown;
 local InterfaceOptionsFrame_OpenToCategory = InterfaceOptionsFrame_OpenToCategory;
 
 -- UI
@@ -274,7 +274,7 @@ function Storyline_API.startDialog(targetType, fullText, event, eventInfo)
 	mainFrame.chat.event = event;
 	Storyline_NPCFrameObjectivesContent:Hide();
 	mainFrame.chat.previous:Hide();
-	showStorylineFame();
+	showStorylineFrame();
 
 	playNext(mainFrame.models.you);
 end
@@ -315,73 +315,53 @@ local function debugInit()
 	end);
 
 	-- Scrolling on the 3D model frame to adjust the size of the models
---	Storyline_NPCFrameModelsMeScrollZone:EnableMouseWheel(true);
---	Storyline_NPCFrameModelsMeScrollZone:SetScript("OnMouseWheel", function(self, delta)
---		if IsAltKeyDown() then
---			if IsShiftKeyDown() then -- If shift key down adjust my model
---			setModelHeight(Storyline_NPCFrameModelsMe.scale - 0.1 * delta, true, true);
---			else
---				setModelHeight(Storyline_NPCFrameModelsMe.scale - 0.01 * delta, true, true);
---			end
---		elseif IsControlKeyDown() then
---			if IsShiftKeyDown() then -- If shift key down adjust my model
---			setModelFacing(Storyline_NPCFrameModelsMe.facing - 0.2 * delta, true, true);
---			else
---				setModelFacing(Storyline_NPCFrameModelsMe.facing - 0.02 * delta, true, true);
---			end
---		end
---	end);
---	Storyline_NPCFrameModelsMeScrollZone:RegisterForClicks("LeftButtonUp", "RightButtonUp");
---	Storyline_NPCFrameModelsMeScrollZone:SetScript("OnClick", function(self, button)
---		local factor = button == "LeftButton" and 1 or -1;
---		if IsAltKeyDown() then
---			if IsShiftKeyDown() then -- If shift key down adjust my model
---			setModelOffset(Storyline_NPCFrameModelsMe.offset - 0.1 * factor, true, true);
---			else
---				setModelOffset(Storyline_NPCFrameModelsMe.offset - 0.01 * factor, true, true);
---			end
---		elseif IsControlKeyDown() then
---			if IsShiftKeyDown() then -- If shift key down adjust my model
---			setModelFeet(Storyline_NPCFrameModelsMe.feet - 0.1 * factor, true, true);
---			else
---				setModelFeet(Storyline_NPCFrameModelsMe.feet - 0.01 * factor, true, true);
---			end
---		end
---	end);
---
---	Storyline_NPCFrameModelsYouScrollZone:EnableMouseWheel(true);
---	Storyline_NPCFrameModelsYouScrollZone:SetScript("OnMouseWheel", function(self, delta)
---		if IsAltKeyDown() then
---			if IsShiftKeyDown() then -- If shift key down adjust my model
---			setModelHeight(Storyline_NPCFrameModelsYou.scale - 0.1 * delta, false, true);
---			else
---				setModelHeight(Storyline_NPCFrameModelsYou.scale - 0.01 * delta, false, true);
---			end
---		elseif IsControlKeyDown() then
---			if IsShiftKeyDown() then -- If shift key down adjust my model
---			setModelFacing(Storyline_NPCFrameModelsYou.facing - 0.2 * delta, false, true);
---			else
---				setModelFacing(Storyline_NPCFrameModelsYou.facing - 0.02 * delta, false, true);
---			end
---		end
---	end);
---	Storyline_NPCFrameModelsYouScrollZone:RegisterForClicks("LeftButtonUp", "RightButtonUp");
---	Storyline_NPCFrameModelsYouScrollZone:SetScript("OnClick", function(self, button)
---		local factor = button == "LeftButton" and 1 or -1;
---		if IsAltKeyDown() then
---			if IsShiftKeyDown() then -- If shift key down adjust my model
---			setModelOffset(Storyline_NPCFrameModelsYou.offset - 0.1 * factor, false, true);
---			else
---				setModelOffset(Storyline_NPCFrameModelsYou.offset - 0.01 * factor, false, true);
---			end
---		elseif IsControlKeyDown() then
---			if IsShiftKeyDown() then -- If shift key down adjust my model
---			setModelFeet(Storyline_NPCFrameModelsYou.feet - 0.1 * factor, false, true);
---			else
---				setModelFeet(Storyline_NPCFrameModelsYou.feet - 0.01 * factor, false, true);
---			end
---		end
---	end);
+	for _, meYou in pairs({"me", "you"}) do
+		mainFrame.models[meYou].scroll:EnableMouseWheel(true);
+		mainFrame.models[meYou].scroll:SetScript("OnMouseWheel", function(self, delta)
+			if IsAltKeyDown() then
+				local scale = mainFrame.models[meYou].scale - (IsShiftKeyDown() and 0.1 or 0.01) * delta;
+				scalingLib:SetModelHeight(scale, mainFrame.models[meYou]);
+			elseif IsControlKeyDown() then
+				local facing = mainFrame.models[meYou].facing - (IsShiftKeyDown() and 0.2 or 0.02) * delta;
+				scalingLib:SetModelFacing(facing, mainFrame.models[meYou], meYou == "me");
+			end
+		end);
+		mainFrame.models[meYou].scroll:RegisterForClicks("LeftButtonUp", "RightButtonUp");
+		mainFrame.models[meYou].scroll:SetScript("OnClick", function(self, button)
+			if IsAltKeyDown() then
+				local offset = mainFrame.models[meYou].offset - (button == "LeftButton" and 1 or -1) * (IsShiftKeyDown() and 0.1 or 0.01);
+				scalingLib:SetModelOffset(offset, mainFrame.models[meYou], meYou == "me");
+			elseif IsControlKeyDown() then
+				local feet = mainFrame.models[meYou].feet - (button == "LeftButton" and 1 or -1) * (IsShiftKeyDown() and 0.1 or 0.01);
+				scalingLib:SetModelFeet(feet, mainFrame.models[meYou]);
+			end
+		end);
+	end
+
+	mainFrame.debug.dump.dump:SetScript("OnClick", function()
+		local info =
+[[["%s~%s"] = {
+	["me"] = {
+		["scale"] = %s,
+		["feet"] = %s,
+		["offset"] = %s,
+		["facing"] = %s,
+	},
+	["you"] = {
+		["scale"] = %s,
+		["feet"] = %s,
+		["offset"] = %s,
+		["facing"] = %s,
+	}
+},]]
+		local formatted = info:format(
+			mainFrame.models.me.model,
+			mainFrame.models.you.model,
+			mainFrame.models.me.scale, mainFrame.models.me.feet, mainFrame.models.me.offset, mainFrame.models.me.facing,
+			mainFrame.models.you.scale, mainFrame.models.you.feet, mainFrame.models.you.offset, mainFrame.models.you.facing
+		);
+		mainFrame.debug.dump.scroll.text:SetText(formatted);
+	end);
 
 	-- Debug for scaling
 	Storyline_API.addon:RegisterChatCommand("storydebug", function()
