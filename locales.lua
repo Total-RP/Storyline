@@ -97,8 +97,8 @@ The frame cannot be moved when using the default position. This option requires 
 	["frFR"] = {
 		localeText = "Français",
 		localeContent = {
-			SL_ACCEPTANCE = "J'accepte.", -- Needs review
-			SL_CHECK_OBJ = "Vérifier objectifs", -- Needs review
+			SL_ACCEPTANCE = "J'accepte.",
+			SL_CHECK_OBJ = "Vérifier objectifs",
 			SL_CONFIG = "Configuration",
 			SL_CONFIG_AUTOEQUIP = "Équipement automatique (expérimental)",
 			SL_CONFIG_AUTOEQUIP_TT = "Équipe automatiquement les récompense si elles ont un meilleur niveau d'équipement.",
@@ -106,51 +106,58 @@ The frame cannot be moved when using the default position. This option requires 
 Accrochant follement aux herbes des haillons
 D'argent ; où le soleil, de la montagne fière,
 Luit : c'est un petit val qui mousse de rayons. »
-— Arthur Rimbaud]=], -- Needs review
-			SL_CONFIG_DEBUG = "Mode débug", -- Needs review
-			SL_CONFIG_DEBUG_TT = "Activer le mode débug pour afficher la fenêtre d'informations de développement sous la fenêtre principale de Storyline.", -- Needs review
-			SL_CONFIG_DIALOG_TEXT = "Texte de dialogues", -- Needs review
-			SL_CONFIG_FORCEGOSSIP = "Forcer les textes des PNJs", -- Needs review
-			SL_CONFIG_FORCEGOSSIP_TT = "Forcer l'affichage des textes des PNJs normalement masqués, comme les marchands ou les maîtres de vol.", -- Needs review
-			SL_CONFIG_HIDEORIGINALFRAMES = "Cacher les fenêtres originales", -- Needs review
+— Arthur Rimbaud]=],
+			SL_CONFIG_DEBUG = "Mode débug",
+			SL_CONFIG_DEBUG_TT = "Activer le mode débug pour afficher la fenêtre d'informations de développement sous la fenêtre principale de Storyline.",
+			SL_CONFIG_DIALOG_TEXT = "Texte de dialogues",
+			SL_CONFIG_DISABLE_IN_INSTANCES = "Désactiver Storyline en instance",
+			SL_CONFIG_DISABLE_IN_INSTANCES_TT = "Désactiver Storyline automatiquement dans les instances (donjons, champs de bataille, raid, scenario…)",
+			SL_CONFIG_FORCEGOSSIP = "Forcer les textes des PNJs",
+			SL_CONFIG_FORCEGOSSIP_TT = "Forcer l'affichage des textes des PNJs normalement masqués, comme les marchands ou les maîtres de vol.",
+			SL_CONFIG_HIDEORIGINALFRAMES = "Cacher les fenêtres originales",
 			SL_CONFIG_HIDEORIGINALFRAMES_TT = "Cacher les fenêtres originales du jeu (quêtes et dialogues de PNJs) pour qu'il n'y ait que Storyline de visible à l'écran.",
-			SL_CONFIG_LOCKFRAME = "Verrouiller la fenêtre", -- Needs review
+			SL_CONFIG_LANGUAGE = "Langue",
+			SL_CONFIG_LOCKFRAME = "Verrouiller la fenêtre",
 			SL_CONFIG_LOCKFRAME_TT = "Verrouiller la fenêtre de Storyline pour empêcher un déplacement par erreur.",
-			SL_CONFIG_MISCELLANEOUS = "Options diverses", -- Needs review
-			SL_CONFIG_NEXT_ACTION = "Action suivante", -- Needs review
-			SL_CONFIG_NPC_NAME = "Nom du PNJ", -- Needs review
-			SL_CONFIG_QUEST_TITLE = "Titre de la quête", -- Needs review
-			SL_CONFIG_SAMPLE_TEXT = "Voix ambiguë d’un cœur qui au zéphyr préfère les jattes de kiwi.", -- Needs review
+			SL_CONFIG_MISCELLANEOUS = "Options diverses",
+			SL_CONFIG_NEXT_ACTION = "Action suivante",
+			SL_CONFIG_NPC_NAME = "Nom du PNJ",
+			SL_CONFIG_QUEST_TITLE = "Titre de la quête",
+			SL_CONFIG_SAMPLE_TEXT = "Voix ambiguë d’un cœur qui au zéphyr préfère les jattes de kiwi.",
 			SL_CONFIG_STYLING_OPTIONS = "Options d’affichage", -- Needs review
-			SL_CONFIG_TEXTSPEED = "%.1fx", -- Needs review
-			SL_CONFIG_TEXTSPEED_HIGH = "Rapide", -- Needs review
-			SL_CONFIG_TEXTSPEED_INSTANT = "Pas de défilement", -- Needs review
+			SL_CONFIG_TEXTSPEED = "%.1fx",
+			SL_CONFIG_TEXTSPEED_HIGH = "Rapide",
+			SL_CONFIG_TEXTSPEED_INSTANT = "Pas de défilement",
 			SL_CONFIG_TEXTSPEED_TITLE = "Vitesse d'animation du texte", -- Needs review
+			SL_CONFIG_UI_LAYOUT_ENGINE = "Position par défaut",
+			SL_CONFIG_UI_LAYOUT_ENGINE_TT = [=[Utiliser les positions de fenêtres par défaut, alignées sur la gauche, comme pour la fenêtre de personnage ou le grimoire.
+
+La fenêtre ne peut plus être déplacée dans ce mode. Cette option requière un rechargement de l'interface.]=],
 			SL_CONFIG_USE_KEYBOARD = "Utiliser les raccourcis clavier", -- Needs review
 			SL_CONFIG_USE_KEYBOARD_TT = "Utiliser les raccourcis clavier pour naviguer dans les dialogues (barre espace pour avancer, touche retour pour revenir en arrière, touches 1 à 0 pour sélectionner une option de dialogue).", -- Needs review
 			SL_CONFIG_WELCOME = [=[Merci d'utiliser Storyline!
 
 Vous pouvez suivre les développeurs de Storyline sur Twitter, |cff55acee@EllypseCelwe|r et |cff55acee@Telkostrasz|r, pour recevoir des informations sur les mise-à-jour de l'add-on et des aperçu de son développement.]=], -- Needs review
-			SL_CONTINUE = "Terminer la quête", -- Needs review
-			SL_DECLINE = "Je refuse.", -- Needs review
-			SL_GET_REWARD = "Prenez votre récompense", -- Needs review
-			SL_NEXT = "Continuer", -- Needs review
+			SL_CONTINUE = "Terminer la quête",
+			SL_DECLINE = "Je refuse.",
+			SL_GET_REWARD = "Prenez votre récompense",
+			SL_NEXT = "Continuer",
 			SL_NOT_YET = "Revenez quand cela sera fait", -- Needs review
 			SL_RESET = "Début", -- Needs review
 			SL_RESET_TT = "Revenir au début du dialogue", -- Needs review
-			SL_RESIZE = "Redimensionner", -- Needs review
+			SL_RESIZE = "Redimensionner",
 			SL_RESIZE_TT = "Cliquer-glisser pour redimensionner", -- Needs review
-			SL_REWARD_MORE = "Vous recevrez aussi", -- Needs review
+			SL_REWARD_MORE = "Vous recevrez aussi",
 			SL_REWARD_MORE_SUB = [=[
 Argent: |cffffffff%s|r
 Expérience: |cffffffff%s xp|r
 
 |cffffff00Clic:|r Prenez votre récompense !]=],
-			SL_SELECT_AVAILABLE_QUEST = "Sélectionnez une quête", -- Needs review
-			SL_SELECT_DIALOG_OPTION = "Sélectionnez une option", -- Needs review
-			SL_SELECT_REWARD = "Choisissez votre récompense", -- Needs review
+			SL_SELECT_AVAILABLE_QUEST = "Sélectionnez une quête",
+			SL_SELECT_DIALOG_OPTION = "Sélectionnez une option",
+			SL_SELECT_REWARD = "Choisissez votre récompense",
 			SL_STORYLINE = "Storyline",
-			SL_WELL = "Et bien…", -- Needs review
+			SL_WELL = "Et bien…",
 		}
 	},
 
@@ -161,54 +168,57 @@ Expérience: |cffffffff%s xp|r
 	["esES"] = {
 		localeText = "Español",
 		localeContent = {
-			SL_ACCEPTANCE = "Acepto", -- Needs review
-			SL_CHECK_OBJ = "Comprueba los objetivos", -- Needs review
-			SL_CONFIG = "Configuración", -- Needs review
-			SL_CONFIG_AUTOEQUIP = "Equipar automaticamente recompensas (experimental)", -- Needs review
-			SL_CONFIG_AUTOEQUIP_TT = "Equipa automaticamente las recompensas si tienen un nivel de equipo mejor.", -- Needs review
-			SL_CONFIG_DEBUG = "Modo de depuración", -- Needs review
-			SL_CONFIG_DEBUG_TT = "Activa el marco de depuración que muestra información de desarrollo debajo del marco de Storyline", -- Needs review
-			SL_CONFIG_DIALOG_TEXT = "Texto de dialogo", -- Needs review
-			SL_CONFIG_FORCEGOSSIP = "Forzar diálogos de PNJs", -- Needs review
-			SL_CONFIG_FORCEGOSSIP_TT = "Fuerza a que aparezcan diálogos generalmente ocultos en PNJs, como comerciantes y maestros de vuelo", -- Needs review
-			SL_CONFIG_HIDEORIGINALFRAMES = "Ocultar los marcos originales", -- Needs review
-			SL_CONFIG_HIDEORIGINALFRAMES_TT = "Oculta los marcos originales (diálogos de misión y PNJ) de forma que solo Storyline estará visible en la pantalla", -- Needs review
-			SL_CONFIG_LOCKFRAME = "Bloquear marco", -- Needs review
-			SL_CONFIG_LOCKFRAME_TT = "Bloquea el marco de Storyline de forma que no se mueva por error.", -- Needs review
-			SL_CONFIG_MISCELLANEOUS = "Opciones varias", -- Needs review
-			SL_CONFIG_NEXT_ACTION = "Siguiente acción", -- Needs review
-			SL_CONFIG_NPC_NAME = "Nombre del PNJ", -- Needs review
-			SL_CONFIG_QUEST_TITLE = "Título de la misión", -- Needs review
-			SL_CONFIG_STYLING_OPTIONS = "Opciones de estilo", -- Needs review
-			SL_CONFIG_TEXTSPEED = "%.1fx", -- Needs review
-			SL_CONFIG_TEXTSPEED_HIGH = "Alta", -- Needs review
-			SL_CONFIG_TEXTSPEED_INSTANT = "Sin animación", -- Needs review
-			SL_CONFIG_TEXTSPEED_TITLE = "Velocidad de animación del texto", -- Needs review
-			SL_CONFIG_USE_KEYBOARD = "Utilizar atajos de teclado", -- Needs review
-			SL_CONFIG_USE_KEYBOARD_TT = "Utiliza atajos del teclado para moverte por los diálogos (barra espaciadora para avanzar, retroceso para volver, teclas 1 al 0 para seleccionar una opción de diálogo)", -- Needs review
+			SL_ACCEPTANCE = "Acepto",
+			SL_CHECK_OBJ = "Comprueba los objetivos",
+			SL_CONFIG = "Configuración",
+			SL_CONFIG_AUTOEQUIP = "Equipar automáticamente las recompensas (experimental)",
+			SL_CONFIG_AUTOEQUIP_TT = "Equipa automáticamente las recompensas si tienen un nivel de equipo mejor.",
+			SL_CONFIG_BIG_SAMPLE_TEXT = [=[¿Dónde están ahora el caballo y el caballero? ¿Dónde está el cuerno que sonaba? ¿Dónde están el yelmo y la coraza, y los luminosos cabellos flotantes? ¿Dónde están la mano en las cuerdas del arpa y el fuego rojo encendido? ¿Dónde están la primavera y la cosecha y la espiga alta que crece? Han pasado como lluvia en la montaña, como un viento en el prado; los días han descendido en el oeste en la sombra de detrás de las colinas. ¿Quién recogerá el humo de la ardiente madera muerta, o verá los años fugitivos que vuelven del mar?
+—Poema de Rohan sobre su fundador, Eorl el Joven]=],
+			SL_CONFIG_DEBUG = "Modo de depuración",
+			SL_CONFIG_DEBUG_TT = "Activa el marco de depuración que muestra información de desarrollo debajo del marco de Storyline",
+			SL_CONFIG_DIALOG_TEXT = "Texto de dialogo",
+			SL_CONFIG_FORCEGOSSIP = "Forzar diálogos de PNJs",
+			SL_CONFIG_FORCEGOSSIP_TT = "Fuerza a que aparezcan diálogos generalmente ocultos en PNJs, como comerciantes y maestros de vuelo",
+			SL_CONFIG_HIDEORIGINALFRAMES = "Ocultar los marcos originales",
+			SL_CONFIG_HIDEORIGINALFRAMES_TT = "Oculta los marcos originales (diálogos de misión y PNJ) de forma que solo Storyline estará visible en la pantalla",
+			SL_CONFIG_LOCKFRAME = "Bloquear marco",
+			SL_CONFIG_LOCKFRAME_TT = "Bloquea el marco de Storyline de forma que no se mueva por error.",
+			SL_CONFIG_MISCELLANEOUS = "Opciones varias",
+			SL_CONFIG_NEXT_ACTION = "Siguiente acción",
+			SL_CONFIG_NPC_NAME = "Nombre del PNJ",
+			SL_CONFIG_QUEST_TITLE = "Título de la misión",
+			SL_CONFIG_SAMPLE_TEXT = "Malas noticias amigos, Carapútrea ha muerto. Pero buenas noticias, amigos. ¡Ha dejado un moco, que no es poco!",
+			SL_CONFIG_STYLING_OPTIONS = "Opciones de estilo",
+			SL_CONFIG_TEXTSPEED = "%.1fx",
+			SL_CONFIG_TEXTSPEED_HIGH = "Alta",
+			SL_CONFIG_TEXTSPEED_INSTANT = "Sin animación",
+			SL_CONFIG_TEXTSPEED_TITLE = "Velocidad de animación del texto",
+			SL_CONFIG_USE_KEYBOARD = "Utilizar atajos de teclado",
+			SL_CONFIG_USE_KEYBOARD_TT = "Utiliza atajos del teclado para moverte por los diálogos (barra espaciadora para avanzar, retroceso para volver, teclas 1 al 0 para seleccionar una opción de diálogo)",
 			SL_CONFIG_WELCOME = [=[¡Gracias por usar Storyline!
 
-Puedes seguir a los desarrolladores de Storyline en Twitter, |cff55acee@EllypseCelwe|r y |cff55acee@Telkostrasz|r, para recibir noticias acerca del add-on y adelantos de su desarrollo.]=], -- Needs review
-			SL_CONTINUE = "Completar misión", -- Needs review
-			SL_DECLINE = "Me niego", -- Needs review
-			SL_GET_REWARD = "Obtén tu recompensa", -- Needs review
-			SL_NEXT = "Continuar", -- Needs review
-			SL_NOT_YET = "Vuelve cuando hayas acabado", -- Needs review
-			SL_RESET = "Vuelve atrás", -- Needs review
-			SL_RESET_TT = "Vuelve atrás este dialogo", -- Needs review
-			SL_RESIZE = "Redimensionar", -- Needs review
-			SL_RESIZE_TT = "Arrastra y suelta para redimensionar", -- Needs review
-			SL_REWARD_MORE = "Ademas conseguirás", -- Needs review
+Puedes seguir a los desarrolladores de Storyline en Twitter, |cff55acee@EllypseCelwe|r y |cff55acee@Telkostrasz|r para recibir noticias acerca del addon y adelantos de su desarrollo.]=],
+			SL_CONTINUE = "Completar misión",
+			SL_DECLINE = "Me niego",
+			SL_GET_REWARD = "Obtener recompensa",
+			SL_NEXT = "Continuar",
+			SL_NOT_YET = "Vuelve cuando hayas acabado",
+			SL_RESET = "Vuelve atrás",
+			SL_RESET_TT = "Vuelve atrás este dialogo",
+			SL_RESIZE = "Redimensionar",
+			SL_RESIZE_TT = "Arrastra y suelta para redimensionar",
+			SL_REWARD_MORE = "Además conseguirás",
 			SL_REWARD_MORE_SUB = [=[
 Dinero: |cffffffff%s|r
 Experiencia: |cffffffff%s exp|r
 
-|cffffff00Clic:|r ¡Obtén tu recompensa!]=], -- Needs review
-			SL_SELECT_AVAILABLE_QUEST = "Selecciona una misión disponible", -- Needs review
-			SL_SELECT_DIALOG_OPTION = "Selecciona una opción de dialogo", -- Needs review
-			SL_SELECT_REWARD = "Selecciona tu recompensa", -- Needs review
-			SL_STORYLINE = "Storyline", -- Needs review
-			SL_WELL = "Bueno ...", -- Needs review
+|cffffff00Clic:|r ¡Obtén tu recompensa!]=],
+			SL_SELECT_AVAILABLE_QUEST = "Selecciona una misión disponible",
+			SL_SELECT_DIALOG_OPTION = "Selecciona una opción de dialogo",
+			SL_SELECT_REWARD = "Selecciona tu recompensa",
+			SL_STORYLINE = "Storyline",
+			SL_WELL = "Bueno…",
 		}
 	},
 
@@ -219,41 +229,55 @@ Experiencia: |cffffffff%s exp|r
 	["deDE"] = {
 		localeText = "Deutsch",
 		localeContent = {
-			SL_ACCEPTANCE = "Ich akzeptiere.", -- Needs review
-			SL_CHECK_OBJ = "Questziele überprüfen", -- Needs review
-			SL_CONFIG = "Parameter",
-			SL_CONFIG_AUTOEQUIP = "Belohnung automatisch anlegen", -- Needs review
-			SL_CONFIG_AUTOEQUIP_TT = "Belohnungen automatisch anlegen, falls sie eine bessere Gegenstandsstufe haben.", -- Needs review
+			SL_ACCEPTANCE = "Ich akzeptiere.",
+			SL_CHECK_OBJ = "Questziele überprüfen",
+			SL_CONFIG = "Einstellungen", -- Needs review
+			SL_CONFIG_AUTOEQUIP = "Belohnung automatisch anlegen",
+			SL_CONFIG_AUTOEQUIP_TT = "Belohnungen automatisch anlegen, falls sie eine bessere Gegenstandsstufe haben.",
+			SL_CONFIG_DEBUG = "Debugmodus",
+			SL_CONFIG_DEBUG_TT = "Aktiviere das Debugfenster, das Entwicklungsdaten unter dem Storyline-Fenster anzeigt", -- Needs review
+			SL_CONFIG_DIALOG_TEXT = "Dialogtext",
 			SL_CONFIG_FORCEGOSSIP = "Geschwätz immer anzeigen", -- Needs review
 			SL_CONFIG_FORCEGOSSIP_TT = "Geschwätz bei NSCs wie Händler und Flugmeister immer anzeigen.", -- Needs review
-			SL_CONFIG_HIDEORIGINALFRAMES = "Originalfenster verstecken", -- Needs review
+			SL_CONFIG_HIDEORIGINALFRAMES = "Originalfenster verstecken",
 			SL_CONFIG_HIDEORIGINALFRAMES_TT = "Versteckt die Originalfenster (Quest- und NPC-Dialoge), sodass nur Storyline auf dem Bildschirm sichtbar ist.",
-			SL_CONFIG_LOCKFRAME = "Fenster fixieren", -- Needs review
-			SL_CONFIG_LOCKFRAME_TT = "Fixiert das Storyline-Fenster, sodass es nicht aus Versehen verschoben werden kann.", -- Needs review
-			SL_CONFIG_TEXTSPEED = "%.1fx", -- Needs review
-			SL_CONFIG_TEXTSPEED_HIGH = "Hoch", -- Needs review
-			SL_CONFIG_TEXTSPEED_INSTANT = "Keine Anim.", -- Needs review
-			SL_CONTINUE = "Quest abschließen", -- Needs review
-			SL_DECLINE = "Ich lehne ab.", -- Needs review
-			SL_GET_REWARD = "Erhaltet Eure Belohnung", -- Needs review
-			SL_NEXT = "Fortsetzen", -- Needs review
-			SL_NOT_YET = "Kehrt zurück, wenn es erledigt ist", -- Needs review
-			SL_RESET = "Zurückspulen", -- Needs review
-			SL_RESET_TT = "Spult diesen Dialog zurück.", -- Needs review
-			SL_RESIZE = "Größe ändern", -- Needs review
-			SL_RESIZE_TT = "Ziehen und loslassen um die Größe zu ändern", -- Needs review
-			SL_REWARD_MORE = "Ihr bekommt außerdem", -- Needs review
+			SL_CONFIG_LOCKFRAME = "Fenster fixieren",
+			SL_CONFIG_LOCKFRAME_TT = "Fixiert das Storyline-Fenster, sodass es nicht aus Versehen verschoben werden kann.",
+			SL_CONFIG_MISCELLANEOUS = "Sonstige Optionen", -- Needs review
+			SL_CONFIG_NEXT_ACTION = "Nächste Aktion", -- Needs review
+			SL_CONFIG_NPC_NAME = "NSC-Name",
+			SL_CONFIG_QUEST_TITLE = "Questtitel",
+			SL_CONFIG_TEXTSPEED = "%.1fx",
+			SL_CONFIG_TEXTSPEED_HIGH = "Hoch",
+			SL_CONFIG_TEXTSPEED_INSTANT = "Keine Animation.",
+			SL_CONFIG_TEXTSPEED_TITLE = "Text Animationsgeschwindigkeit", -- Needs review
+			SL_CONFIG_USE_KEYBOARD = "Tastaturkürzel verwenden", -- Needs review
+			SL_CONFIG_USE_KEYBOARD_TT = "Verwende Tastaturkürzel, um in Dialogen zu navigieren (Leertaste für weiter, Rücktaste für zurück, Tasten 1 bis 0 zum Auswählen einer Dialogoption)", -- Needs review
+			SL_CONFIG_WELCOME = [=[Danke, dass du Storyline verwendest!
+
+Du kannst den Entwicklern von Storyline auf Twitter folgen |cff55acee@EllypseCelwe|r und |cff55acee@Telkostrasz|r um Neuigkeiten und Sneak Peeks zur Entwicklung dieses Add-Ons zu bekommen.]=], -- Needs review
+			SL_CONTINUE = "Quest abschließen",
+			SL_DECLINE = "Ich lehne ab.",
+			SL_GET_REWARD = "Erhaltet Eure Belohnung",
+			SL_NEXT = "Fortsetzen",
+			SL_NOT_YET = "Kehrt zurück, wenn es erledigt ist",
+			SL_RESET = "Zurückspulen",
+			SL_RESET_TT = "Spult diesen Dialog zurück.",
+			SL_RESIZE = "Größe ändern",
+			SL_RESIZE_TT = "Ziehen und loslassen um die Größe zu ändern",
+			SL_REWARD_MORE = "Ihr bekommt außerdem",
 			SL_REWARD_MORE_SUB = [=[
 Geld: |cffffffff%s|r
 Erfahrung: |cffffffff%s EP|r
 
-|cffffff00Click:|r Erhaltet Eure Belohnung!]=], -- Needs review
-			SL_SELECT_AVAILABLE_QUEST = "Verfügbare Quest wählen", -- Needs review
-			SL_SELECT_DIALOG_OPTION = "Dialogoption wählen", -- Needs review
-			SL_SELECT_REWARD = "Wählt Eure Belohnung", -- Needs review
-			SL_STORYLINE = "Storyline", -- Needs review
-			SL_WELL = "Nun...", -- Needs review
+|cffffff00Klick:|r Erhaltet Eure Belohnung!]=],
+			SL_SELECT_AVAILABLE_QUEST = "Verfügbare Quest wählen",
+			SL_SELECT_DIALOG_OPTION = "Dialogoption wählen",
+			SL_SELECT_REWARD = "Wählt Eure Belohnung",
+			SL_STORYLINE = "Storyline",
+			SL_WELL = "Nun...",
 		}
+
 	},
 
 	--*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
@@ -263,95 +287,124 @@ Erfahrung: |cffffffff%s EP|r
 	["itIT"] = {
 		localeText = "Italiano",
 		localeContent = {
-			SL_ACCEPTANCE = "Accetto.", -- Needs review
-			SL_CHECK_OBJ = "Controlla gli obiettivi", -- Needs review
+			SL_ACCEPTANCE = "Accetto.",
+			SL_CHECK_OBJ = "Controlla gli obiettivi",
 			SL_CONFIG = "Parametri", -- Needs review
-			SL_CONFIG_AUTOEQUIP = "Equipaggia automaticamente la ricompensa (sperimentale)", -- Needs review
-			SL_CONFIG_AUTOEQUIP_TT = "Equipaggia automaticamente la ricompensa se il LivOg è più alto", -- Needs review
+			SL_CONFIG_AUTOEQUIP = "Equipaggia automaticamente la ricompensa (sperimentale)",
+			SL_CONFIG_AUTOEQUIP_TT = "Equipaggia automaticamente la ricompensa se il LivOg è più alto",
+			SL_CONFIG_DEBUG = "Modalità di debug", -- Needs review
+			SL_CONFIG_DIALOG_TEXT = "Testo dialogo", -- Needs review
 			SL_CONFIG_FORCEGOSSIP = "Attiva convenevoli", -- Needs review
 			SL_CONFIG_FORCEGOSSIP_TT = "Attiva convenevoli per i PNG come mercanti o maestri di volo.", -- Needs review
-			SL_CONFIG_HIDEORIGINALFRAMES = "Nascondi i riquadri originali", -- Needs review
-			SL_CONFIG_HIDEORIGINALFRAMES_TT = "Nascondi i riquadri originali (dialoghi missioni e PNG) in modo che sia visualizzato solo Sotryline.", -- Needs review
-			SL_CONFIG_LOCKFRAME = "Blocca riquadro", -- Needs review
-			SL_CONFIG_LOCKFRAME_TT = "Blocca il riquadro di Storyline così da evitare di spostarlo per errore.", -- Needs review
-			SL_CONFIG_TEXTSPEED = "%.1fx", -- Needs review
-			SL_CONFIG_TEXTSPEED_HIGH = "Alta", -- Needs review
-			SL_CONFIG_TEXTSPEED_INSTANT = "Nessuna animazione", -- Needs review
-			SL_CONTINUE = "Completa la missione", -- Needs review
-			SL_DECLINE = "Non accetto.", -- Needs review
-			SL_GET_REWARD = "Ottieni la ricompensa", -- Needs review
-			SL_NEXT = "Continua", -- Needs review
+			SL_CONFIG_HIDEORIGINALFRAMES = "Nascondi i riquadri originali",
+			SL_CONFIG_HIDEORIGINALFRAMES_TT = "Nascondi i riquadri originali (dialoghi missioni e PNG) in modo che sia visualizzato solo Sotryline.",
+			SL_CONFIG_LOCKFRAME = "Blocca riquadro",
+			SL_CONFIG_LOCKFRAME_TT = "Blocca il riquadro di Storyline così da evitare di spostarlo per errore.",
+			SL_CONFIG_MISCELLANEOUS = "Opzioni varie", -- Needs review
+			SL_CONFIG_NEXT_ACTION = "Azione successiva", -- Needs review
+			SL_CONFIG_NPC_NAME = "Nome di NPC", -- Needs review
+			SL_CONFIG_SAMPLE_TEXT = "Ma la volpe, col suo balzo, ha raggiunto il quieto Fido.", -- Needs review
+			SL_CONFIG_STYLING_OPTIONS = "Opzioni di stile", -- Needs review
+			SL_CONFIG_TEXTSPEED = "%.1fx",
+			SL_CONFIG_TEXTSPEED_HIGH = "Alta",
+			SL_CONFIG_TEXTSPEED_INSTANT = "Nessuna animazione",
+			SL_CONFIG_WELCOME = [=[Grazie per aver scelto Storyline!
+
+È possibile seguire gli sviluppatori Storyline su Twitter |cff55acee@EllypseCelwe|r e | cff55acee@Telkostrasz|r per avere notizie su l'add-on e sneek peaks del suo sviluppo.]=], -- Needs review
+			SL_CONTINUE = "Completa la missione",
+			SL_DECLINE = "Non accetto.",
+			SL_GET_REWARD = "Ottieni la ricompensa",
+			SL_NEXT = "Continua",
 			SL_NOT_YET = "Torna a missione completata", -- Needs review
 			SL_RESET = "Riavvolgi", -- Needs review
 			SL_RESET_TT = "Riavvolgi il dialogo.", -- Needs review
-			SL_RESIZE = "Ridimensiona", -- Needs review
+			SL_RESIZE = "Ridimensiona",
 			SL_RESIZE_TT = "Trascina il riquadro per ridimensionarlo", -- Needs review
 			SL_REWARD_MORE = "Otterrai anche", -- Needs review
-			SL_REWARD_MORE_SUB = [=[
-Denaro: |cffffffff%s|r
+			SL_REWARD_MORE_SUB = [=[Denaro: |cffffffff%s|r
 Esperienza: |cffffffff%s xp|r
 
 |cffffff00Click:|r Ottieni la ricompensa!]=], -- Needs review
-			SL_SELECT_AVAILABLE_QUEST = "Seleziona le missioni disponibili", -- Needs review
-			SL_SELECT_DIALOG_OPTION = "Seleziona l'opzione di dialogo", -- Needs review
-			SL_SELECT_REWARD = "Seleziona la ricompensa", -- Needs review
-			SL_STORYLINE = "Storyline", -- Needs review
-			SL_WELL = "Be'...", -- Needs review
+			SL_SELECT_AVAILABLE_QUEST = "Seleziona le missioni disponibili",
+			SL_SELECT_DIALOG_OPTION = "Seleziona l'opzione di dialogo",
+			SL_SELECT_REWARD = "Seleziona la ricompensa",
+			SL_STORYLINE = "Storyline",
+			SL_WELL = "Bene…",
 		}
+
 	},
 
 	--*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
 	-- LOCALE_RU
 	--*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
 
-	--[[
+
 	["ruRU"] = {
+		localeText = "Russian",
 		localeContent = {
-			SL_ACCEPTANCE = "Соглашаюсь", -- Needs review
-			SL_CHECK_OBJ = "Показать цель", -- Needs review
+			SL_ACCEPTANCE = "Принимаю",
+			SL_CHECK_OBJ = "Показать цель задания",
 			SL_CONFIG = "Параметры",
-			SL_CONFIG_AUTOEQUIP = "Автоснаряжение персонажа (пробно)", -- Needs review
-			SL_CONFIG_AUTOEQUIP_TT = "Автоматически надевать полученную вещь, если у неё уровень предмета выше.", -- Needs review
-			SL_CONFIG_FORCEGOSSIP = "Мгновенное отображение текста задания", -- Needs review
-			SL_CONFIG_HIDEORIGINALFRAMES = "Скрыть стандартные окна", -- Needs review
-			SL_CONFIG_HIDEORIGINALFRAMES_TT = "Отображать только окна Storyline (скрыть стандартные окна заданий и диалогов с NPC).", -- Needs review
-			SL_CONFIG_LOCKFRAME = "Закрепить окно", -- Needs review
-			SL_CONFIG_LOCKFRAME_TT = "Закрепить окно аддона", -- Needs review
-			SL_CONFIG_TEXTSPEED = "%.1fx", -- Needs review
-			SL_CONFIG_TEXTSPEED_HIGH = "Высокая", -- Needs review
-			SL_CONFIG_TEXTSPEED_INSTANT = "Без анимации", -- Needs review
-			SL_CONTINUE = "Завершить", -- Needs review
-			SL_DECLINE = "Отказываюсь", -- Needs review
-			SL_GET_REWARD = "Получить награду", -- Needs review
-			SL_NEXT = "Продолжить", -- Needs review
-			SL_NOT_YET = "Возвращайся, когда выполнишь", -- Needs review
-			SL_RESET = "Отмотать назад", -- Needs review
-			SL_RESET_TT = "Отобразить диалог повторно", -- Needs review
-			SL_RESIZE = "Размер окна", -- Needs review
-			SL_RESIZE_TT = "Потяните", -- Needs review
-			SL_REWARD_MORE = "Также получите", -- Needs review
-			SL_REWARD_MORE_SUB = [=[Золото: |cffffffff%s|r
+			SL_CONFIG_AUTOEQUIP = "Автоматически экипировать награды (Экспериментальная функция)", -- Needs review
+			SL_CONFIG_AUTOEQUIP_TT = "Автоматически экипировать награду, если она имеет более высокий уровень предмета.",
+			SL_CONFIG_BIG_SAMPLE_TEXT = "Когда я переводил эту строчку, со мной связались представители одной крупной компании, предложив разместить здесь рекламу. Деньги были неплохие, но я отказался. Ведь, есть вещи, которые не продаются... А для всего остального есть мастеркард! Ведь мастеркард, это мировая система, объединяющая более 22 тысяч компаний в 210 странах мира! Это самые удобные сервисы и гарантия безопасности ваших денег!",
+			SL_CONFIG_DEBUG = "Режим отладки",
+			SL_CONFIG_DEBUG_TT = "Включить отладочный фрейм, отображающий информацию для разработчиков под фреймом Storyline",
+			SL_CONFIG_DIALOG_TEXT = "Текст диалога",
+			SL_CONFIG_FORCEGOSSIP = "Включить диалоги НИП.",
+			SL_CONFIG_FORCEGOSSIP_TT = "Включает диалоги с некоторыми НИП, такими как торговцы и укротители грифонов, при взаимодействии с ними.",
+			SL_CONFIG_HIDEORIGINALFRAMES = "Скрыть стандартные окна",
+			SL_CONFIG_HIDEORIGINALFRAMES_TT = "Скрыть оригинальные квестовые и диалоговые окна.",
+			SL_CONFIG_LOCKFRAME = "Закрепить окно",
+			SL_CONFIG_LOCKFRAME_TT = "Зафиксировать окно Storyline, чтобы его нельзя было сдвинуть по ошибке.",
+			SL_CONFIG_MISCELLANEOUS = "Прочие опции",
+			SL_CONFIG_NEXT_ACTION = "Далее",
+			SL_CONFIG_NPC_NAME = "Имя НИП",
+			SL_CONFIG_QUEST_TITLE = "Название задания",
+			SL_CONFIG_SAMPLE_TEXT = "Съешь же ещё этих мягких французских булок, да выпей чаю.",
+			SL_CONFIG_STYLING_OPTIONS = "Настройки отображения",
+			SL_CONFIG_TEXTSPEED = "%.1fx",
+			SL_CONFIG_TEXTSPEED_HIGH = "Высокая",
+			SL_CONFIG_TEXTSPEED_INSTANT = "Без анимации",
+			SL_CONFIG_TEXTSPEED_TITLE = "Скорость анимации текста",
+			SL_CONFIG_USE_KEYBOARD = "Использовать горячие клавиши",
+			SL_CONFIG_USE_KEYBOARD_TT = "Использовать горячие клавиши во время диалогов. Пробел - далее. Backspace - назад. Кнопки от 1 до 0 - выбор варианта.",
+			SL_CONFIG_WELCOME = [=[Спасибо за использование Storyline!
+
+Вы можете подписаться на разработчиков Storyline в Twitter |cff55acee@EllypseCelwe|r и |cff55acee@Telkostrasz|r чтобы получать свежие новости об аддоне и ходе его разработки.]=],
+			SL_CONTINUE = "Завершить задание",
+			SL_DECLINE = "Отказываюсь",
+			SL_GET_REWARD = "Получить награду",
+			SL_NEXT = "Продолжить",
+			SL_NOT_YET = "Возвращайся, когда закончишь",
+			SL_RESET = "Вернуться назад",
+			SL_RESET_TT = "Повторить диалог",
+			SL_RESIZE = "Размер окна",
+			SL_RESIZE_TT = "Потяните, чтобы изменить размер окна",
+			SL_REWARD_MORE = "Вы также получите",
+			SL_REWARD_MORE_SUB = [=[Деньги: |cffffffff%s|r
 Опыт: |cffffffff%s xp|r
 
-|cffffff00Click:|r Получите награду!]=], -- Needs review
-			SL_SELECT_AVAILABLE_QUEST = "Выбирайте задание", -- Needs review
-			SL_SELECT_DIALOG_OPTION = "Выбирайте", -- Needs review
-			SL_SELECT_REWARD = "Выбор награды", -- Needs review
-			SL_STORYLINE = "Storyline", -- Needs review
-			SL_WELL = "Ну так что?", -- Needs review
+|cffffff00Click:|r Получите свою награду!]=],
+			SL_SELECT_AVAILABLE_QUEST = "Выберите доступное задание",
+			SL_SELECT_DIALOG_OPTION = "Выберите вариант ответа",
+			SL_SELECT_REWARD = "Выберите награду",
+			SL_STORYLINE = "Storyline",
+			SL_WELL = "Итак…",
 		}
-	},]]
+	},
 
 	--*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
 	-- LOCALE_ZHTW
 	--*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
 
-	--[[
+
 	["zhTW"] = {
+		localeText = "Traditional Chinese",
 		localeContent = {
 			SL_ACCEPTANCE = "我接受。",
 			SL_CHECK_OBJ = "任務目標是...",
-			SL_CONFIG = "選項",
+			SL_CONFIG = "設定",
 			SL_CONFIG_AUTOEQUIP = "自動裝備獎勵物品 (實驗性功能)",
 			SL_CONFIG_AUTOEQUIP_TT = "當物品等級較高時，自動裝備獎勵。",
 			SL_CONFIG_BIG_SAMPLE_TEXT = "在魔獸世界還在內部測試的時候，遊戲裡曾有許多有待修正的bug，其中有個bug是，在大陸間航行的船隻有時會莫名失效，於是暴雪設置了幾個NPC，讓玩家直接傳送到另一個大陸，其中的一個NPC則深受玩家喜愛，普萊斯霍德船長(暫定船長)，暫定船長究竟有多受歡迎呢? 玩家甚至特意為這個NPC做了詞曲，在bug修正後，暫定船長就被移除了。不過，在魔獸正式上線後，這bug又出現了，暴雪只能再把暫定船長搬了出來，玩家深愛上了船長，於是當暴雪移除這個NPC時。玩家哭著鬧著吼著吵著，要求暴雪把船長送回來。於是在大災變裡，暴雪又將NPC放進遊戲，是一個85級的精英部落陣營NPC，不過這NPC沒有達到預期效果，模型也改過了，反正，已經不是當年那個船長了。但是，暫定船長會永遠地活在我們心裡。", -- Needs review
@@ -395,10 +448,68 @@ Esperienza: |cffffffff%s xp|r
 			SL_SELECT_AVAILABLE_QUEST = "選擇任務",
 			SL_SELECT_DIALOG_OPTION = "選擇對話內容",
 			SL_SELECT_REWARD = "選擇你的獎勵",
-			SL_STORYLINE = "任務故事情節",
+			SL_STORYLINE = "任務故事劇情",
 			SL_WELL = "嗯哼...",
 		}
-	},]]
+	},
+
+	--*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
+	-- LOCALE_koKR
+	--*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
+
+
+	["koKR"] = {
+		localeText = "Korean",
+		localeContent = {
+			SL_ACCEPTANCE = "알겠습니다.",
+			SL_CHECK_OBJ = "임무 확인하기",
+			SL_CONFIG = "설정",
+			SL_CONFIG_AUTOEQUIP = "자동으로 보상 착용 (시험중)",
+			SL_CONFIG_AUTOEQUIP_TT = "보상 아이템의 아이템 레벨이 기존 아이템보다 높을 경우 자동으로 착용합니다.",
+			SL_CONFIG_BIG_SAMPLE_TEXT = "저는 등산을 좋아해서 매주마다 산에 오르곤 합니다. 언제나처럼 산길을 열심히 올라가는데 도인처럼 보이는 어느 행인이 어깨에 웬 새를 얹혀놓고 걸어가고 있더군요. 신기한 김에 \"선생님, 그 어깨에 얹혀놓은 새 이름이 뭔가요?\" 하고 물어 보았습니다. 제 말을 들은 그분께서 어깨를 보고는 말하시길, \"앗 깜짝이야 뭐야 이거\"",
+			SL_CONFIG_DEBUG = "디버그 모드",
+			SL_CONFIG_DEBUG_TT = "스토리라인 창 아래에 디버그 창을 보이게 합니다.",
+			SL_CONFIG_DIALOG_TEXT = "대화 본문",
+			SL_CONFIG_FORCEGOSSIP = "상관없는 대화 보여주기",
+			SL_CONFIG_FORCEGOSSIP_TT = "퀘스트가 없는 상인이나 비행 전문가의 대화 구문도 보이게 합니다.",
+			SL_CONFIG_HIDEORIGINALFRAMES = "기존 창 숨기기",
+			SL_CONFIG_HIDEORIGINALFRAMES_TT = "기존의 퀘스트 창을 숨깁니다.",
+			SL_CONFIG_LOCKFRAME = "창 잠그기",
+			SL_CONFIG_LOCKFRAME_TT = "실수로 움직여지지 않게 퀘스트라인 창을 잠급니다.",
+			SL_CONFIG_MISCELLANEOUS = "그 외의 설정",
+			SL_CONFIG_NEXT_ACTION = "다음 행동",
+			SL_CONFIG_NPC_NAME = "NPC 이름",
+			SL_CONFIG_QUEST_TITLE = "퀘스트 이름",
+			SL_CONFIG_SAMPLE_TEXT = "다람쥐 헌 쳇바퀴에 타고파",
+			SL_CONFIG_STYLING_OPTIONS = "꾸미기 설정",
+			SL_CONFIG_TEXTSPEED = "%.1fx",
+			SL_CONFIG_TEXTSPEED_HIGH = "빠르게",
+			SL_CONFIG_TEXTSPEED_INSTANT = "애니메이션 없음",
+			SL_CONFIG_TEXTSPEED_TITLE = "글이 나타나는 속도",
+			SL_CONFIG_USE_KEYBOARD = "단축키 사용",
+			SL_CONFIG_USE_KEYBOARD_TT = "대화를 넘기는 데에도 단축키를 사용합니다(스페이스바는 다음으로, 백스페이스는 뒤로, 1부터 0까지의 숫자 키는 다중 선택지 고르기).",
+			SL_CONFIG_WELCOME = [=[스토리라인을 이용해 주셔서 감사합니다!
+
+스토리라인 제작진의 트위터를 |cff55acee@EllypseCelwe|r 와 |cff55acee@Telkostrasz|r 팔로우하시고 스토리라인의 새로운 소식을 알아보세요.
+]=],
+			SL_CONTINUE = "퀘스트 완료",
+			SL_DECLINE = "거절하겠습니다.",
+			SL_GET_REWARD = "보상 획득하기",
+			SL_NEXT = "다음으로",
+			SL_NOT_YET = "일을 마치고 돌아오겠습니다.",
+			SL_RESET = "다시 보기",
+			SL_RESET_TT = "이 대화를 처음부터 다시 봅니다.",
+			SL_RESIZE = "크기 조정",
+			SL_RESIZE_TT = "끌었다 놓으면 창의 크기를 바꿀 수 있습니다.",
+			SL_REWARD_MORE = "당신이 얻을 보상은",
+			SL_REWARD_MORE_SUB = "\\n돈: |cffffffff%s|r\\n경험치: |cffffffff%s xp|r\\n\\n|cffffff00눌러서|r 수령하세요!",
+			SL_SELECT_AVAILABLE_QUEST = "수행할 임무 선택",
+			SL_SELECT_DIALOG_OPTION = "할 일 선택",
+			SL_SELECT_REWARD = "보상을 선택하십시오",
+			SL_STORYLINE = "스토리라인",
+			SL_WELL = "그럼...",
+		}
+	},
 
 }
 
@@ -426,6 +537,8 @@ function Storyline_API.locale.init()
 		localeFont = "Fonts\\bLEI00D.TTF";
 	elseif current == "ruRU" then
 		localeFont = "Fonts\\FRIZQT___CYR.TTF";
+	elseif current == "koKR" then
+		localeFont = "Fonts\\2002.TTF";
 	else
 		localeFont = "Fonts\\FRIZQT__.TTF";
 	end
