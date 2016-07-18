@@ -1,7 +1,7 @@
 ## Interface: 70000
 ## Title: Storyline
 ## Author: Telkostrasz
-## Version: 1.2.2
+## Version: 1.3
 ## Notes: Enhanced quest storytelling
 ## URL: http://storyline.totalrp3.info/
 ## DefaultState: Enabled
