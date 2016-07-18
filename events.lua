@@ -643,7 +643,6 @@ eventHandlers["QUEST_PROGRESS"] = function()
 end
 
 eventHandlers["QUEST_COMPLETE"] = function(eventInfo)
-	hideQuestRewardFrameIfNeed();
 	Storyline_NPCFrameRewards:Show();
 	setTooltipForSameFrame(Storyline_NPCFrameRewardsItem, "TOP", 0, 0, REWARDS, loc("SL_GET_REWARD"));
 
@@ -1378,4 +1377,7 @@ function Storyline_API.initEventsStructure()
 	Storyline_NPCFrameRewards.Content.Title:SetText(REWARDS);
 	Storyline_NPCFrameRewards.Content.RewardText2:SetText(REWARD_ITEMS);
 	Storyline_NPCFrameRewards.Content.RewardText3:SetText(REWARD_CHOOSE);
+
+	-- Hook reward
+	hooksecurefunc("QuestInfo_ShowRewards", hideQuestRewardFrameIfNeed);
 end
