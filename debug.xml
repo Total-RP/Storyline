@@ -260,7 +260,7 @@
 			<Frame parentKey="dump" inherits="Storyline_TextArea">
 				<Size x="140" y="100"/>
 				<Anchors>
-					<Anchor point="BOTTOMRIGHT" x="-10" y="10"/>
+					<Anchor point="BOTTOMLEFT" relativePoint="BOTTOMRIGHT" x="10" y="10"/>
 				</Anchors>
 				<Frames>
 					<Button parentKey="dump" inherits="Storyline_CommonButton" text="Dump">
