@@ -164,8 +164,8 @@ Storyline_API.options.init = function()
 	if Storyline_Data.config.useLayoutEngine == nil then
 		Storyline_Data.config.useLayoutEngine = false; -- By default, this option is disabled
 	end
-	StorylineOptionsPanel.UseLayoutEngine.Text:SetText("[PH] Use layout engine"); -- TODO localization
-	StorylineOptionsPanel.UseLayoutEngine.tooltip = "[PH] Use layout engine. (Force frame lock, requires a ReloadUI())"; -- TODO localization
+	StorylineOptionsPanel.UseLayoutEngine.Text:SetText(loc("SL_CONFIG_UI_LAYOUT_ENGINE"));
+	StorylineOptionsPanel.UseLayoutEngine.tooltip = loc("SL_CONFIG_UI_LAYOUT_ENGINE_TT");
 	StorylineOptionsPanel.UseLayoutEngine:SetChecked(Storyline_Data.config.useLayoutEngine);
 
 	if Storyline_Data.config.useLayoutEngine then
@@ -191,8 +191,8 @@ Storyline_API.options.init = function()
 	if Storyline_Data.config.disableInInstances == nil then
 		Storyline_Data.config.disableInInstances = false; -- By default, this option is disabled
 	end
-	StorylineOptionsPanel.DisableInInstances.Text:SetText("[PH] Disable Storyline in instances"); -- TODO localization
-	StorylineOptionsPanel.DisableInInstances.tooltip = "[PH] Disable Storyline in instances)"; -- TODO localization
+	StorylineOptionsPanel.DisableInInstances.Text:SetText(loc("SL_CONFIG_DISABLE_IN_INSTANCES"));
+	StorylineOptionsPanel.DisableInInstances.tooltip = loc("SL_CONFIG_DISABLE_IN_INSTANCES_TT");
 	StorylineOptionsPanel.DisableInInstances:SetScript("OnClick", function(self)
 		Storyline_Data.config.disableInInstances = self:GetChecked() == true;
 		Storyline_NPCFrameLock:SetChecked(Storyline_Data.config.disableInInstances);

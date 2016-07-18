@@ -171,7 +171,7 @@
 					<Anchor point="LEFT" x="250"/>
 				</Anchors>
 			</CheckButton>
-			<CheckButton parentKey="DisableForDailies" inherits="StorylineOptionsCheckboxWithTooltip">
+			<CheckButton parentKey="DisableForDailies" inherits="StorylineOptionsCheckboxWithTooltip" hidden="true">
 				<Anchors>
 					<Anchor point="TOPLEFT" relativeKey="$parent.DisableInInstances" relativePoint="BOTTOMLEFT" y="-10"/>
 				</Anchors>
