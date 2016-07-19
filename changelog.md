@@ -14,3 +14,7 @@ This version fixes a lot of issues introduced with patch 7.0.
 
 - We are now using a **new system to hide the default quest frame and dialog frame**. The frames should no longer re-appear when opening other frames, and the other frames should be correctly aligned to the left of the screen without any gap. This version is also more compatible with other UI customization add-ons. This new solution require a reload of the user interface.
 - With the new system to hide the quest frame, we have also implemented an **option to use the default interface layout engine**. When opening default frames, they appear on the left of the screen, one next to the other, with priorities. Storyline can now use that layout engine to be placed on the left just like the character pannel or the spellbook.
+
+## Animation/Scaling
+
+- Improved scaling and animation for female Orc
