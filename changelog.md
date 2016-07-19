@@ -17,4 +17,9 @@ This version fixes a lot of issues introduced with patch 7.0.
 
 ## Animation/Scaling
 
-- Improved scaling and animation for female Orc
+- Improved scaling and animation for female Orc and female Troll
+
+## Locales
+
+- Improved existing locales
+- Added Russian, Traditional Chinese and Korean locales
