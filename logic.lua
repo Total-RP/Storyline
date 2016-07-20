@@ -196,6 +196,11 @@ local function modelsLoaded()
 		if mainFrame.models.me.model then
 			mainFrame.debug.me:SetText(mainFrame.models.me.model);
 		end
+
+		mainFrame.debug.recorded:Hide();
+		if scalingLib:IsRecorded(mainFrame.models.me.model, mainFrame.models.you.model) then
+			mainFrame.debug.recorded:Show();
+		end
 	end
 end
 

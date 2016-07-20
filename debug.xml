@@ -60,6 +60,12 @@
 					</Anchors>
 					<Color r="1" g="1" b="0.4"/>
 				</FontString>
+				<FontString parentKey="recorded" inherits="GameFontNormal" justifyH="RIGHT" justifyV="TOP" text="RECORDED">
+					<Anchors>
+						<Anchor point="BOTTOMRIGHT" x="-10" y="10"/>
+					</Anchors>
+					<Color r="1" g="1" b="0.4"/>
+				</FontString>
 			</Layer>
 		</Layers>
 		<Frames>
