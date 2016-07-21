@@ -1,3 +1,8 @@
+# Change-log version 1.3.1
+
+- Fixed a bug when having several active quests on the same NPC.
+- Various tweaks to model scaling.
+
 # Change-log version 1.3
 
 ## Legion compatibility
