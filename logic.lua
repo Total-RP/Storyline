@@ -45,7 +45,6 @@ local LINE_FEED_CODE = string.char(10);
 local CARRIAGE_RETURN_CODE = string.char(13);
 local WEIRD_LINE_BREAK = LINE_FEED_CODE .. CARRIAGE_RETURN_CODE .. LINE_FEED_CODE;
 local CHAT_MARGIN = 70;
-local DEFAULT_SCALE = scalingLib.DEFAULT_SCALE;
 
 --*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
 -- NPC Blacklisting
@@ -64,10 +63,9 @@ local Storyline_NPC_BLACKLIST = {"94399"} -- Garrison mission table
 -- @param secondPriority
 -- @param fallback
 --
-local function getBestValue(dataKey, firstPriority, secondPriority, fallback)
+local function getBestValue(dataKey, firstPriority, secondPriority)
 	if firstPriority and firstPriority[dataKey] then return firstPriority[dataKey] end
 	if secondPriority and secondPriority[dataKey] then return secondPriority[dataKey] end
-	return fallback[dataKey];
 end
 
 ---
@@ -89,7 +87,7 @@ local function getScalingStuctures(modelMeID, modelYouID)
 	end
 
 	-- Default structure
-	local dataMe, dataYou = scalingLib:GetModelScaling(modelMeID, modelYouID);
+	local dataMe, dataYou = scalingLib:GetModelCoupleProperties(modelMeID, modelYouID);
 
 	return savedDataMe, savedDataYou, dataMe, dataYou;
 end
@@ -153,10 +151,10 @@ end
 --*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
 
 local function loadScalingParameters(savedData, defaultData, meYou, facing)
-	scalingLib:SetModelHeight(getBestValue("scale", savedData, defaultData, DEFAULT_SCALE[meYou]), mainFrame.models[meYou]);
-	scalingLib:SetModelFeet(getBestValue("feet", savedData, defaultData, DEFAULT_SCALE[meYou]), mainFrame.models[meYou]);
-	scalingLib:SetModelOffset(getBestValue("offset", savedData, defaultData, DEFAULT_SCALE[meYou]), mainFrame.models[meYou], facing);
-	scalingLib:SetModelFacing(getBestValue("facing", savedData, defaultData, DEFAULT_SCALE[meYou]), mainFrame.models[meYou], facing);
+	scalingLib:SetModelHeight(getBestValue("scale", savedData, defaultData), mainFrame.models[meYou]);
+	scalingLib:SetModelFeet(getBestValue("feet", savedData, defaultData), mainFrame.models[meYou]);
+	scalingLib:SetModelOffset(getBestValue("offset", savedData, defaultData), mainFrame.models[meYou], facing);
+	scalingLib:SetModelFacing(getBestValue("facing", savedData, defaultData), mainFrame.models[meYou], facing);
 end
 
 ---
