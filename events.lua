@@ -1054,9 +1054,9 @@ function Storyline_API.initEventsStructure()
 
 				else
 					-- The choice popup is open, we will use the first choice in the popup
-					if firstChoiceAvailableInPopup and firstChoiceAvailableInPopup:getScript("OnClick") then
+					if firstChoiceAvailableInPopup and firstChoiceAvailableInPopup:GetScript("OnClick") then
 						debug("QUEST_GREETING – Finish method : Choice popup opened, picked first choice available");
-						return firstChoiceAvailableInPopup:getScript("OnClick")();
+						return firstChoiceAvailableInPopup:GetScript("OnClick")();
 					end
 				end
 
