@@ -51,7 +51,7 @@ local debug = Storyline_API.debug;
 local faction, faction_loc = UnitFactionGroup("player");
 local pairs, CreateFrame, wipe, type, tinsert, after, select, huge = pairs, CreateFrame, wipe, type, tinsert, C_Timer.After, select, math.huge;
 local ChatTypeInfo = ChatTypeInfo;
-local UnitIsUnit, UnitExists, DeclineQuest, AcceptQuest = UnitIsUnit, UnitExists, DeclineQuest, AcceptQuest;
+local UnitIsUnit, UnitExists, DeclineQuest, AcceptQuest, AcknowledgeAutoAcceptQuest = UnitIsUnit, UnitExists, DeclineQuest, AcceptQuest, AcknowledgeAutoAcceptQuest;
 local IsQuestCompletable, CompleteQuest, CloseQuest, GetQuestLogTitle = IsQuestCompletable, CompleteQuest, CloseQuest, GetQuestLogTitle;
 local GetNumQuestChoices, GetQuestReward, GetQuestLogSelection = GetNumQuestChoices, GetQuestReward, GetQuestLogSelection;
 local GetQuestLogQuestText, GetGossipAvailableQuests, GetGossipActiveQuests = GetQuestLogQuestText, GetGossipAvailableQuests, GetGossipActiveQuests;
@@ -233,12 +233,11 @@ end
 local function acceptQuest()
 	if QuestFlagsPVP() then
 		QuestFrame.dialog = StaticPopup_Show("CONFIRM_ACCEPT_PVP_QUEST");
+	elseif QuestGetAutoAccept() then
+		AcknowledgeAutoAcceptQuest();
+		PlayAutoAcceptQuestSound();
 	else
-		if QuestFrame.autoQuest then
-			AcknowledgeAutoAcceptQuest();
-		else
-			AcceptQuest();
-		end
+		AcceptQuest();
 	end
 end
 
@@ -298,7 +297,7 @@ local function decorateItemButton(button, index, type, texture, name, numItems, 
 	button.index = index;
 	button.type = type;
 	button.Icon:SetTexture(texture);
-	button.Name:SetText(name);
+	button.Name:SetText(name or RETRIEVING_DATA);
 	button.Count:SetText(numItems > 1 and numItems or "");
 	if not isUsable then
 		button.Icon:SetVertexColor(1, 0, 0);
@@ -314,11 +313,6 @@ local function decorateItemButton(button, index, type, texture, name, numItems, 
 			GetQuestReward(self.index);
 			autoEquip(itemLink);
 			autoEquipAllReward();
-		end
-		
-		if IsModifiedClick("DRESSUP") and DressUpFrame:IsVisible() then
-			DressUpFrame:ClearAllPoints();
-			DressUpFrame:SetPoint("TOPLEFT", Storyline_NPCFrame, "TOPRIGHT", 10, 0);
 		end
 	end);
 end
@@ -923,6 +917,36 @@ local function handleEventSpecifics(event, texts, textIndex, eventInfo)
 	end
 end
 
+local function refreshRewards(...)
+
+	local rewardsInfoUpdated = {};
+
+	for i = 1, GetNumQuestRewards() do
+		local name, texture, numItems, quality, isUsable = GetQuestItemInfo("reward", i);
+		rewardsInfoUpdated[i] = name;
+	end
+
+	for index, buttonInfo in pairs(displayBuilder) do
+		local button = itemButtons[index];
+
+		if not button then return end;
+
+		if rewardsInfoUpdated[buttonInfo.index] then
+			buttonInfo.text = rewardsInfoUpdated[buttonInfo.index];
+		end
+
+		if buttonInfo.type == "currency" then
+			decorateCurrencyButton(button, buttonInfo.index, "reward", buttonInfo.icon, buttonInfo.text, buttonInfo.count);
+		elseif buttonInfo.type == "item" then
+			decorateItemButton(button, buttonInfo.index, buttonInfo.rewardType, buttonInfo.icon, buttonInfo.text, buttonInfo.count, buttonInfo.isUsable);
+		elseif buttonInfo.type == "skillpoint" then
+			decorateSkillPointButton(button, buttonInfo.icon, buttonInfo.text, buttonInfo.count, buttonInfo.tooltipTitle);
+		else
+			decorateStandardButton(button, buttonInfo.icon, buttonInfo.text, buttonInfo.tooltipTitle, buttonInfo.tooltipSub);
+		end
+	end
+end
+
 local function playText(textIndex, targetModel)
 	local animTab = targetModel.animTab;
 	wipe(animTab);
@@ -1343,6 +1367,8 @@ function Storyline_API.initEventsStructure()
 			startDialog("npc", info.text(), event, info);
 		end);
 	end
+
+	registerHandler("QUEST_ITEM_UPDATE", refreshRewards);
 
 	-- Replay buttons
 	local questButton = CreateFrame("Button", nil, QuestLogPopupDetailFrame, "Storyline_CommonButton");
