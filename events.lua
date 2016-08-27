@@ -1357,6 +1357,8 @@ function Storyline_API.initEventsStructure()
 	};
 	Storyline_API.EVENT_INFO = EVENT_INFO;
 
+	local storylineFrameShouldOpen = false;
+
 	for event, info in pairs(EVENT_INFO) do
 		registerHandler(event, function()
 			if Storyline_Data.config.disableInInstances then
@@ -1364,11 +1366,25 @@ function Storyline_API.initEventsStructure()
 					return
 				end
 			end
-			startDialog("npc", info.text(), event, info);
+
+			-- Thanks to Blizzard for firing GOSSIP_SHOW and then GOSSIP_CLOSED when ForceGossip is false...
+			if not Storyline_Data.config.forceGossip then
+				storylineFrameShouldOpen = true;
+				C_Timer.After(0.5, function()
+					if storylineFrameShouldOpen then
+						startDialog("npc", info.text(), event, info);
+					end
+				end)
+			else
+				startDialog("npc", info.text(), event, info);
+			end
 		end);
 	end
 
 	registerHandler("QUEST_ITEM_UPDATE", refreshRewards);
+	registerHandler("GOSSIP_CLOSED", function()
+		storylineFrameShouldOpen = false;
+	end);
 
 	-- Replay buttons
 	local questButton = CreateFrame("Button", nil, QuestLogPopupDetailFrame, "Storyline_CommonButton");
