@@ -1,30 +1,21 @@
-# Change-log version 1.3.1
+# Change-log version 1.4
 
-- Fixed a bug when having several active quests on the same NPC.
-- Various tweaks to model scaling.
+## Custom scaling system
 
-# Change-log version 1.3
+We have restored the custom scaling system. We had to take it out after the modifications brought by Legion. Storyline will now remember the height you have defined for a model.
 
-## Legion compatibility
+Additionally, the vertical and horizontal offset of a model is now saved per model, and not for a model against another model, so models that are not correctly centered only need to be fixed once.
 
-This version fixes a lot of issues introduced with patch 7.0.
+_Reminder_: You can manually change the height and the position of a model. To change the height of a model maintain the ALT key down and scroll on a model, to change its horizontal offset maintain the ALT key down and left click or right click on a model, and to change the vertical offset maintain the CONTROL key down and left click or right click. If you additionally maintain the SHIFT key down for any of those actions, the value will be incremented by 10 instead of 1 so it's faster.
 
-## Workflow improvements
-- **Fast-forward**: you can now **right-click** or use **SHIFT + spacebar** to fast forward to the end of a dialog.
-- **Next action improvement**: we have tweaked what a click on the text (or the spacebar) do when at the end of a dialog to make it always choose the best option available instead of just closing the dialog. If a dialog has choices, clicking on the text at the end of a dialog will now pick the best choice (first completed quests, then quests that are available, then gossip choices and finally dialog for quest that are not completed yet).
-- **New disable Storyline in instances option**. A new option (disable by default), allow you to disable Storyline when you are inside an instance (dungeon, raid, battlegrounds, etc.).
-- You can now use the middle click of the mouse on the text to close the dialog quickly.
+## Bug fixes
 
-## UI improvements
+- Fixed a bug when using the next action shortcut when a NPC has at least one active quest and one quest available.
+- Fixed an issue that was making the Storyline window appear briefly for some NPCs.
+- Fixed an issue that was preventing in game events from being triggered for auto-accepted quests.
+- Fixed an issue where reward item names were empty.
 
-- We are now using a **new system to hide the default quest frame and dialog frame**. The frames should no longer re-appear when opening other frames, and the other frames should be correctly aligned to the left of the screen without any gap. This version is also more compatible with other UI customization add-ons. This new solution require a reload of the user interface.
-- With the new system to hide the quest frame, we have also implemented an **option to use the default interface layout engine**. When opening default frames, they appear on the left of the screen, one next to the other, with priorities. Storyline can now use that layout engine to be placed on the left just like the character pannel or the spellbook.
+## Improvements
 
-## Animation/Scaling
-
-- Improved scaling and animation for female Orc and female Troll
-
-## Locales
-
-- Improved existing locales
-- Added Russian, Traditional Chinese and Korean locales
+- Added Brazilian Portuguese localization
+- Added sounds when the Storyline frame is opened and closed.
