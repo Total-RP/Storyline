@@ -61,7 +61,6 @@ local Storyline_NPC_BLACKLIST = {"94399"} -- Garrison mission table
 -- @param dataKey
 -- @param firstPriority
 -- @param secondPriority
--- @param fallback
 --
 local function getBestValue(dataKey, firstPriority, secondPriority)
 	if firstPriority and firstPriority[dataKey] then return firstPriority[dataKey] end
