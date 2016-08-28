@@ -511,6 +511,71 @@ Esperienza: |cffffffff%s xp|r
 		}
 	},
 
+
+	--*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
+	-- LOCALE_ptBR
+	--*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
+
+	["ptBR"] = {
+		localeText = "ptBRBrazilian Portuguese",
+		localeContent = {
+			SL_ACCEPTANCE = "Aceito.",
+			SL_CHECK_OBJ = "Checar objetivos.",
+			SL_CONFIG = "Configurações.",
+			SL_CONFIG_AUTOEQUIP = "Auto equipar recompensa (experimental)",
+			SL_CONFIG_AUTOEQUIP_TT = "Auto equipar recompensa se o item for melhor.",
+			SL_CONFIG_BIG_SAMPLE_TEXT = "Por muito tempo achei que a ausência é falta. E lastimava, ignorante, a falta. Hoje não a lastimo. Não há falta na ausência. A ausência é um estar em mim. E sinto-a, branca, tão pegada, aconchegada nos meus braços, que rio e danço e invento exclamações alegres, porque a ausência, essa ausência assimilada, ninguém a rouba mais de mim.",
+			SL_CONFIG_DEBUG = "Modo de depuração",
+			SL_CONFIG_DEBUG_TT = "Ativar a interface de depuração mostrando dados de desenvolvedor na interface do Storyline",
+			SL_CONFIG_DIALOG_TEXT = "Texto de diálogo",
+			SL_CONFIG_DISABLE_IN_INSTANCES = "Desativar o Storyline em instâncias",
+			SL_CONFIG_DISABLE_IN_INSTANCES_TT = "Automaticamente desativa o Storyline quando você estiver em instâncias (masmorras, campos de batalha, raides, cenários)",
+			SL_CONFIG_FORCEGOSSIP = "Mostrar textos temáticos",
+			SL_CONFIG_FORCEGOSSIP_TT = "Mostrar textos temáticos em PNJs como mercadores ou mestres de vôo.",
+			SL_CONFIG_HIDEORIGINALFRAMES = "Esconder interface original",
+			SL_CONFIG_HIDEORIGINALFRAMES_TT = "Esconder a interface de missões original e o quadro de diálogo de PNJ.",
+			SL_CONFIG_LANGUAGE = "Idioma",
+			SL_CONFIG_LOCKFRAME = "Travar interface",
+			SL_CONFIG_LOCKFRAME_TT = "Travar a interface do Storyline para que não seja movida acidentalmente.",
+			SL_CONFIG_MISCELLANEOUS = "Opções diversas",
+			SL_CONFIG_NEXT_ACTION = "Próxima ação",
+			SL_CONFIG_NPC_NAME = "Nome do NPC",
+			SL_CONFIG_QUEST_TITLE = "Título da missão",
+			SL_CONFIG_SAMPLE_TEXT = "Um pequeno jabuti xereta viu dez cegonhas felizes.",
+			SL_CONFIG_STYLING_OPTIONS = "Opções de estilo",
+			SL_CONFIG_TEXTSPEED = "%.1fx",
+			SL_CONFIG_TEXTSPEED_HIGH = "Rápido",
+			SL_CONFIG_TEXTSPEED_INSTANT = "Sem animação",
+			SL_CONFIG_TEXTSPEED_TITLE = "Velocidade de animação",
+			SL_CONFIG_UI_LAYOUT_ENGINE = "Usar a posição padrão da janela",
+			SL_CONFIG_UI_LAYOUT_ENGINE_TT = "Usa o leiate padrão para que o Storyline apareça na esquerda como a janela do personagem ou a janela dos feitiços e seja empurrada se novas janelas forem abertas",
+			SL_CONFIG_USE_KEYBOARD = "Usar atalhos de teclado",
+			SL_CONFIG_USE_KEYBOARD_TT = "Usar atalhos no teclado para navegar nos diálogos (espaço para avançar, backspace para voltar, teclas de 1 a 0 para selecionar opções de diálogo)",
+			SL_CONFIG_WELCOME = [=[Obrigado por utilizar o Storyline!
+
+Você pode seguir os desenvolvedores no Twitter |cff55acee@EllypseCelwe|r e |cff55acee@Telkostrasz|r para receber atualizações sobre o add-on e prévias do desenvolvimento.]=],
+			SL_CONTINUE = "Completar missão",
+			SL_DECLINE = "Me recuso.",
+			SL_GET_REWARD = "Receber recompensa",
+			SL_NEXT = "Continuar",
+			SL_NOT_YET = "Volte quando estiver pronto",
+			SL_RESET = "Retroceder",
+			SL_RESET_TT = "Retroceder esse diálogo",
+			SL_RESIZE = "Redimensionar",
+			SL_RESIZE_TT = "Arraste para redimensionar",
+			SL_REWARD_MORE = "Você também receberá",
+			SL_REWARD_MORE_SUB = [=[Moeda: |cffffffff%s|r
+Experiência: |cffffffff%s|r
+
+|cffffff00Clique:|r Receba sua recompensa!]=],
+			SL_SELECT_AVAILABLE_QUEST = "Selecione uma missão",
+			SL_SELECT_DIALOG_OPTION = "Selecione a opção de diálogo",
+			SL_SELECT_REWARD = "Escolha a recompensa",
+			SL_STORYLINE = "Enredo",
+			SL_WELL = "Bem…",
+		}
+
+	},
 }
 
 local error, tostring = error, tostring;
