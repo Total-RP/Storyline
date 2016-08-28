@@ -37,10 +37,9 @@ local InterfaceOptionsFrame_OpenToCategory = InterfaceOptionsFrame_OpenToCategor
 local mainFrame = Storyline_NPCFrame;
 
 local scalingLib = LibStub:GetLibrary("TRP-Dialog-Scaling-DB");
-local scalingDB;
+local scalingDB, customHeightDB, customPersonalDB;
 
 -- Constants
-local DEBUG = true;
 local LINE_FEED_CODE = string.char(10);
 local CARRIAGE_RETURN_CODE = string.char(13);
 local WEIRD_LINE_BREAK = LINE_FEED_CODE .. CARRIAGE_RETURN_CODE .. LINE_FEED_CODE;
@@ -57,103 +56,73 @@ local Storyline_NPC_BLACKLIST = {"94399"} -- Garrison mission table
 --*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
 
 ---
--- Get the best structure to use.
--- @param dataKey
--- @param firstPriority
--- @param secondPriority
---
-local function getBestValue(dataKey, firstPriority, secondPriority)
-	if firstPriority and firstPriority[dataKey] then return firstPriority[dataKey] end
-	if secondPriority and secondPriority[dataKey] then return secondPriority[dataKey] end
-end
-
----
 -- Get the scaling structures (saved and defaults)
 -- @param modelMeID
 -- @param modelYouID
 --
 local function getScalingStuctures(modelMeID, modelYouID)
 	local key, invertedKey = scalingLib:GetModelKeys(modelMeID, modelYouID);
-
-	-- Saved structure
-	local savedDataMe, savedDataYou;
-	if scalingDB[key] then
-		savedDataMe = scalingDB[key].me;
-		savedDataYou = scalingDB[key].you;
-	elseif scalingDB[invertedKey] then
-		savedDataMe = scalingDB[invertedKey].you;
-		savedDataYou = scalingDB[invertedKey].me;
-	end
-
-	-- Default structure
 	local dataMe, dataYou = scalingLib:GetModelCoupleProperties(modelMeID, modelYouID);
 
-	return savedDataMe, savedDataYou, dataMe, dataYou;
+	-- Custom height
+	if customHeightDB[key] then
+		dataMe.scale = customHeightDB[key][1];
+		dataYou.scale = customHeightDB[key][2];
+	elseif customHeightDB[invertedKey] then
+		dataMe.scale = customHeightDB[key][2];
+		dataYou.scale = customHeightDB[key][1];
+	end
+
+	-- Custom attributes
+	if customPersonalDB[modelMeID] then
+		for field, value in pairs(customPersonalDB[modelMeID]) do
+			dataMe[field] = value;
+		end
+	end
+	if customPersonalDB[modelYouID] then
+		for field, value in pairs(customPersonalDB[modelYouID]) do
+			dataYou[field] = value;
+		end
+	end
+
+	return dataMe, dataYou;
 end
 
 ---
 -- Reset a scaling field in the saved structures for a modelID tuple.
 -- @param field typically "me" or "you"
 --
-local function resetStructure(field)
+local function resetStructure()
 	local key, invertedKey = scalingLib:GetModelKeys(mainFrame.models.me.model, mainFrame.models.you.model);
 
-	local structure = scalingDB[key] or scalingDB[invertedKey];
-	if structure then
-		if structure[field] then
-			wipe(structure[field]);
-			structure[field] = nil;
-			-- If after removing the field the save structure is empty, we remove it.
-			if tsize(structure) == 0 then
-				scalingDB[key] = nil;
-				scalingDB[invertedKey] = nil;
-			end
+	-- Reset custom heights
+	for _, value in pairs({key, invertedKey}) do
+		if customHeightDB[value] then
+			wipe(customHeightDB[value]);
+			customHeightDB[value] = nil;
 		end
 	end
-end
 
----
--- Get the saved structure for the current two displayed models.
--- If the structure does not exist, create it.
---
-local function getInitializedSavedStructure()
-	local key, invertedKey = scalingLib:GetModelKeys(mainFrame.models.me.model, mainFrame.models.you.model);
-
-	if not scalingDB[key] and not scalingDB[invertedKey] then
-		scalingDB[key] = {};
+	-- Reset custom attributes
+	if customPersonalDB[mainFrame.models.me.model] then
+		wipe(customPersonalDB[mainFrame.models.me.model]);
+		customPersonalDB[mainFrame.models.me.model] = nil;
 	end
-	return scalingDB[key] or scalingDB[invertedKey], scalingDB[key] == nil;
-end
-
----
--- Save a scaling information for the current two displayed models.
--- @param dataName
--- @param isMe
--- @param value
---
-local function saveStructureData(dataName, isMe, value)
-	local structure, isInverted = getInitializedSavedStructure();
-	local meYou;
-	if (isMe and not isInverted) or (not isMe and isInverted) then
-		meYou = "me";
-	elseif (isMe and isInverted) or (not isMe and not isInverted) then
-		meYou = "you";
+	if customPersonalDB[mainFrame.models.you.model] then
+		wipe(customPersonalDB[mainFrame.models.you.model]);
+		customPersonalDB[mainFrame.models.you.model] = nil;
 	end
-	if not structure[meYou] then
-		structure[meYou] = {};
-	end
-	structure[meYou][dataName] = value;
 end
 
 --*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
 -- LOADING & START DIALOG
 --*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
 
-local function loadScalingParameters(savedData, defaultData, meYou, facing)
-	scalingLib:SetModelHeight(getBestValue("scale", savedData, defaultData), mainFrame.models[meYou]);
-	scalingLib:SetModelFeet(getBestValue("feet", savedData, defaultData), mainFrame.models[meYou]);
-	scalingLib:SetModelOffset(getBestValue("offset", savedData, defaultData), mainFrame.models[meYou], facing);
-	scalingLib:SetModelFacing(getBestValue("facing", savedData, defaultData), mainFrame.models[meYou], facing);
+local function loadScalingParameters(defaultData, meYou, facing)
+	scalingLib:SetModelHeight(defaultData.scale, mainFrame.models[meYou]);
+	scalingLib:SetModelFeet(defaultData.feet, mainFrame.models[meYou]);
+	scalingLib:SetModelOffset(defaultData.offset, mainFrame.models[meYou], facing);
+	scalingLib:SetModelFacing(defaultData.facing, mainFrame.models[meYou], facing);
 end
 
 ---
@@ -173,14 +142,14 @@ local function modelsLoaded()
 		end
 
 
-		local savedDataMe, savedDataYou, dataMe, dataYou = getScalingStuctures(mainFrame.models.me.model, mainFrame.models.you.model);
+		local dataMe, dataYou = getScalingStuctures(mainFrame.models.me.model, mainFrame.models.you.model);
 
 		-- Configuration for model Me.
-		loadScalingParameters(savedDataMe, dataMe, "me", true);
+		loadScalingParameters(dataMe, "me", true);
 
 		-- Configuration for model You, if available.
 		if mainFrame.models.you.model then
-			loadScalingParameters(savedDataYou, dataYou, "you", false);
+			loadScalingParameters(dataYou, "you", false);
 		else
 			-- If there is no You model, play the read animation for the Me model.
 			mainFrame.models.me:SetAnimation(520);
@@ -303,16 +272,37 @@ end
 -- DEBUG
 --*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
 
+local function saveCustomHeight(meYou, scale)
+	-- Getting custom structure or creating it
+	local key, invertedKey = scalingLib:GetModelKeys(mainFrame.models.me.model, mainFrame.models.you.model);
+
+	if not customHeightDB[key] and customHeightDB[invertedKey] then
+		-- We swap me/you as it is inverted
+		customHeightDB[invertedKey][meYou == "me" and 2 or 1] = scale;
+	else
+		if not customHeightDB[key] then
+			customHeightDB[key] = {};
+		end
+		customHeightDB[key][meYou == "me" and 1 or 2] = scale;
+	end
+
+end
+
+local function saveCustomIndependantScaling(meYou, field, value)
+	local model = meYou == "me" and mainFrame.models.me.model or mainFrame.models.you.model;
+
+	if not customPersonalDB[model] then
+		customPersonalDB[model] = {};
+	end
+	customPersonalDB[model][field] = value;
+end
+
 local function debugInit()
 	if not Storyline_Data.config.debug then
 		mainFrame.debug:Hide();
 	end
 	Storyline_NPCFrameDebugMeResetButton:SetScript("OnClick", function(self)
-		resetStructure("me");
-		modelsLoaded();
-	end);
-	Storyline_NPCFrameDebugYouResetButton:SetScript("OnClick", function(self)
-		resetStructure("you");
+		resetStructure();
 		modelsLoaded();
 	end);
 
@@ -323,9 +313,11 @@ local function debugInit()
 			if IsAltKeyDown() then
 				local scale = mainFrame.models[meYou].scale - (IsShiftKeyDown() and 0.1 or 0.01) * delta;
 				scalingLib:SetModelHeight(scale, mainFrame.models[meYou]);
+				saveCustomHeight(meYou, scale);
 			elseif IsControlKeyDown() then
 				local facing = mainFrame.models[meYou].facing - (IsShiftKeyDown() and 0.2 or 0.02) * delta;
 				scalingLib:SetModelFacing(facing, mainFrame.models[meYou], meYou == "me");
+				saveCustomIndependantScaling(meYou, "facing", facing);
 			end
 		end);
 		mainFrame.models[meYou].scroll:RegisterForClicks("LeftButtonUp", "RightButtonUp");
@@ -333,9 +325,11 @@ local function debugInit()
 			if IsAltKeyDown() then
 				local offset = mainFrame.models[meYou].offset - (button == "LeftButton" and 1 or -1) * (IsShiftKeyDown() and 0.1 or 0.01);
 				scalingLib:SetModelOffset(offset, mainFrame.models[meYou], meYou == "me");
+				saveCustomIndependantScaling(meYou, "offset", offset);
 			elseif IsControlKeyDown() then
 				local feet = mainFrame.models[meYou].feet - (button == "LeftButton" and 1 or -1) * (IsShiftKeyDown() and 0.1 or 0.01);
 				scalingLib:SetModelFeet(feet, mainFrame.models[meYou]);
+				saveCustomIndependantScaling(meYou, "feet", feet);
 			end
 		end);
 	end
@@ -370,8 +364,7 @@ local function debugInit()
 		Storyline_API.startDialog("target", "Pouic", "SCALING_DEBUG", Storyline_API.EVENT_INFO.SCALING_DEBUG);
 	end);
 
-	setTooltipAll(Storyline_NPCFrameDebugMeResetButton, "TOP", 0, 0, "Reset values for 'my' model"); -- Debug, not localized
-	setTooltipAll(Storyline_NPCFrameDebugYouResetButton, "TOP", 0, 0, "Reset values for 'his' model"); -- Debug, not localized
+	setTooltipAll(Storyline_NPCFrameDebugMeResetButton, "TOP", 0, 0, "Reset values for these models"); -- Debug, not localized
 end
 
 --*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
@@ -398,16 +391,33 @@ function Storyline_API.addon:OnEnable()
 	if not Storyline_Data then
 		Storyline_Data = {};
 	end
-	if not Storyline_Data.scaling then
-		Storyline_Data.scaling = {};
+
+	-- Cleanup
+	local usedFields = {
+		"customscale",
+		"config",
+		"npc_blacklist",
+	};
+	for key, _ in pairs(Storyline_Data) do
+		if not tContains(usedFields, key) then
+			wipe(Storyline_Data[key]);
+			Storyline_Data[key] = nil;
+		end
 	end
-	scalingDB = Storyline_Data.scaling;
-	if not Storyline_Data.debug then
-		Storyline_Data.debug = {};
+
+	if not Storyline_Data.customscale then
+		Storyline_Data.customscale = {};
 	end
-	if not Storyline_Data.debug.timing then
-		Storyline_Data.debug.timing = {};
+	if not Storyline_Data.customscale.relative then
+		Storyline_Data.customscale.relative = {};
 	end
+	if not Storyline_Data.customscale.personal then
+		Storyline_Data.customscale.personal = {};
+	end
+	scalingDB = Storyline_Data.customscale;
+	customHeightDB = Storyline_Data.customscale.relative;
+	customPersonalDB = Storyline_Data.customscale.personal;
+
 	if not Storyline_Data.config then
 		Storyline_Data.config = {};
 	end
