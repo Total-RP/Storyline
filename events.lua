@@ -1381,7 +1381,7 @@ function Storyline_API.initEventsStructure()
 		end);
 	end
 
-	registerHandler("QUEST_ITEM_UPDATE", refreshRewards);
+--	registerHandler("QUEST_ITEM_UPDATE", refreshRewards);
 	registerHandler("GOSSIP_CLOSED", function()
 		storylineFrameShouldOpen = false;
 	end);

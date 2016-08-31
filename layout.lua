@@ -52,7 +52,7 @@ Storyline_API.layout.unlockFrame = unlockFrame;
 -- Return true if the frame is locked and should not be dragged around.
 -- @return boolean
 local isFrameLocked = function()
-	return Storyline_Data.config.lockFrame or false;
+	return Storyline_Data.config.lockFrame == true;
 end
 Storyline_API.layout.isFrameLocked = isFrameLocked;
 

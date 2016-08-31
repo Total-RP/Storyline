@@ -13,7 +13,7 @@ _Reminder_: You can manually change the height and the position of a model. To c
 - Fixed a bug when using the next action shortcut when a NPC has at least one active quest and one quest available.
 - Fixed an issue that was making the Storyline window appear briefly for some NPCs.
 - Fixed an issue that was preventing in game events from being triggered for auto-accepted quests.
-- Fixed an issue where reward item names were empty.
+- Fixed an issue preventing the frame from being locked properly.
 
 ## Improvements
 

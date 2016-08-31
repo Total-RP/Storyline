@@ -517,7 +517,7 @@ Esperienza: |cffffffff%s xp|r
 	--*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
 
 	["ptBR"] = {
-		localeText = "ptBRBrazilian Portuguese",
+		localeText = "Brazilian Portuguese",
 		localeContent = {
 			SL_ACCEPTANCE = "Aceito.",
 			SL_CHECK_OBJ = "Checar objetivos.",
