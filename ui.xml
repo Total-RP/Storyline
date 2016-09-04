@@ -205,6 +205,13 @@
 
 	<Frame name="Storyline_NPCFrame" inherits="Storyline_StandardParchmentFrame" toplevel="true" parent="UIParent" frameStrata="MEDIUM" enableMouse="true" clampedToScreen="true" hidden="true" movable="true">
 		<Size x="700" y="450"/>
+
+		<Scripts>
+			<OnLoad>
+				tinsert(UISpecialFrames, self:GetName());
+			</OnLoad>
+		</Scripts>
+
 		<Layers>
 			<Layer level="BORDER">
 				<Texture name="Storyline_NPCFrameBG" file="Interface\DRESSUPFRAME\DressUpBackground-NightElf1" alpha="0.5">
