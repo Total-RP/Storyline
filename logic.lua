@@ -69,8 +69,8 @@ local function getScalingStuctures(modelMeID, modelYouID)
 		dataMe.scale = customHeightDB[key][1];
 		dataYou.scale = customHeightDB[key][2];
 	elseif customHeightDB[invertedKey] then
-		dataMe.scale = customHeightDB[key][2];
-		dataYou.scale = customHeightDB[key][1];
+		dataMe.scale = customHeightDB[invertedKey][2];
+		dataYou.scale = customHeightDB[invertedKey][1];
 	end
 
 	-- Custom attributes
