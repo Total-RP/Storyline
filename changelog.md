@@ -1,3 +1,11 @@
+# Change-log version 1.4.1
+
+## Bug fixes
+
+- Fixed an issue with the order hall upgrades NPCs when the flavor NPC text option is enabled.
+- Fixed a Lua error with the custom scaling.
+- The window can now be dismissed using escape even when not using the default game layout.
+
 # Change-log version 1.4
 
 ## Custom scaling system
