@@ -1368,7 +1368,7 @@ function Storyline_API.initEventsStructure()
 			end
 
 			-- Thanks to Blizzard for firing GOSSIP_SHOW and then GOSSIP_CLOSED when ForceGossip is false...
-			if not Storyline_Data.config.forceGossip then
+			if not ForceGossip() then
 				storylineFrameShouldOpen = true;
 				C_Timer.After(0.5, function()
 					if storylineFrameShouldOpen then

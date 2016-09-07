@@ -425,7 +425,28 @@ function Storyline_API.addon:OnEnable()
 		Storyline_Data.npc_blacklist = {};
 	end
 
-	ForceGossip = function() return Storyline_Data.config.forceGossip == true end
+	-- List of IDs for NPCs that are buggy when ForceGossip returns true
+	local fuckingNPCIDs = {
+		["110725"] = true, -- Archon Torias (Priests order hall)
+		["108018"] = true, -- Archivist Melinda (Warlocks order hall)
+		["108050"] = true, -- Survivalist Bahn (Hunters order hall)
+		["110599"] = true, -- Loramus Thalipedes (Demon hunters order hall)
+		["108527"] = true, -- Loramus Thalipedes (Demon hunters order hall) again
+		["107994"] = true, -- Einar the Runecaster (Warriors order hall)
+		["108331"] = true, -- Chronicler Elrianne (Mages order hall)
+		["109901"] = true, -- Sir Alamande Graythorn (Paladins order hall)
+		["112199"] = true, -- Journeyman Goldmine (Shamans order hall)
+		["97485"]  = true, -- Archivist Zubashi (Death knights order hall)
+		["98939"]  = true, -- Number Nine Jia (Monks order hall)
+		["105998"] = true, -- Winstone Wolfe (Rogues order hall)
+		["97989"]  = true, -- Leafbeard the Storied (Druids order hall)
+		["105998"] = true, -- Winstone Wolfe (Rogues order hall)
+	}
+
+	ForceGossip = function()
+		-- return if the option is enabled and check if the NPC is not buggy (thanks Blizzard)
+		return Storyline_Data.config.forceGossip and not fuckingNPCIDs[select(6, strsplit("-", UnitGUID("target") or ""))];
+	end
 
 	Storyline_API.locale.init();
 
