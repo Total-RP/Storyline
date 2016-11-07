@@ -369,6 +369,28 @@ end
 
 local displayBuilder = {};
 
+local statusBar = Storyline_NPCFriendshipStatusBar;
+local GetFriendshipReputation = GetFriendshipReputation;
+
+local function updateNPCFrienshipSatusBar()
+	local id, rep, maxRep, name, text, texture, reaction, threshold, nextThreshold = GetFriendshipReputation();
+	if ( id and id > 0 ) then
+		if ( not nextThreshold ) then
+			threshold, nextThreshold, rep = 0, 1, 1;
+		end
+		if ( texture ) then
+			statusBar.icon:SetTexture(texture);
+		else
+			statusBar.icon:SetTexture("Interface\\Common\\friendship-heart");
+		end
+		statusBar:SetMinMaxValues(threshold, nextThreshold);
+		statusBar:SetValue(rep);
+		statusBar:Show();
+	else
+		statusBar:Hide();
+	end
+end
+
 eventHandlers["GOSSIP_SHOW"] = function()
 	local hasGossip, hasAvailable, hasActive = GetNumGossipOptions() > 0, GetNumGossipAvailableQuests() > 0, GetNumGossipActiveQuests() > 0;
 	local previous;
@@ -446,6 +468,8 @@ eventHandlers["GOSSIP_SHOW"] = function()
 		keyBinding = keyBinding + 1;
 	end
 
+	updateNPCFrienshipSatusBar();
+
 end
 
 eventHandlers["QUEST_GREETING"] = function()
@@ -500,6 +524,8 @@ eventHandlers["QUEST_GREETING"] = function()
 		end
 		keyBinding = keyBinding + 1;
 	end
+
+	updateNPCFrienshipSatusBar();
 end
 
 eventHandlers["QUEST_DETAIL"] = function()
@@ -535,6 +561,8 @@ eventHandlers["QUEST_DETAIL"] = function()
 		local _, icon = GetQuestItemInfo("required", 1);
 		Storyline_NPCFrameObjectivesImage:SetTexture(icon);
 	end
+
+	updateNPCFrienshipSatusBar();
 end
 
 eventHandlers["QUEST_PROGRESS"] = function()
@@ -634,6 +662,8 @@ eventHandlers["QUEST_PROGRESS"] = function()
 	end
 
 	Storyline_NPCFrameObjectivesContent:SetHeight(contentHeight);
+
+	updateNPCFrienshipSatusBar();
 end
 
 eventHandlers["QUEST_COMPLETE"] = function(eventInfo)
@@ -875,6 +905,8 @@ eventHandlers["QUEST_COMPLETE"] = function(eventInfo)
 	Storyline_NPCFrameRewardsItemIcon:SetTexture(bestIcon);
 	contentHeight = contentHeight + Storyline_NPCFrameRewards.Content.Title:GetHeight() + 15;
 	Storyline_NPCFrameRewards.Content:SetHeight(contentHeight);
+
+	updateNPCFrienshipSatusBar();
 end
 
 local function handleEventSpecifics(event, texts, textIndex, eventInfo)
