@@ -364,7 +364,6 @@ local function decorateSkillPointButton(button, texture, name, count, tt, ttsub)
 end
 
 local function decorateSpellButton(button, texture, name, rewardSpellIndex)
-	print(rewardSpellIndex);
 	button.Icon:SetTexture(texture);
 	button.Name:SetText(name);
 	button.Count:Hide();
@@ -391,11 +390,24 @@ end
 local function decorateFollowerButton(button, followerID)
 	local followerInfo = C_Garrison.GetFollowerInfo(followerID);
 	button.Name:SetText(followerInfo.name);
-	button.Icon:SetTexture(followerInfo.portraitIconID or "Interface\\Garrison\\Portraits\\FollowerPortrait_NoPortrait")
+	button.Icon:SetTexture(followerInfo.portraitIconID or "Interface\\Garrison\\Portraits\\FollowerPortrait_NoPortrait");
+
+	local showILevelOnFollower = followerInfo.followerTypeID and GarrisonFollowerOptions[followerInfo.followerTypeID].showILevelOnFollower or false;
+	local hideLevelOnFollower = followerInfo.isTroop or (followerInfo.quality < GarrisonFollowerOptions[followerInfo.followerTypeID].minQualityLevelToShowLevel);
+
+	if (hideLevelOnFollower) then
+		button.Count:Hide();
+	elseif showILevelOnFollower then
+		button.Count:Show();
+		button.Count:SetText(followerInfo.iLevel);
+	else
+		button.Count:Show();
+		button.Count:SetText(followerInfo.level);
+	end
+
 	button.ID = followerID;
 
 	button:SetScript("OnEnter", function(self)
-		GameTooltip:Hide();
 		GarrisonFollowerTooltip:ClearAllPoints();
 		GarrisonFollowerTooltip:SetPoint("BOTTOMLEFT", self, "TOPRIGHT");
 		local link = C_Garrison.GetFollowerLinkByID(self.ID);
@@ -403,13 +415,19 @@ local function decorateFollowerButton(button, followerID)
 
 		GarrisonFollowerTooltip_Show(tonumber(garrisonFollowerID), false, tonumber(quality), tonumber(level), 0, 0, tonumber(itemLevel), tonumber(spec1), tonumber(ability1), tonumber(ability2), tonumber(ability3), tonumber(ability4), tonumber(trait1), tonumber(trait2), tonumber(trait3), tonumber(trait4));
 	end);
+
+	button:SetScript("OnLeave", function(self)
+		GarrisonFollowerTooltip:Hide();
+	end)
 end
 
 local function dispatchSpellButtonDecorator(button, buttonInfo)
-	if button.spellBucketType == QUEST_INFO_SPELL_REWARD_ORDERING.QUEST_SPELL_REWARD_TYPE_AURA then
-		decorateSpellButton(button, buttonInfo.icon, buttonInfo.text, buttonInfo.rewardSpellIndex);
-	elseif button.spellBucketType == QUEST_INFO_SPELL_REWARD_ORDERING.QUEST_SPELL_REWARD_TYPE_FOLLOWER then
+	if buttonInfo.garrFollowerID then
+		debug("Spell reward is a follower.");
 		decorateFollowerButton(button, buttonInfo.garrFollowerID)
+	elseif button.spellBucketType == QUEST_INFO_SPELL_REWARD_ORDERING.QUEST_SPELL_REWARD_TYPE_AURA then
+		debug("Spell reward is aura.");
+		decorateSpellButton(button, buttonInfo.icon, buttonInfo.text, buttonInfo.rewardSpellIndex);
 	end
 end
 
@@ -858,27 +876,6 @@ eventHandlers["QUEST_COMPLETE"] = function(eventInfo)
 						spellBucketType = spellBucketType,
 						isUsable = true,
 					});
-
-					--						local anchorFrame;
-					--						if garrFollowerID then
-					--							local followerFrame = rewardsFrame.followerRewardPool:Acquire();
-					--							local followerInfo = C_Garrison.GetFollowerInfo(garrFollowerID);
-					--							followerFrame.Name:SetText(followerInfo.name);
-					--							followerFrame.Class:SetAtlas(followerInfo.classAtlas);
-					--							followerFrame.PortraitFrame:SetupPortrait(followerInfo);
-					--							followerFrame.ID = garrFollowerID;
-					--							followerFrame:Show();
-					--
-					--							anchorFrame = followerFrame;
-					--						else
-					--							local spellRewardFrame = rewardsFrame.spellRewardPool:Acquire();
-					--							spellRewardFrame.Icon:SetTexture(texture);
-					--							spellRewardFrame.Name:SetText(name);
-					--							spellRewardFrame.rewardSpellIndex = rewardSpellIndex;
-					--							spellRewardFrame:Show();
-					--
-					--							anchorFrame = spellRewardFrame;
-					--						end
 				end
 			end
 		end
@@ -991,53 +988,6 @@ eventHandlers["QUEST_COMPLETE"] = function(eventInfo)
 
 		contentHeight = contentHeight + gridHeight;
 	end
-
-	--[[local texture, name, isTradeskillSpell, isSpellLearned, hideSpellLearnText, isBoostSpell, garrFollowerID = GetRewardSpell();
-	local spellReward = texture and (not isBoostSpell or IsCharacterNewlyBoosted()) and (not garrFollowerID or not C_Garrison.IsFollowerCollected(garrFollowerID));
-
-	if spellReward then
-
-		if isTradeskillSpell then
-			Storyline_NPCFrameRewards.Content.RewardTextSpell:SetText(REWARD_TRADESKILL_SPELL);
-		elseif isBoostSpell then
-			Storyline_NPCFrameRewards.Content.RewardTextSpell:SetText(REWARD_ABILITY);
-		elseif garrFollowerID then
-			Storyline_NPCFrameRewards.Content.RewardTextSpell:SetText(REWARD_FOLLOWER);
-		elseif not isSpellLearned then
-			Storyline_NPCFrameRewards.Content.RewardTextSpell:SetText(REWARD_AURA);
-		else
-			Storyline_NPCFrameRewards.Content.RewardTextSpell:SetText(REWARD_SPELL);
-		end
-
-		Storyline_NPCFrameRewards.Content.RewardTextSpell:Show();
-		Storyline_NPCFrameRewards.Content.RewardTextSpell:SetPoint("TOP", previousForChoice, "BOTTOM", 0, -5);
-		contentHeight = contentHeight + 18;
-		previousForChoice = Storyline_NPCFrameRewards.Content.RewardTextSpell;
-
-		if garrFollowerID then
-			local questItem = Storyline_NPCFrameRewards.Content.FollowerFrame;
-			questItem:SetPoint("TOP", previousForChoice, "BOTTOM", 0, -5);
-			questItem:Show();
-			questItem.ID = garrFollowerID;
-			local followerInfo = GetFollowerInfo(garrFollowerID);
-			questItem.Name:SetText(followerInfo.name);
-			questItem.PortraitFrame.Level:SetText(followerInfo.level);
-			questItem.Class:SetAtlas(followerInfo.classAtlas);
-			local color = ITEM_QUALITY_COLORS[followerInfo.quality];
-			questItem.PortraitFrame.PortraitRingQuality:SetVertexColor(color.r, color.g, color.b);
-			questItem.PortraitFrame.LevelBorder:SetVertexColor(color.r, color.g, color.b);
-			GarrisonFollowerPortrait_Set(questItem.PortraitFrame.Portrait, followerInfo.portraitIconID);
-			contentHeight = contentHeight + 70;
-			previousForChoice = questItem;
-		else
-			local questItem = Storyline_NPCFrameRewards.Content.SpellFrame;
-			questItem:Show();
-			questItem.Icon:SetTexture(texture);
-			questItem.Name:SetText(name);
-			contentHeight = contentHeight + 40;
-			previousForChoice = questItem;
-		end
-	end]]
 
 	showQuestPortraitFrame();
 

@@ -21,7 +21,7 @@
 local getId = Storyline_API.lib.generateID;
 
 -- WOW API
-local after, tostring = C_Timer.After, tostring;
+local after, tostring, print = C_Timer.After, tostring, print;
 
 ---
 -- I am using this little local function because I always forget a print or two :P
@@ -31,8 +31,11 @@ local after, tostring = C_Timer.After, tostring;
 -- @param message
 --
 local debug = function(message)
+	local DEFAULT_DEBUG_MESSAGE = "Debug function called, but message was empty ¯\\_(^_^)_/¯";
+	local header = "|cffffa500[Storyline debug]|r: %s"
+
 	if Storyline_Data.config.debug then
-		print(message);
+		print(header:format(message or DEFAULT_DEBUG_MESSAGE));
 	end
 end
 Storyline_API.debug = debug;
@@ -60,7 +63,7 @@ Storyline_API.getQuestIcon = getQuestIcon;
 
 local function getQuestActiveIcon(isComplete)
 	local questIcon = "|T";
-	if (isComplete) then
+	if isComplete then
 		questIcon = questIcon .. "Interface\\GossipFrame\\ActiveQuestIcon:20:20";
 	else
 		questIcon = questIcon .. "Interface\\GossipFrame\\IncompleteQuestIcon:20:20";
