@@ -67,7 +67,7 @@ local GetGossipText, GetRewardText, GetQuestText = GetGossipText, GetRewardText,
 local GetItemInfo, GetContainerNumSlots, GetContainerItemLink, EquipItemByName = GetItemInfo, GetContainerNumSlots, GetContainerItemLink, EquipItemByName;
 local InCombatLockdown, GetInventorySlotInfo, GetInventoryItemLink = InCombatLockdown, GetInventorySlotInfo, GetInventoryItemLink;
 local GetQuestCurrencyInfo, GetMaxRewardCurrencies, GetRewardTitle = GetQuestCurrencyInfo, GetMaxRewardCurrencies, GetRewardTitle;
-local GarrisonFollowerPortrait_Set, GetFollowerInfo = GarrisonFollowerPortrait_Set, C_Garrison.GetFollowerInfo;
+local GetFollowerInfo = C_Garrison.GetFollowerInfo;
 local GetQuestMoneyToGet, GetMoney, GetNumQuestCurrencies = GetQuestMoneyToGet, GetMoney, GetNumQuestCurrencies;
 local GetSuggestedGroupNum = GetSuggestedGroupNum;
 local UnitIsDead = UnitIsDead;
@@ -363,6 +363,56 @@ local function decorateSkillPointButton(button, texture, name, count, tt, ttsub)
 	button:SetScript("OnClick", nil);
 end
 
+local function decorateSpellButton(button, texture, name, rewardSpellIndex)
+	print(rewardSpellIndex);
+	button.Icon:SetTexture(texture);
+	button.Name:SetText(name);
+	button.Count:Hide();
+	button.rewardSpellIndex = rewardSpellIndex;
+	button:SetScript("OnEnter", function(self)
+		GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
+		if ( QuestInfoFrame.questLog ) then
+			GameTooltip:SetQuestLogRewardSpell(self.rewardSpellIndex);
+		else
+			GameTooltip:SetQuestRewardSpell(self.rewardSpellIndex);
+		end
+	end);
+	button:SetScript("OnClick", function(self)
+		if ( IsModifiedClick("CHATLINK") ) then
+			if ( QuestInfoFrame.questLog ) then
+				ChatEdit_InsertLink(GetQuestLogSpellLink(self.rewardSpellIndex));
+			else
+				ChatEdit_InsertLink(GetQuestSpellLink(self.rewardSpellIndex));
+			end
+		end
+	end);
+end
+
+local function decorateFollowerButton(button, followerID)
+	local followerInfo = C_Garrison.GetFollowerInfo(followerID);
+	button.Name:SetText(followerInfo.name);
+	button.Icon:SetTexture(followerInfo.portraitIconID or "Interface\\Garrison\\Portraits\\FollowerPortrait_NoPortrait")
+	button.ID = followerID;
+
+	button:SetScript("OnEnter", function(self)
+		GameTooltip:Hide();
+		GarrisonFollowerTooltip:ClearAllPoints();
+		GarrisonFollowerTooltip:SetPoint("BOTTOMLEFT", self, "TOPRIGHT");
+		local link = C_Garrison.GetFollowerLinkByID(self.ID);
+		local _, garrisonFollowerID, quality, level, itemLevel, ability1, ability2, ability3, ability4, trait1, trait2, trait3, trait4, spec1 = strsplit(":", link);
+
+		GarrisonFollowerTooltip_Show(tonumber(garrisonFollowerID), false, tonumber(quality), tonumber(level), 0, 0, tonumber(itemLevel), tonumber(spec1), tonumber(ability1), tonumber(ability2), tonumber(ability3), tonumber(ability4), tonumber(trait1), tonumber(trait2), tonumber(trait3), tonumber(trait4));
+	end);
+end
+
+local function dispatchSpellButtonDecorator(button, buttonInfo)
+	if button.spellBucketType == QUEST_INFO_SPELL_REWARD_ORDERING.QUEST_SPELL_REWARD_TYPE_AURA then
+		decorateSpellButton(button, buttonInfo.icon, buttonInfo.text, buttonInfo.rewardSpellIndex);
+	elseif button.spellBucketType == QUEST_INFO_SPELL_REWARD_ORDERING.QUEST_SPELL_REWARD_TYPE_FOLLOWER then
+		decorateFollowerButton(button, buttonInfo.garrFollowerID)
+	end
+end
+
 --*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
 -- EVENT PART
 --*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
@@ -653,6 +703,8 @@ eventHandlers["QUEST_PROGRESS"] = function()
 				decorateCurrencyButton(button, buttonInfo.index, buttonInfo.rewardType, buttonInfo.icon, buttonInfo.text, buttonInfo.count);
 			elseif buttonInfo.type == "item" then
 				decorateItemButton(button, buttonInfo.index, buttonInfo.rewardType, buttonInfo.icon, buttonInfo.text, buttonInfo.count, buttonInfo.isUsable);
+			elseif buttonInfo.type == "spell" then
+				dispatchSpellButtonDecorator(button, buttonInfo);
 			else
 				decorateStandardButton(button, buttonInfo.icon, buttonInfo.text, buttonInfo.tooltipTitle, buttonInfo.tooltipSub, buttonInfo.isNotUsable);
 			end
@@ -664,6 +716,14 @@ eventHandlers["QUEST_PROGRESS"] = function()
 	Storyline_NPCFrameObjectivesContent:SetHeight(contentHeight);
 
 	updateNPCFrienshipSatusBar();
+end
+
+local function AddSpellToBucket(spellBuckets, type, rewardSpellIndex)
+	if not spellBuckets[type] then
+		spellBuckets[type] = {};
+	end
+
+	table.insert(spellBuckets[type], rewardSpellIndex);
 end
 
 eventHandlers["QUEST_COMPLETE"] = function(eventInfo)
@@ -747,6 +807,84 @@ eventHandlers["QUEST_COMPLETE"] = function(eventInfo)
 		end
 	end
 
+	-- Spells
+	local numSpellRewards = GetNumRewardSpells();
+	local numQuestSpellRewards = 0;
+
+	for rewardSpellIndex = 1, numSpellRewards do
+		local texture, name, isTradeskillSpell, isSpellLearned, hideSpellLearnText, isBoostSpell, garrFollowerID, spellID = GetRewardSpell(rewardSpellIndex);
+		local knownSpell = IsSpellKnownOrOverridesKnown(spellID);
+
+		-- only allow the spell reward if user can learn it
+		if ( texture and not knownSpell and (not isBoostSpell or IsCharacterNewlyBoosted()) and (not garrFollowerID or not C_Garrison.IsFollowerCollected(garrFollowerID)) ) then
+			numQuestSpellRewards = numQuestSpellRewards + 1;
+		end
+	end
+
+	-- Setup spell rewards
+	if ( numQuestSpellRewards > 0 ) then
+		local spellBuckets = {};
+
+		for rewardSpellIndex = 1, numSpellRewards do
+			local texture, name, isTradeskillSpell, isSpellLearned, hideSpellLearnText, isBoostSpell, garrFollowerID, spellID = GetRewardSpell(rewardSpellIndex);
+			local knownSpell = IsSpellKnownOrOverridesKnown(spellID);
+			if texture and not knownSpell and (not isBoostSpell or IsCharacterNewlyBoosted()) and (not garrFollowerID or not C_Garrison.IsFollowerCollected(garrFollowerID)) then
+				if ( isTradeskillSpell ) then
+					AddSpellToBucket(spellBuckets, QUEST_SPELL_REWARD_TYPE_TRADESKILL_SPELL, rewardSpellIndex);
+				elseif ( isBoostSpell ) then
+					AddSpellToBucket(spellBuckets, QUEST_SPELL_REWARD_TYPE_ABILITY, rewardSpellIndex);
+				elseif ( garrFollowerID ) then
+					AddSpellToBucket(spellBuckets, QUEST_SPELL_REWARD_TYPE_FOLLOWER, rewardSpellIndex);
+				elseif ( not isSpellLearned ) then
+					AddSpellToBucket(spellBuckets, QUEST_SPELL_REWARD_TYPE_AURA, rewardSpellIndex);
+				else
+					AddSpellToBucket(spellBuckets, QUEST_SPELL_REWARD_TYPE_SPELL, rewardSpellIndex);
+				end
+			end
+		end
+
+		for orderIndex, spellBucketType in ipairs(QUEST_INFO_SPELL_REWARD_ORDERING) do
+			local spellBucket = spellBuckets[spellBucketType];
+			if spellBucket then
+				for i, rewardSpellIndex in ipairs(spellBucket) do
+					local texture, name, isTradeskillSpell, isSpellLearned, _, isBoostSpell, garrFollowerID = GetRewardSpell(rewardSpellIndex);
+					bestIcon = texture;
+					tinsert(displayBuilder, {
+						text = name,
+						icon = texture,
+						type = "spell",
+						garrFollowerID = garrFollowerID,
+						rewardSpellIndex = rewardSpellIndex,
+						spellBucketType = spellBucketType,
+						isUsable = true,
+					});
+
+					--						local anchorFrame;
+					--						if garrFollowerID then
+					--							local followerFrame = rewardsFrame.followerRewardPool:Acquire();
+					--							local followerInfo = C_Garrison.GetFollowerInfo(garrFollowerID);
+					--							followerFrame.Name:SetText(followerInfo.name);
+					--							followerFrame.Class:SetAtlas(followerInfo.classAtlas);
+					--							followerFrame.PortraitFrame:SetupPortrait(followerInfo);
+					--							followerFrame.ID = garrFollowerID;
+					--							followerFrame:Show();
+					--
+					--							anchorFrame = followerFrame;
+					--						else
+					--							local spellRewardFrame = rewardsFrame.spellRewardPool:Acquire();
+					--							spellRewardFrame.Icon:SetTexture(texture);
+					--							spellRewardFrame.Name:SetText(name);
+					--							spellRewardFrame.rewardSpellIndex = rewardSpellIndex;
+					--							spellRewardFrame:Show();
+					--
+					--							anchorFrame = spellRewardFrame;
+					--						end
+				end
+			end
+		end
+	end
+
+
 	-- Item reward
 	if GetNumQuestChoices() == 1 or GetNumQuestRewards() > 0 then
 		if GetNumQuestChoices() == 1 then
@@ -791,6 +929,8 @@ eventHandlers["QUEST_COMPLETE"] = function(eventInfo)
 		placeOnGrid(button, Storyline_NPCFrameRewards.Content.RewardText1);
 		if buttonInfo.type == "currency" then
 			decorateCurrencyButton(button, buttonInfo.index, "reward", buttonInfo.icon, buttonInfo.text, buttonInfo.count);
+		elseif buttonInfo.type == "spell" then
+			dispatchSpellButtonDecorator(button, buttonInfo);
 		elseif buttonInfo.type == "item" then
 			decorateItemButton(button, buttonInfo.index, buttonInfo.rewardType, buttonInfo.icon, buttonInfo.text, buttonInfo.count, buttonInfo.isUsable);
 		elseif buttonInfo.type == "skillpoint" then
@@ -852,7 +992,6 @@ eventHandlers["QUEST_COMPLETE"] = function(eventInfo)
 		contentHeight = contentHeight + gridHeight;
 	end
 
-	-- TODO GetRewardSpell removed in Legion. Look for what they are using now and adapt this
 	--[[local texture, name, isTradeskillSpell, isSpellLearned, hideSpellLearnText, isBoostSpell, garrFollowerID = GetRewardSpell();
 	local spellReward = texture and (not isBoostSpell or IsCharacterNewlyBoosted()) and (not garrFollowerID or not C_Garrison.IsFollowerCollected(garrFollowerID));
 
@@ -969,6 +1108,8 @@ local function refreshRewards(...)
 
 		if buttonInfo.type == "currency" then
 			decorateCurrencyButton(button, buttonInfo.index, "reward", buttonInfo.icon, buttonInfo.text, buttonInfo.count);
+		elseif buttonInfo.type == "spell" then
+			dispatchSpellButtonDecorator(button, buttonInfo);
 		elseif buttonInfo.type == "item" then
 			decorateItemButton(button, buttonInfo.index, buttonInfo.rewardType, buttonInfo.icon, buttonInfo.text, buttonInfo.count, buttonInfo.isUsable);
 		elseif buttonInfo.type == "skillpoint" then
