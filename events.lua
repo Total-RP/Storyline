@@ -440,17 +440,32 @@ local displayBuilder = {};
 local statusBar = Storyline_NPCFriendshipStatusBar;
 local GetFriendshipReputation = GetFriendshipReputation;
 
+local customReputationColors = {
+	[1391545] = { -- Arcane thirst of the Nightfallen
+		r = .227,
+		g = .203,
+		b = .745
+	},
+	["DEFAULT"] = {
+		r = .709,
+		g = .396,
+		b = .031
+	}
+}
+
 local function updateNPCFrienshipSatusBar()
 	local id, rep, maxRep, name, text, texture, reaction, threshold, nextThreshold = GetFriendshipReputation();
 	if ( id and id > 0 ) then
 		if ( not nextThreshold ) then
 			threshold, nextThreshold, rep = 0, 1, 1;
 		end
-		if ( texture ) then
-			statusBar.icon:SetTexture(texture);
-		else
-			statusBar.icon:SetTexture("Interface\\Common\\friendship-heart");
-		end
+
+		statusBar.icon:SetTexture(texture or "Interface\\Common\\friendship-heart");
+
+		-- Nice touch: we will recolor the status bar for some specific rep, because its prettier :3
+		local statusBarColor = customReputationColors[texture] or customReputationColors["DEFAULT"];
+		statusBar:SetStatusBarColor(statusBarColor.r, statusBarColor.g, statusBarColor.b);
+
 		statusBar:SetMinMaxValues(threshold, nextThreshold);
 		statusBar:SetValue(rep);
 		statusBar:Show();
