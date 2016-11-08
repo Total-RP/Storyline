@@ -72,6 +72,7 @@ local GetQuestMoneyToGet, GetMoney, GetNumQuestCurrencies = GetQuestMoneyToGet, 
 local GetSuggestedGroupNum = GetSuggestedGroupNum;
 local UnitIsDead = UnitIsDead;
 local QuestIsFromAreaTrigger, QuestGetAutoAccept = QuestIsFromAreaTrigger, QuestGetAutoAccept;
+local BreakUpLargeNumbers = BreakUpLargeNumbers;
 -- UI
 local Storyline_NPCFrameChatOption1, Storyline_NPCFrameChatOption2, Storyline_NPCFrameChatOption3 = Storyline_NPCFrameChatOption1, Storyline_NPCFrameChatOption2, Storyline_NPCFrameChatOption3;
 local Storyline_NPCFrameObjectives, Storyline_NPCFrameObjectivesNo, Storyline_NPCFrameObjectivesYes = Storyline_NPCFrameObjectives, Storyline_NPCFrameObjectivesNo, Storyline_NPCFrameObjectivesYes;
@@ -236,8 +237,11 @@ local function acceptQuest()
 	elseif QuestGetAutoAccept() then
 		AcknowledgeAutoAcceptQuest();
 		PlayAutoAcceptQuestSound();
+		Storyline_API.layout.hideStorylineFrame();
 	else
 		AcceptQuest();
+		-- Some quests do not automatically close the UI. Weird. TODO Look where the issue is here
+		Storyline_API.layout.hideStorylineFrame();
 	end
 end
 
@@ -761,7 +765,7 @@ eventHandlers["QUEST_COMPLETE"] = function(eventInfo)
 	if xp > 0 then
 		bestIcon = "Interface\\ICONS\\xp_icon";
 		tinsert(displayBuilder, {
-			text = xp .. " " .. XP,
+			text = BreakUpLargeNumbers(xp) .. " " .. XP,
 			icon = bestIcon,
 			tooltipTitle = ERR_QUEST_REWARD_EXP_I:format(xp)
 		});
