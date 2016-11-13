@@ -383,10 +383,10 @@
 				</Frames>
 			</Frame>
 
-			<StatusBar name="Storyline_NPCFriendshipStatusBar" hidden="true" frameStrata="TOOLTIP">
+			<StatusBar name="Storyline_NPCFriendshipStatusBar" hidden="true" frameStrata="DIALOG">
 				<Size x="230" y="14"/>
 				<Anchors>
-					<Anchor point="TOPLEFT" y="-2" x="25" relativePoint="TOPLEFT" relativeTo="Storyline_NPCFrameChat"/>
+					<Anchor point="TOPRIGHT" y="8" x="-6" relativePoint="TOPRIGHT" relativeTo="Storyline_NPCFrameChat"/>
 				</Anchors>
 				<HitRectInsets>
 					<AbsInset left="-25" right="0" top="-15" bottom="0"/>
@@ -447,9 +447,10 @@
 					<OnLoad>
 						self:SetStatusBarTexture(1, 1, 1, "BORDER", -1);
 						self:GetStatusBarTexture():SetGradient("VERTICAL", 8/255, 93/255, 72/255, 11/255, 136/255, 105/255);
-						self:SetStatusBarColor(1, 0, 0);
 					</OnLoad>
-					<OnEnter function="NPCFriendshipStatusBar_OnEnter"/>
+					<OnEnter>
+						ShowFriendshipReputationTooltip(nil, self, "ANCHOR_TOPRIGHT")
+					</OnEnter>
 					<OnLeave>
 						GameTooltip:Hide();
 					</OnLeave>
