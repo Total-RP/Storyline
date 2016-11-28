@@ -40,7 +40,7 @@ local selectMultipleActive = Storyline_API.selectMultipleActive;
 local selectFirstActive = Storyline_API.selectFirstActive;
 local selectMultipleAvailable = Storyline_API.selectMultipleAvailable;
 local selectFirstAvailable = Storyline_API.selectFirstAvailable;
-local selectFirstGossip, selectMultipleGossip = Storyline_API.selectFirstGossip, Storyline_API.selectMultipleGossip;
+local selectFirstGossip, 	selectMultipleGossip = Storyline_API.selectFirstGossip, Storyline_API.selectMultipleGossip;
 local selectMultipleRewards, selectFirstGreetingActive = Storyline_API.selectMultipleRewards, Storyline_API.selectFirstGreetingActive;
 local getBindingIcon = Storyline_API.getBindingIcon;
 local hideStorylineFrame = Storyline_API.layout.hideStorylineFrame;
@@ -478,142 +478,86 @@ local function updateNPCFrienshipSatusBar()
 	end
 end
 
-eventHandlers["GOSSIP_SHOW"] = function()
-	local hasGossip, hasAvailable, hasActive = GetNumGossipOptions() > 0, GetNumGossipAvailableQuests() > 0, GetNumGossipActiveQuests() > 0;
-	local previous;
-	local keyBinding = 1;
-
-	-- Available quests
-	if hasAvailable then
-		Storyline_NPCFrameChatOption1:Show();
-		Storyline_NPCFrameChatOption1:SetScript("OnEnter", function() playSelfAnim(65) end);
-		Storyline_NPCFrameChatOption1:ClearAllPoints();
-		Storyline_NPCFrameChatOption1:SetPoint("LEFT", OPTIONS_MARGIN, 0);
-		Storyline_NPCFrameChatOption1:SetPoint("RIGHT", -OPTIONS_MARGIN, 0);
-		Storyline_NPCFrameChatOption1:SetPoint("TOP", 0, OPTIONS_TOP);
-
-		previous = Storyline_NPCFrameChatOption1;
-		if GetNumGossipAvailableQuests() == 1 then
-			local title, lvl, isTrivial, frequency, isRepeatable, isLegendary = GetGossipAvailableQuests();
-			local icon = getQuestIcon(frequency, isRepeatable, isLegendary, isTrivial);
-			Storyline_NPCFrameChatOption1:SetText(getBindingIcon(keyBinding) .. gossipColor .. icon .. " " .. title);
-			Storyline_NPCFrameChatOption1:SetScript("OnClick", selectFirstAvailable);
-		else
-			Storyline_NPCFrameChatOption1:SetText(getBindingIcon(keyBinding) .. gossipColor .. "|TInterface\\GossipFrame\\AvailableQuestIcon:20:20|t " .. loc("SL_WELL"));
-			Storyline_NPCFrameChatOption1:SetScript("OnClick", selectMultipleAvailable);
+local buttonDecorators = {
+	[Storyline_API.dialogs.BUCKET_TYPE.COMPLETED_QUEST] = function(button, data, index)
+		button.text:SetText(data.title);
+		button.icon:SetTexture(Storyline_API.buttons.getIconTextureForActiveQuestType(data.frequency, data.isRepeatable, data.isLegendary));
+		button:SetScript("OnMouseUp", function()
+			SelectGossipActiveQuest(index);
+		end);
+	end,
+	[Storyline_API.dialogs.BUCKET_TYPE.AVAILABLE_QUEST] = function(button, data, index)
+		button.text:SetText(data.title);
+		button.icon:SetTexture(Storyline_API.buttons.getIconTextureForAvailableQuestType(data.frequency, data.isRepeatable, data.isLegendary));
+		if data.isTrivial then
+			button.icon:SetVertexColor(0.5, 0.5, 0.5);
 		end
-		keyBinding = keyBinding + 1;
+		button:SetScript("OnMouseUp", function()
+			SelectGossipAvailableQuest(index);
+		end);
+	end,
+	[Storyline_API.dialogs.BUCKET_TYPE.GOSSIP] = function(button, data, index)
+		button.text:SetText(data.text);
+		button.icon:SetTexture(Storyline_API.buttons.getIconTextureForGossipType(data.gossipType));
+		button:SetScript("OnMouseUp", function()
+			SelectGossipOption(index);
+		end);
+	end,
+	[Storyline_API.dialogs.BUCKET_TYPE.UNCOMPLETED_QUEST] = function(button, data, index)
+		button.text:SetText(data.title);
+		button.icon:SetTexture("Interface\\GossipFrame\\IncompleteQuestIcon");
+		button:SetScript("OnMouseUp", function()
+			SelectGossipActiveQuest(index);
+		end);
 	end
+}
 
-	-- Active options
-	if hasActive then
-		Storyline_NPCFrameChatOption2:Show();
-		Storyline_NPCFrameChatOption2:SetScript("OnEnter", function() playSelfAnim(60) end);
-		Storyline_NPCFrameChatOption2:ClearAllPoints();
-		Storyline_NPCFrameChatOption2:SetPoint("LEFT", OPTIONS_MARGIN, 0);
-		Storyline_NPCFrameChatOption2:SetPoint("RIGHT", -OPTIONS_MARGIN, 0);
-		if previous then
-			Storyline_NPCFrameChatOption2:SetPoint("TOP", previous, "BOTTOM", 0, -5);
-		else
-			Storyline_NPCFrameChatOption2:SetPoint("TOP", 0, OPTIONS_TOP);
-		end
-		previous = Storyline_NPCFrameChatOption2;
-		if GetNumGossipActiveQuests() == 1 then
-			local title, lvl, isTrivial, isComplete, isRepeatable = GetGossipActiveQuests();
-			Storyline_NPCFrameChatOption2:SetText(getBindingIcon(keyBinding) .. gossipColor .. getQuestActiveIcon(isComplete, isRepeatable) .. " " .. title);
-			Storyline_NPCFrameChatOption2:SetScript("OnClick", selectFirstActive);
-		else
-			Storyline_NPCFrameChatOption2:SetText(getBindingIcon(keyBinding) .. gossipColor .. "|TInterface\\GossipFrame\\ActiveQuestIcon:20:20|t " .. loc("SL_WELL"));
-			Storyline_NPCFrameChatOption2:SetScript("OnClick", selectMultipleActive);
-		end
-		keyBinding = keyBinding + 1;
+local function decorateChoiceButton(buttonIndex, data, index, previousFrame, bucketType)
+	local dialogChoiceFrame = Storyline_API.buttons.getButtonAtIndex(buttonIndex, Storyline_DialogChoicesScrollFrame.container, previousFrame);
+	C_Timer.After(0.05 * buttonIndex, function()
+		dialogChoiceFrame:Show();
+		dialogChoiceFrame.fadeIn:Play();
+	end);
+	if buttonIndex < 10 and Storyline_Data.config.useKeyboard then
+		dialogChoiceFrame.binding:SetText(buttonIndex);
+	else
+		dialogChoiceFrame.binding:SetText("");
 	end
-
-	-- Gossip options
-	if hasGossip then
-		Storyline_NPCFrameChatOption3:Show();
-		Storyline_NPCFrameChatOption3:SetScript("OnEnter", function() playSelfAnim(60) end);
-		Storyline_NPCFrameChatOption3:ClearAllPoints();
-		Storyline_NPCFrameChatOption3:SetPoint("LEFT", OPTIONS_MARGIN, 0);
-		Storyline_NPCFrameChatOption3:SetPoint("RIGHT", -OPTIONS_MARGIN, 0);
-		if previous then
-			Storyline_NPCFrameChatOption3:SetPoint("TOP", previous, "BOTTOM", 0, -5);
-		else
-			Storyline_NPCFrameChatOption3:SetPoint("TOP", 0, OPTIONS_TOP);
-		end
-		previous = Storyline_NPCFrameChatOption3;
-
-		local gossips = { GetGossipOptions() };
-		if GetNumGossipOptions() == 1 then
-			local gossip, gossipType = gossips[1], gossips[2];
-			Storyline_NPCFrameChatOption3:SetText(getBindingIcon(keyBinding) .. gossipColor .. "|TInterface\\GossipFrame\\" .. gossipType .. "GossipIcon:20:20|t " .. gossip);
-			Storyline_NPCFrameChatOption3:SetScript("OnClick", selectFirstGossip);
-		else
-			Storyline_NPCFrameChatOption3:SetText(getBindingIcon(keyBinding) .. gossipColor .. "|TInterface\\GossipFrame\\PetitionGossipIcon:20:20|t " .. loc("SL_WELL"));
-			Storyline_NPCFrameChatOption3:SetScript("OnClick", selectMultipleGossip);
-		end
-		keyBinding = keyBinding + 1;
-	end
-
-	updateNPCFrienshipSatusBar();
-
+	buttonDecorators[bucketType](dialogChoiceFrame, data, index);
+	Storyline_API.buttons.refreshButtonHeight(dialogChoiceFrame);
+	return dialogChoiceFrame;
 end
 
-eventHandlers["QUEST_GREETING"] = function()
-	local numActiveQuests = GetNumActiveQuests();
-	local numAvailableQuests = GetNumAvailableQuests();
-	local previous;
-	local keyBinding = 1;
+local function gossipEventHandler()
+	local dialogChoices = Storyline_API.dialogs.getChoices();
+	local buttonIndex = 0;
+	Storyline_API.buttons.hideAllButtons();
+	local previousFrame;
+	local totalButtonHeights = 0;
 
-	if numActiveQuests > 0 then
-		Storyline_NPCFrameChatOption1:Show();
-		Storyline_NPCFrameChatOption1:SetScript("OnEnter", function() playSelfAnim(65) end);
-		Storyline_NPCFrameChatOption1:ClearAllPoints();
-		Storyline_NPCFrameChatOption1:ClearAllPoints();
-		Storyline_NPCFrameChatOption1:SetPoint("LEFT", OPTIONS_MARGIN, 0);
-		Storyline_NPCFrameChatOption1:SetPoint("RIGHT", -OPTIONS_MARGIN, 0);
-		Storyline_NPCFrameChatOption1:SetPoint("TOP", 0, OPTIONS_TOP);
-
-		previous = Storyline_NPCFrameChatOption1;
-		if numActiveQuests == 1 then
-			local title, isComplete = GetActiveTitle(1);
-			local isTrivial, frequency, isRepeatable, isLegendary = GetAvailableQuestInfo(1);
-			Storyline_NPCFrameChatOption1:SetText(getBindingIcon(keyBinding) .. gossipColor .. getQuestActiveIcon(isComplete, isRepeatable) .. " " .. title);
-			Storyline_NPCFrameChatOption1:SetScript("OnClick", selectFirstGreetingActive);
-		else
-			Storyline_NPCFrameChatOption1:SetText(getBindingIcon(keyBinding) .. gossipColor .. "|TInterface\\GossipFrame\\ActiveQuestIcon:20:20|t " .. loc("SL_WELL"));
-			Storyline_NPCFrameChatOption1:SetScript("OnClick", selectMultipleActiveGreetings);
+	for bucketType, bucket in pairs(dialogChoices) do
+		for index, choice in pairs(bucket) do
+			buttonIndex = buttonIndex + 1;
+			local dialogChoiceFrame = decorateChoiceButton(buttonIndex, choice, index, previousFrame, bucketType);
+			totalButtonHeights = totalButtonHeights + dialogChoiceFrame:GetHeight() + 5;
+			previousFrame = dialogChoiceFrame;
 		end
-		keyBinding = keyBinding + 1;
 	end
 
-	if numAvailableQuests > 0 then
-		Storyline_NPCFrameChatOption2:Show();
-		Storyline_NPCFrameChatOption2:SetScript("OnEnter", function() playSelfAnim(60) end);
-		Storyline_NPCFrameChatOption2:ClearAllPoints();
-		Storyline_NPCFrameChatOption2:SetPoint("LEFT", OPTIONS_MARGIN, 0);
-		Storyline_NPCFrameChatOption2:SetPoint("RIGHT", -OPTIONS_MARGIN, 0);
-		if previous then
-			Storyline_NPCFrameChatOption2:SetPoint("TOP", previous, "BOTTOM", 0, -5);
+	if buttonIndex > 0 then
+		Storyline_DialogChoicesScrollFrame:Show();
+		if totalButtonHeights > 250 then
+			Storyline_DialogChoicesScrollFrame.borderBottom:Show();
 		else
-			Storyline_NPCFrameChatOption2:SetPoint("TOP", 0, OPTIONS_TOP);
+
 		end
-		previous = Storyline_NPCFrameChatOption2;
-		if numAvailableQuests == 1 then
-			local title, isComplete = GetAvailableTitle(1);
-			local isTrivial, frequency, isRepeatable, isLegendary = GetAvailableQuestInfo(1);
-			local icon = getQuestIcon(frequency, isRepeatable, isLegendary);
-			Storyline_NPCFrameChatOption2:SetText(getBindingIcon(keyBinding) .. gossipColor .. icon .. " " .. title);
-			Storyline_NPCFrameChatOption2:SetScript("OnClick", selectFirstGreetingAvailable);
-		else
-			Storyline_NPCFrameChatOption2:SetText(getBindingIcon(keyBinding) .. gossipColor .. "|TInterface\\GossipFrame\\AvailableQuestIcon:20:20|t " .. loc("SL_WELL"));
-			Storyline_NPCFrameChatOption2:SetScript("OnClick", selectMultipleAvailableGreetings);
-		end
-		keyBinding = keyBinding + 1;
 	end
 
 	updateNPCFrienshipSatusBar();
 end
+
+eventHandlers["GOSSIP_SHOW"] = gossipEventHandler;
+eventHandlers["QUEST_GREETING"] = gossipEventHandler;
 
 eventHandlers["QUEST_DETAIL"] = function()
 
@@ -642,7 +586,76 @@ eventHandlers["QUEST_DETAIL"] = function()
 		contentHeight = contentHeight + 10 + Storyline_NPCFrameObjectivesContent.GroupSuggestion:GetHeight();
 	end
 
+	local rewardsBucket = Storyline_API.rewards.getRewards();
+	if #rewardsBucket[Storyline_API.rewards.BUCKET_TYPES.RECEIVED] > 0 then
+		Storyline_NPCFrameObjectivesContent.rewards:SetText(REWARD_ITEMS_ONLY);
+		Storyline_NPCFrameObjectivesContent.rewards:Show();
+		local previousForChoice = Storyline_NPCFrameObjectivesContent.rewards;
+
+		resetGrid();
+		for rewardType, rewards in pairs(rewardsBucket[Storyline_API.rewards.BUCKET_TYPES.RECEIVED]) do
+			for _, reward in pairs(rewards) do
+				local button = getQuestButton(Storyline_NPCFrameObjectivesContent);
+				placeOnGrid(button, previousForChoice);
+				if rewardType == Storyline_API.rewards.REWARD_TYPES.XP or rewardType == Storyline_API.rewards.REWARD_TYPES.MONNEY then
+					decorateStandardButton(button, reward.icon, reward.text, reward.tooltipTitle, reward.tooltipSub);
+				elseif rewardType == "currency" then
+					decorateCurrencyButton(button, buttonInfo.index, "reward", buttonInfo.icon, buttonInfo.text, buttonInfo.count);
+				elseif rewardType == "spell" then
+					dispatchSpellButtonDecorator(button, buttonInfo);
+				elseif rewardType == Storyline_API.rewards.REWARD_TYPES.ITEMS then
+					decorateItemButton(button, reward.index, reward.rewardType, reward.icon, reward.text, reward.count, reward.isUsable);
+				elseif rewardType == "skillpoint" then
+					decorateSkillPointButton(button, buttonInfo.icon, buttonInfo.text, buttonInfo.count, buttonInfo.tooltipTitle);
+				else
+
+				end
+				previousForChoice = button;
+			end
+		end
+
+		contentHeight = contentHeight + 20 + Storyline_NPCFrameObjectivesContent.rewards:GetHeight();
+		contentHeight = contentHeight + gridHeight;
+	end
+
+	if rewardsBucket[Storyline_API.rewards.BUCKET_TYPES.CHOICE] then
+		if previousElementOnTheLeft then
+			Storyline_NPCFrameObjectivesContent.choices:SetPoint("TOPLEFT", previousElementOnTheLeft, "BOTTOMLEFT", 0, -5);
+		end
+		Storyline_NPCFrameObjectivesContent.choices:SetText(REWARD_CHOICES);
+		Storyline_NPCFrameObjectivesContent.choices:Show();
+		local previousForChoice = Storyline_NPCFrameObjectivesContent.choices;
+
+		resetGrid();
+		TRP3_API.utils.table.dump(rewardsBucket[Storyline_API.rewards.BUCKET_TYPES.CHOICE]);
+		for rewardType, rewards in pairs(rewardsBucket[Storyline_API.rewards.BUCKET_TYPES.CHOICE]) do
+			for _, reward in pairs(rewards) do
+				local button = getQuestButton(Storyline_NPCFrameObjectivesContent);
+				placeOnGrid(button, previousForChoice);
+				print(rewardType);
+				if rewardType == Storyline_API.rewards.REWARD_TYPES.XP or rewardType == Storyline_API.rewards.REWARD_TYPES.MONNEY then
+					decorateStandardButton(button, reward.icon, reward.text, reward.tooltipTitle, reward.tooltipSub);
+				elseif rewardType == "currency" then
+					decorateCurrencyButton(button, buttonInfo.index, "reward", buttonInfo.icon, buttonInfo.text, buttonInfo.count);
+				elseif rewardType == "spell" then
+					dispatchSpellButtonDecorator(button, buttonInfo);
+				elseif rewardType == Storyline_API.rewards.REWARD_TYPES.ITEMS then
+					decorateItemButton(button, reward.index, reward.rewardType, reward.icon, reward.text, reward.count, reward.isUsable);
+				elseif rewardType == "skillpoint" then
+					decorateSkillPointButton(button, buttonInfo.icon, buttonInfo.text, buttonInfo.count, buttonInfo.tooltipTitle);
+				else
+
+				end
+				previousForChoice = button;
+			end
+		end
+
+		contentHeight = contentHeight + 20 + Storyline_NPCFrameObjectivesContent.choices:GetHeight();
+		contentHeight = contentHeight + gridHeight;
+	end
+
 	Storyline_NPCFrameObjectivesContent:SetHeight(contentHeight);
+
 
 	if GetNumQuestItems() > 0 then
 		local _, icon = GetQuestItemInfo("required", 1);
@@ -1051,6 +1064,8 @@ local function handleEventSpecifics(event, texts, textIndex, eventInfo)
 	Storyline_NPCFrameChatOption3:SetScript("OnEnter", nil);
 	Storyline_NPCFrameObjectivesImage:SetTexture("Interface\\FriendsFrame\\FriendsFrameScrollIcon");
 	QuestFrame_HideQuestPortrait();
+	Storyline_API.buttons.hideAllButtons();
+	Storyline_NPCFrameObjectivesContent.rewards:Hide();
 
 	if textIndex == #texts and eventHandlers[event] then
 		eventHandlers[event](eventInfo);
@@ -1114,9 +1129,9 @@ local function playText(textIndex, targetModel)
 		Storyline_NPCFrameChatText:SetText(text);
 		text:gsub("[%.%?%!]+", function(finder)
 			animTab[#animTab + 1] = animationLib:GetDialogAnimation(targetModel.model, finder:sub(1, 1));
-			animTab[#animTab + 1] = 0;
 		end);
 	end
+	animTab[#animTab + 1] = 0;
 
 	if #animTab == 0 then
 		animTab[1] = 0;
@@ -1503,7 +1518,15 @@ function Storyline_API.initEventsStructure()
 	local storylineFrameShouldOpen = false;
 
 	for event, info in pairs(EVENT_INFO) do
-		registerHandler(event, function()
+		registerHandler(event, function(...)
+
+			-- Workaround quests auto accepted from items
+			if event == "QUEST_DETAIL" then
+				local questStartItemID = ...;
+				if(questStartItemID ~= nil and questStartItemID ~= 0) or (QuestGetAutoAccept() and QuestIsFromAreaTrigger()) then
+					return
+				end
+			end
 			if Storyline_Data.config.disableInInstances then
 				if IsInInstance() then
 					return

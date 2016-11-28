@@ -630,4 +630,76 @@ function Storyline_API.addon:OnEnable()
 	end);
 
 	Storyline_API.options.init();
+
+	---------------------------------------------
+	--- Buttons builder
+	---------------------------------------------
+	Storyline_API.buttons = {};
+	local buttons = {};
+
+	local animationLib = LibStub:GetLibrary("TRP-Dialog-Animation-DB");
+
+	function Storyline_API.buttons.getButtonAtIndex(index, parent, anchor)
+		local anchorPoint = "BOTTOM";
+		if not buttons[index] then
+			local button = CreateFrame("Frame", nil, parent, "Storyline_DialogChoice");
+			button:HookScript("OnMouseUp", function()
+				PlaySound("gsCharacterSelection");
+				Storyline_API.buttons.hideAllButtons();
+			end);
+			button:HookScript("OnEnter", function(self)
+				button.text:GetText():gsub("[%.%?%!]+", function(finder)
+					Storyline_API.playSelfAnim(animationLib:GetDialogAnimation(Storyline_NPCFrameModelsMe.model, finder:sub(1, 1)));
+				end);
+			end);
+			buttons[index] = button;
+		end
+		local button = buttons[index];
+		if not anchor then
+			anchor = parent;
+			anchorPoint = "TOP";
+		end
+		button:SetPoint("TOP", anchor, anchorPoint, 0, -5);
+		return button;
+	end
+
+	function Storyline_API.buttons.refreshButtonHeight(button)
+		button:SetHeight(button.text:GetHeight() + 25);
+	end
+
+	function Storyline_API.buttons.hideAllButtons()
+		Storyline_DialogChoicesScrollFrame:Hide();
+		Storyline_DialogChoicesScrollFrame.borderBottom:Hide();
+		Storyline_DialogChoicesScrollFrame.borderTop:Hide();
+		Storyline_DialogChoicesScrollFrame:Hide();
+		for _, button in pairs(buttons) do
+			button:Hide();
+			button.icon:SetVertexColor(1, 1, 1);
+		end
+	end
+
+	function Storyline_API.buttons.getIconTextureForGossipType(gossipType)
+		return "Interface\\GossipFrame\\" .. gossipType .. "GossipIcon";
+	end
+
+	function Storyline_API.buttons.getIconTextureForAvailableQuestType(frequency, isRepeatable, isLegendary)
+		local questIcon = "Interface\\GossipFrame\\AvailableQuestIcon";
+		if isLegendary then
+			questIcon = "Interface\\GossipFrame\\AvailableLegendaryQuestIcon";
+		elseif frequency == LE_QUEST_FREQUENCY_DAILY or frequency == LE_QUEST_FREQUENCY_WEEKLY or isRepeatable then
+			questIcon = "Interface\\GossipFrame\\DailyQuestIcon";
+		end
+		return questIcon;
+	end
+
+	function Storyline_API.buttons.getIconTextureForActiveQuestType(frequency, isRepeatable, isLegendary)
+		local questIcon = "Interface\\GossipFrame\\ActiveQuestIcon";
+		if isLegendary then
+			questIcon = "Interface\\GossipFrame\\ActiveLegendaryQuestIcon";
+		elseif frequency == LE_QUEST_FREQUENCY_DAILY or frequency == LE_QUEST_FREQUENCY_WEEKLY or isRepeatable then
+			questIcon = "Interface\\GossipFrame\\DailyActiveQuestIcon";
+		end
+		return questIcon;
+	end
+
 end

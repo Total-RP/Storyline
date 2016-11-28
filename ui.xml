@@ -203,6 +203,95 @@
 		</Scripts>
 	</Button>
 
+	<Frame name="Storyline_DialogChoice" virtual="true" hidden="true">
+		<Size x="450" y="50"/>
+		<Layers>
+			<Layer level="BACKGROUND">
+				<Texture file="Interface/AdventureMap/AdventureMap">
+					<Size y="13" />
+					<Anchors>
+						<Anchor point="TOP" />
+						<Anchor point="LEFT" />
+						<Anchor point="RIGHT" />
+					</Anchors>
+					<TexCoords left="0.34" right="0.78" top="0.30" bottom="0.325"/>
+				</Texture>
+				<Texture file="Interface/AdventureMap/AdventureMap">
+					<Anchors>
+						<Anchor point="TOP" y="-13"/>
+						<Anchor point="BOTTOM" y="13"/>
+						<Anchor point="LEFT" />
+						<Anchor point="RIGHT" />
+					</Anchors>
+					<TexCoords left="0.34" right="0.78" top="0.33" bottom="0.34"/>
+				</Texture>
+				<Texture file="Interface/AdventureMap/AdventureMap">
+					<Size y="13" />
+					<Anchors>
+						<Anchor point="BOTTOM"/>
+						<Anchor point="LEFT" />
+						<Anchor point="RIGHT" />
+					</Anchors>
+					<TexCoords left="0.34" right="0.78" top="0.34" bottom="0.36"/>
+				</Texture>
+			</Layer>
+			<Layer>
+				<Texture parentKey="icon" file="Interface/GOSSIPFRAME/ChatBubbleGossipIcon">
+					<Size x="16" y="16"/>
+					<Anchors>
+						<Anchor point="LEFT" relativeKey="$parent" relativePoint="LEFT" x="90"/>
+					</Anchors>
+				</Texture>
+				<FontString parentKey="text" inherits="GameFontNormalMed1" justifyH="LEFT" justifyV="MIDDLE" wordwrap="true">
+					<Size x="250"/>
+					<Anchors>
+						<Anchor point="LEFT" relativePoint="RIGHT" relativeKey="$parent.icon" x="10"/>
+					</Anchors>
+				</FontString>
+				<FontString parentKey="binding" inherits="GameFontNormal" justifyH="RIGHT" justifyV="MIDDLE">
+					<Size x="50"/>
+					<Anchors>
+						<Anchor point="RIGHT" relativePoint="LEFT" relativeKey="$parent.icon" x="-5"/>
+					</Anchors>
+				</FontString>
+			</Layer>
+			<Layer level="OVERLAY">
+				<Texture parentKey="highlight" file="Interface\FriendsFrame\UI-FriendsFrame-HighlightBar" alpha="0" alphaMode="ADD">
+					<Anchors>
+						<Anchor point="TOPLEFT" y="-5" x="20"/>
+						<Anchor point="BOTTOMRIGHT" y="5" x="-20"/>
+					</Anchors>
+				</Texture>
+			</Layer>
+		</Layers>
+		<Animations>
+			<AnimationGroup parentKey="fadeIn">
+				<Alpha fromAlpha="0.0" toAlpha="1" duration="0.2" smoothing="OUT"/>
+			</AnimationGroup>
+			<AnimationGroup parentKey="onClickedAnimation">
+				<Translation offsetX="0" offsetY="-3" duration="0.1" />
+			</AnimationGroup>
+			<AnimationGroup parentKey="onEnterAnimation" setToFinalAlpha="true">
+				<Alpha childKey="highlight" fromAlpha="0.0" toAlpha="0.4" duration="0.1" smoothing="OUT"/>
+			</AnimationGroup>
+			<AnimationGroup parentKey="onLeaveAnimation" setToFinalAlpha="true">
+				<Alpha childKey="highlight" fromAlpha="0.4" toAlpha="0.0" duration="0.1" smoothing="OUT"/>
+			</AnimationGroup>
+		</Animations>
+		<Scripts>
+			<OnEnter>
+				self.onEnterAnimation:Play();
+			</OnEnter>
+			<OnLeave>
+				self.onLeaveAnimation:Play();
+			</OnLeave>
+			<OnMouseDown>
+				self.onClickedAnimation:Stop();
+				self.onClickedAnimation:Play();
+			</OnMouseDown>
+		</Scripts>
+	</Frame>
+
 	<Frame name="Storyline_NPCFrame" inherits="Storyline_StandardParchmentFrame" toplevel="true" parent="UIParent" frameStrata="MEDIUM" enableMouse="true" clampedToScreen="true" hidden="true" movable="true">
 		<Size x="700" y="450"/>
 
@@ -298,6 +387,60 @@
 					</Frame>
 				</Frames>
 			</Frame>
+
+			<ScrollFrame name="Storyline_DialogChoicesScrollFrame" inherits="UIPanelScrollFrameCodeTemplate" frameStrata="HIGH">
+				<Size x="400" y="250"/>
+				<Anchors>
+					<Anchor point="CENTER" relativePoint="CENTER" relativeTo="$parent"/>
+				</Anchors>
+				<Frames>
+					<Slider name="$parentScrollBar" inherits="UIPanelScrollBarTemplate" parentKey="ScrollBar" hidden="true" alpha="0">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativePoint="TOPRIGHT" x="6" y="-16"/>
+							<Anchor point="BOTTOMLEFT" relativePoint="BOTTOMRIGHT" x="6" y="16"/>
+						</Anchors>
+					</Slider>
+				</Frames>
+				<Layers>
+					<Layer level="OVERLAY">
+						<Texture parentKey="borderTop" file="Interface\ACHIEVEMENTFRAME\UI-Achievement-Borders" alpha="1" hidden="true">
+							<TexCoords left="0.12" right="0.87" top="0.25" bottom="0" />
+							<Size y="30"/>
+							<Anchors>
+								<Anchor point="BOTTOM" relativePoint="TOP" relativeTo="$parent" />
+								<Anchor point="LEFT" relativePoint="LEFT" relativeTo="$parent" />
+								<Anchor point="RIGHT" relativePoint="RIGHT" relativeTo="$parent" />
+							</Anchors>
+							<Animations>
+								<AnimationGroup parentKey="pulse" looping="REPEAT">
+									<Alpha fromAlpha="1" toAlpha="0.5" order="1" duration="0.7" smoothing="OUT"/>
+									<Alpha fromAlpha="0.5" toAlpha="1" order="2" duration="0.7" smoothing="IN"/>
+								</AnimationGroup>
+							</Animations>
+						</Texture>
+						<Texture parentKey="borderBottom" file="Interface\ACHIEVEMENTFRAME\UI-Achievement-Borders" alpha="1" hidden="true">
+							<TexCoords left="0.12" right="0.87" top="0" bottom="0.25" />
+							<Size y="30"/>
+							<Anchors>
+								<Anchor point="TOP" relativePoint="BOTTOM" relativeTo="$parent" />
+								<Anchor point="LEFT" relativePoint="LEFT" relativeTo="$parent" />
+								<Anchor point="RIGHT" relativePoint="RIGHT" relativeTo="$parent" />
+							</Anchors>
+							<Animations>
+								<AnimationGroup parentKey="pulse" looping="REPEAT">
+									<Alpha fromAlpha="1" toAlpha="0.5" order="1" duration="0.7" smoothing="OUT"/>
+									<Alpha fromAlpha="0.5" toAlpha="1" order="2" duration="0.7" smoothing="IN"/>
+								</AnimationGroup>
+							</Animations>
+						</Texture>
+					</Layer>
+				</Layers>
+				<ScrollChild>
+					<Frame parentKey="container">
+						<Size x="400" y="250" />
+					</Frame>
+				</ScrollChild>
+			</ScrollFrame>
 
 			<Frame name="Storyline_NPCFrameChat" parentKey="chat" frameStrata="HIGH">
 				<Backdrop bgFile="Interface\DialogFrame\UI-DialogBox-Background" edgeFile="Interface\GLUES\COMMON\TextPanel-Border" tile="true">
@@ -565,6 +708,24 @@
 									</Anchors>
 									<Color r="0.95" g="0.65" b="0"/>
 								</FontString>
+								<FontString parentKey="rewards" inherits="GameFontNormal" justifyH="LEFT" justifyV="TOP">
+									<Size x="0" y="0"/>
+									<Anchors>
+										<Anchor point="TOP" relativePoint="BOTTOM" relativeKey="$parent.RequiredItemText" x="0" y="-5"/>
+										<Anchor point="LEFT" x="10" y="0"/>
+										<Anchor point="RIGHT" x="-10" y="0"/>
+									</Anchors>
+									<Color r="0.95" g="0.65" b="0"/>
+								</FontString>
+								<FontString parentKey="choices" inherits="GameFontNormal" justifyH="LEFT" justifyV="TOP">
+									<Size x="0" y="0"/>
+									<Anchors>
+										<Anchor point="TOP" relativePoint="BOTTOM" relativeKey="$parent.rewards" x="0" y="-5"/>
+										<Anchor point="LEFT" x="10" y="0"/>
+										<Anchor point="RIGHT" x="-10" y="0"/>
+									</Anchors>
+									<Color r="0.95" g="0.65" b="0"/>
+								</FontString>
 							</Layer>
 						</Layers>
 					</Frame>
@@ -765,7 +926,8 @@
 	<Include file="options.xml"/>
 	<Include file="debug.xml"/>
 
-	<Script file="consolePort.lua"/>
+	<Script file="rewards.lua"/>
+	<Script file="dialogs.lua"/>
 	<Script file="layout.lua"/>
 	<Script file="utils.lua"/>
 	<Script file="selections.lua"/>
