@@ -1,0 +1,79 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/ http://wowprogramming.com/utils/xmlbrowser/live/FrameXML/UI.xsd">
+    <!--
+        Storyline
+
+        Dialogs part
+
+        Copyright 2016 Renaud "Ellypse" Parize <ellypse@totalrp3.info> @EllypseCelwe
+
+        Licensed under the Apache License, Version 2.0 (the "License");
+        you may not use this file except in compliance with the License.
+        You may obtain a copy of the License at
+
+            http://www.apache.org/licenses/LICENSE-2.0
+
+        Unless required by applicable law or agreed to in writing, software
+        distributed under the License is distributed on an "AS IS" BASIS,
+        WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+        See the License for the specific language governing permissions and
+        limitations under the License.
+    -->
+
+    <FontString name="Storyline_RewardsHeader" inherits="GameFontNormal" justifyH="LEFT" justifyV="TOP" virtual="true">
+        <Size x="0" y="0"/>
+        <Anchors>
+            <Anchor point="LEFT" x="10" y="0"/>
+            <Anchor point="RIGHT" x="-10" y="0"/>
+        </Anchors>
+        <Color r="0.95" g="0.65" b="0"/>
+    </FontString>
+
+    <!-- Copied from Blizzard code to make it a template -->
+    <Button name="Storyline_SkillPointsRewardTemplate" inherits="LargeItemButtonTemplate" virtual="true">
+        <Layers>
+            <Layer level="OVERLAY">
+                <Texture parentKey="CircleBackground" name="$parentSkillPointBg" file="Interface\QuestFrame\SkillUp-BG">
+                    <Size x="24" y="24"/>
+                    <Anchors>
+                        <Anchor point="BOTTOMRIGHT" relativeKey="$parent.Icon" x="9" y="-4"/>
+                    </Anchors>
+                </Texture>
+                <Texture parentKey="CircleBackgroundGlow" name="$parentSkillPointBgGlow" file="Interface\QuestFrame\SkillUp-Glow" alphaMode="ADD" alpha="0.3">
+                    <Size x="48" y="48"/>
+                    <Anchors>
+                        <Anchor point="CENTER" relativeKey="$parent.CircleBackground"/>
+                    </Anchors>
+                </Texture>
+                <FontString parentKey="ValueText" name="$parentPoints" inherits="GameFontNormal" justifyH="LEFT">
+                    <Anchors>
+                        <Anchor point="CENTER" relativeKey="$parent.CircleBackground" relativePoint="CENTER" x="3"/>
+                    </Anchors>
+                </FontString>
+            </Layer>
+        </Layers>
+        <Scripts>
+            <OnEnter>
+                    if (self.tooltip) then
+                        GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
+                        GameTooltip:SetText(self.tooltip, HIGHLIGHT_FONT_COLOR.r, HIGHLIGHT_FONT_COLOR.g, HIGHLIGHT_FONT_COLOR.b);
+                    end
+            </OnEnter>
+            <OnLeave>
+                    GameTooltip:Hide();
+            </OnLeave>
+        </Scripts>
+    </Button>
+
+    <Button name="Storyline_GarrisonFollowerRewardTemplate" inherits="LargeQuestInfoRewardFollowerTemplate" virtual="true">
+        <Scripts>
+            <OnLeave>
+                    GarrisonFollowerTooltip:Hide();
+            </OnLeave>
+        </Scripts>
+    </Button>
+
+    <!-- Load Lua scripts -->
+    <Script file="rewards.lua"/>
+    <Script file="rewards_buttons.lua"/>
+
+</Ui>

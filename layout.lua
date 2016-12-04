@@ -228,23 +228,3 @@ Storyline_NPCFrame:SetScript("OnHide", function()
 		CloseGossip(); -- Force CloseGossip() when Storyline is close if using the layout engine to prevent issue with NPC dialogs.
 	end
 end)
-
-Storyline_DialogChoicesScrollFrame:HookScript("OnMousewheel", function(self, delta)
-	local currentScroll = self:GetVerticalScroll();
-	local maxScroll = self:GetVerticalScrollRange();
-
-	if currentScroll >= maxScroll - 1 then
-		self.borderBottom:Hide();
-		self.borderBottom.pulse:Stop();
-	else
-		self.borderBottom:Show();
-		self.borderBottom.pulse:Play();
-	end
-	if currentScroll < 20 then
-		self.borderTop:Hide();
-		self.borderTop.pulse:Stop();
-	else
-		self.borderTop:Show();
-		self.borderTop.pulse:Play();
-	end
-end)

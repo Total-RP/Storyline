@@ -46,6 +46,7 @@ local getBindingIcon = Storyline_API.getBindingIcon;
 local hideStorylineFrame = Storyline_API.layout.hideStorylineFrame;
 local hideQuestRewardFrameIfNeed = Storyline_API.layout.hideQuestRewardFrameIfNeed;
 local debug = Storyline_API.debug;
+local tsize = Storyline_API.lib.tsize;
 
 -- WOW API
 local faction, faction_loc = UnitFactionGroup("player");
@@ -83,6 +84,11 @@ local Storyline_NPCFrameChat, Storyline_NPCFrameChatText = Storyline_NPCFrameCha
 local Storyline_NPCFrameChatNext, Storyline_NPCFrameChatPrevious = Storyline_NPCFrameChatNext, Storyline_NPCFrameChatPrevious;
 local Storyline_NPCFrameConfigButton, Storyline_NPCFrameObjectivesContent = Storyline_NPCFrameConfigButton, Storyline_NPCFrameObjectivesContent;
 local Storyline_NPCFrameGossipChoices = Storyline_NPCFrameGossipChoices;
+local Dialogs = Storyline_API.dialogs;
+local DialogsButtons = Storyline_API.dialogs.buttons;
+local DialogsScrollFrame = Storyline_API.dialogs.scrollFrame;
+local Rewards = Storyline_API.rewards;
+local RewardsButtons = Storyline_API.rewards.buttons;
 
 -- Constants
 local OPTIONS_MARGIN, OPTIONS_TOP = 175, -175;
@@ -478,95 +484,55 @@ local function updateNPCFrienshipSatusBar()
 	end
 end
 
-local buttonDecorators = {
-	[Storyline_API.dialogs.BUCKET_TYPE.COMPLETED_QUEST] = function(button, data, index)
-		button.text:SetText(data.title);
-		button.icon:SetTexture(Storyline_API.buttons.getIconTextureForActiveQuestType(data.frequency, data.isRepeatable, data.isLegendary));
-		button:SetScript("OnMouseUp", function()
-			SelectGossipActiveQuest(index);
-		end);
-	end,
-	[Storyline_API.dialogs.BUCKET_TYPE.AVAILABLE_QUEST] = function(button, data, index)
-		button.text:SetText(data.title);
-		button.icon:SetTexture(Storyline_API.buttons.getIconTextureForAvailableQuestType(data.frequency, data.isRepeatable, data.isLegendary));
-		if data.isTrivial then
-			button.icon:SetVertexColor(0.5, 0.5, 0.5);
-		end
-		button:SetScript("OnMouseUp", function()
-			SelectGossipAvailableQuest(index);
-		end);
-	end,
-	[Storyline_API.dialogs.BUCKET_TYPE.GOSSIP] = function(button, data, index)
-		button.text:SetText(data.text);
-		button.icon:SetTexture(Storyline_API.buttons.getIconTextureForGossipType(data.gossipType));
-		button:SetScript("OnMouseUp", function()
-			SelectGossipOption(index);
-		end);
-	end,
-	[Storyline_API.dialogs.BUCKET_TYPE.UNCOMPLETED_QUEST] = function(button, data, index)
-		button.text:SetText(data.title);
-		button.icon:SetTexture("Interface\\GossipFrame\\IncompleteQuestIcon");
-		button:SetScript("OnMouseUp", function()
-			SelectGossipActiveQuest(index);
-		end);
-	end
-}
-
-local function decorateChoiceButton(buttonIndex, data, index, previousFrame, bucketType)
-	local dialogChoiceFrame = Storyline_API.buttons.getButtonAtIndex(buttonIndex, Storyline_DialogChoicesScrollFrame.container, previousFrame);
-	C_Timer.After(0.05 * buttonIndex, function()
-		dialogChoiceFrame:Show();
-		dialogChoiceFrame.fadeIn:Play();
-	end);
-	if buttonIndex < 10 and Storyline_Data.config.useKeyboard then
-		dialogChoiceFrame.binding:SetText(buttonIndex);
-	else
-		dialogChoiceFrame.binding:SetText("");
-	end
-	buttonDecorators[bucketType](dialogChoiceFrame, data, index);
-	Storyline_API.buttons.refreshButtonHeight(dialogChoiceFrame);
-	return dialogChoiceFrame;
-end
-
-local function gossipEventHandler()
-	local dialogChoices = Storyline_API.dialogs.getChoices();
+local function gossipEventHandler(eventType)
+	local dialogChoices = Storyline_API.dialogs.getChoices(eventType);
 	local buttonIndex = 0;
-	Storyline_API.buttons.hideAllButtons();
 	local previousFrame;
 	local totalButtonHeights = 0;
 
 	for bucketType, bucket in pairs(dialogChoices) do
-		for index, choice in pairs(bucket) do
+		for choiceIndex, choice in pairs(bucket) do
 			buttonIndex = buttonIndex + 1;
-			local dialogChoiceFrame = decorateChoiceButton(buttonIndex, choice, index, previousFrame, bucketType);
-			totalButtonHeights = totalButtonHeights + dialogChoiceFrame:GetHeight() + 5;
-			previousFrame = dialogChoiceFrame;
+			-- Get a dialog button for the current index (it will either be created or we'll be given an existing one).
+			local dialogChoiceButton = DialogsButtons.getButton(DialogsScrollFrame.container, previousFrame);
+			-- Decorate the button appropriately for its type and data
+			dialogChoiceButton:Decorate(buttonIndex, choiceIndex, choice, bucketType, eventType);
+
+			totalButtonHeights = totalButtonHeights + dialogChoiceButton:GetHeight() + DialogsButtons.getMargin();
+			previousFrame = dialogChoiceButton;
 		end
 	end
 
 	if buttonIndex > 0 then
-		Storyline_DialogChoicesScrollFrame:Show();
-		if totalButtonHeights > 250 then
-			Storyline_DialogChoicesScrollFrame.borderBottom:Show();
-		else
-
-		end
+		DialogsScrollFrame.show(totalButtonHeights);
 	end
 
 	updateNPCFrienshipSatusBar();
 end
 
-eventHandlers["GOSSIP_SHOW"] = gossipEventHandler;
-eventHandlers["QUEST_GREETING"] = gossipEventHandler;
+eventHandlers[Dialogs.EVENT_TYPES.GOSSIP_SHOW] = function()
+	gossipEventHandler(Dialogs.EVENT_TYPES.GOSSIP_SHOW);
+end;
+eventHandlers[Dialogs.EVENT_TYPES.QUEST_GREETING] = function()
+	gossipEventHandler(Dialogs.EVENT_TYPES.QUEST_GREETING);
+end
+
+local HOVERED_FRAME_TITLE_MARGIN = 10;
+local HOVERED_FRAME_TEXT_MARGIN = 5;
+
+local function setObjectiveText(fontString, text, anchor)
+	fontString:SetPoint("TOPLEFT", anchor, "BOTTOMLEFT", 0, -1 * HOVERED_FRAME_TEXT_MARGIN);
+	fontString:SetText(text);
+	fontString:Show();
+	return fontString:GetHeight() + HOVERED_FRAME_TEXT_MARGIN;
+end
 
 eventHandlers["QUEST_DETAIL"] = function()
 
-	-- Quest that pops up and are auto-accepted (like the one for learning to mount or for new expansions)
-	if (QuestGetAutoAccept() and QuestIsFromAreaTrigger()) then
-		hideStorylineFrame();
-	end
+	local previousText = Storyline_NPCFrameObjectivesContent.Title;
 
-	local contentHeight = Storyline_NPCFrameObjectivesContent.Title:GetHeight() + 15;
+	Storyline_NPCFrameObjectivesContent.Title:SetPoint("TOP", 0, -1 * HOVERED_FRAME_TITLE_MARGIN);
+	local contentHeight = Storyline_NPCFrameObjectivesContent.Title:GetHeight() + HOVERED_FRAME_TITLE_MARGIN;
 
 	Storyline_NPCFrameObjectives:Show();
 	Storyline_NPCFrameObjectivesImage:SetDesaturated(false);
@@ -574,88 +540,28 @@ eventHandlers["QUEST_DETAIL"] = function()
 
 	local objectives = GetObjectiveText();
 	if objectives:len() > 0 then
-		Storyline_NPCFrameObjectivesContent.Objectives:SetText(objectives);
-		Storyline_NPCFrameObjectivesContent.Objectives:Show();
-		contentHeight = contentHeight + 10 + Storyline_NPCFrameObjectivesContent.Objectives:GetHeight();
+		contentHeight = contentHeight + setObjectiveText(Storyline_NPCFrameObjectivesContent.Objectives, objectives, previousText);
+		previousText = Storyline_NPCFrameObjectivesContent.Objectives;
 	end
 
 	local groupNum = GetSuggestedGroupNum();
 	if groupNum > 0 then
-		Storyline_NPCFrameObjectivesContent.GroupSuggestion:SetText(format(QUEST_SUGGESTED_GROUP_NUM, groupNum));
-		Storyline_NPCFrameObjectivesContent.GroupSuggestion:Show();
-		contentHeight = contentHeight + 10 + Storyline_NPCFrameObjectivesContent.GroupSuggestion:GetHeight();
+		contentHeight = contentHeight +  setObjectiveText(Storyline_NPCFrameObjectivesContent.GroupSuggestion, format(QUEST_SUGGESTED_GROUP_NUM, groupNum), previousText);
+		previousText = Storyline_NPCFrameObjectivesContent.GroupSuggestion;
 	end
 
-	local rewardsBucket = Storyline_API.rewards.getRewards();
-	if #rewardsBucket[Storyline_API.rewards.BUCKET_TYPES.RECEIVED] > 0 then
-		Storyline_NPCFrameObjectivesContent.rewards:SetText(REWARD_ITEMS_ONLY);
-		Storyline_NPCFrameObjectivesContent.rewards:Show();
-		local previousForChoice = Storyline_NPCFrameObjectivesContent.rewards;
+	local rewardsBucket = Rewards.getRewards();
 
-		resetGrid();
-		for rewardType, rewards in pairs(rewardsBucket[Storyline_API.rewards.BUCKET_TYPES.RECEIVED]) do
-			for _, reward in pairs(rewards) do
-				local button = getQuestButton(Storyline_NPCFrameObjectivesContent);
-				placeOnGrid(button, previousForChoice);
-				if rewardType == Storyline_API.rewards.REWARD_TYPES.XP or rewardType == Storyline_API.rewards.REWARD_TYPES.MONNEY then
-					decorateStandardButton(button, reward.icon, reward.text, reward.tooltipTitle, reward.tooltipSub);
-				elseif rewardType == "currency" then
-					decorateCurrencyButton(button, buttonInfo.index, "reward", buttonInfo.icon, buttonInfo.text, buttonInfo.count);
-				elseif rewardType == "spell" then
-					dispatchSpellButtonDecorator(button, buttonInfo);
-				elseif rewardType == Storyline_API.rewards.REWARD_TYPES.ITEMS then
-					decorateItemButton(button, reward.index, reward.rewardType, reward.icon, reward.text, reward.count, reward.isUsable);
-				elseif rewardType == "skillpoint" then
-					decorateSkillPointButton(button, buttonInfo.icon, buttonInfo.text, buttonInfo.count, buttonInfo.tooltipTitle);
-				else
-
-				end
-				previousForChoice = button;
-			end
+	for bucketType, bucket in pairs(rewardsBucket) do
+		if tsize(bucket) > 0 then
+			contentHeight = contentHeight + RewardsButtons.displayRewardsOnGrid(bucketType, bucket, Storyline_NPCFrameObjectivesContent, previousText);
 		end
-
-		contentHeight = contentHeight + 20 + Storyline_NPCFrameObjectivesContent.rewards:GetHeight();
-		contentHeight = contentHeight + gridHeight;
 	end
 
-	if rewardsBucket[Storyline_API.rewards.BUCKET_TYPES.CHOICE] then
-		if previousElementOnTheLeft then
-			Storyline_NPCFrameObjectivesContent.choices:SetPoint("TOPLEFT", previousElementOnTheLeft, "BOTTOMLEFT", 0, -5);
-		end
-		Storyline_NPCFrameObjectivesContent.choices:SetText(REWARD_CHOICES);
-		Storyline_NPCFrameObjectivesContent.choices:Show();
-		local previousForChoice = Storyline_NPCFrameObjectivesContent.choices;
-
-		resetGrid();
-		TRP3_API.utils.table.dump(rewardsBucket[Storyline_API.rewards.BUCKET_TYPES.CHOICE]);
-		for rewardType, rewards in pairs(rewardsBucket[Storyline_API.rewards.BUCKET_TYPES.CHOICE]) do
-			for _, reward in pairs(rewards) do
-				local button = getQuestButton(Storyline_NPCFrameObjectivesContent);
-				placeOnGrid(button, previousForChoice);
-				print(rewardType);
-				if rewardType == Storyline_API.rewards.REWARD_TYPES.XP or rewardType == Storyline_API.rewards.REWARD_TYPES.MONNEY then
-					decorateStandardButton(button, reward.icon, reward.text, reward.tooltipTitle, reward.tooltipSub);
-				elseif rewardType == "currency" then
-					decorateCurrencyButton(button, buttonInfo.index, "reward", buttonInfo.icon, buttonInfo.text, buttonInfo.count);
-				elseif rewardType == "spell" then
-					dispatchSpellButtonDecorator(button, buttonInfo);
-				elseif rewardType == Storyline_API.rewards.REWARD_TYPES.ITEMS then
-					decorateItemButton(button, reward.index, reward.rewardType, reward.icon, reward.text, reward.count, reward.isUsable);
-				elseif rewardType == "skillpoint" then
-					decorateSkillPointButton(button, buttonInfo.icon, buttonInfo.text, buttonInfo.count, buttonInfo.tooltipTitle);
-				else
-
-				end
-				previousForChoice = button;
-			end
-		end
-
-		contentHeight = contentHeight + 20 + Storyline_NPCFrameObjectivesContent.choices:GetHeight();
-		contentHeight = contentHeight + gridHeight;
-	end
+	-- Add some margin on the bottom
+	contentHeight = contentHeight + HOVERED_FRAME_TEXT_MARGIN;
 
 	Storyline_NPCFrameObjectivesContent:SetHeight(contentHeight);
-
 
 	if GetNumQuestItems() > 0 then
 		local _, icon = GetQuestItemInfo("required", 1);
@@ -768,274 +674,39 @@ eventHandlers["QUEST_PROGRESS"] = function()
 	updateNPCFrienshipSatusBar();
 end
 
-local function AddSpellToBucket(spellBuckets, type, rewardSpellIndex)
-	if not spellBuckets[type] then
-		spellBuckets[type] = {};
-	end
-
-	table.insert(spellBuckets[type], rewardSpellIndex);
-end
-
+local CLICKING_ON_REWARDS_MEANS_CHOOSING_IT = true;
 eventHandlers["QUEST_COMPLETE"] = function(eventInfo)
 	Storyline_NPCFrameRewards:Show();
 	setTooltipForSameFrame(Storyline_NPCFrameRewardsItem, "TOP", 0, 0, REWARDS, loc("SL_GET_REWARD"));
 
-	--*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
-	-- Rewards structure
-	--*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
-	-- Clean our variable used for remember the first reward choice available
-	Storyline_NPCFrameRewards.Content.firstChoice = nil;
-	wipe(displayBuilder);
-	local bestIcon = "Interface\\ICONS\\trade_archaeology_chestoftinyglassanimals";
+	local previousText = Storyline_NPCFrameRewards.Content.Title;
 
-	-- XP
-	local xp = GetRewardXP();
-	if xp > 0 then
-		bestIcon = "Interface\\ICONS\\xp_icon";
-		tinsert(displayBuilder, {
-			text = BreakUpLargeNumbers(xp) .. " " .. XP,
-			icon = bestIcon,
-			tooltipTitle = ERR_QUEST_REWARD_EXP_I:format(xp)
-		});
-	end
+	Storyline_NPCFrameRewards.Content.Title:SetPoint("TOP", 0, -1 * HOVERED_FRAME_TITLE_MARGIN);
+	local contentHeight = Storyline_NPCFrameRewards.Content.Title:GetHeight() + HOVERED_FRAME_TITLE_MARGIN;
 
-	-- Money
-	local money = GetRewardMoney();
-	if money > 0 then
-		bestIcon = "Interface\\ICONS\\inv_misc_coin_03";
-		if money < 100 then
-			bestIcon = "Interface\\ICONS\\inv_misc_coin_05";
-		elseif money > 9999 then
-			bestIcon = "Interface\\ICONS\\inv_misc_coin_01";
-		end
-		local moneyString = GetCoinTextureString(money);
-		tinsert(displayBuilder, {
-			text = moneyString,
-			icon = bestIcon,
-			tooltipTitle = ERR_QUEST_REWARD_MONEY_S:format(moneyString),
-		});
-	end
+	local rewardsBucket, bestIcon = Storyline_API.rewards.getRewards();
 
-	-- Title
-	local playerTitle = GetRewardTitle();
-	if playerTitle then
-		tinsert(displayBuilder, {
-			text = playerTitle,
-			icon = "Interface\\ICONS\\inv_scroll_11",
-			tooltipTitle = playerTitle,
-			tooltipSub = playerTitle
-		});
-	end
-
-	-- Skill points
-	local skillName, skillIcon, skillPoints = GetRewardSkillPoints();
-	if skillPoints then
-		skillName = skillName or "?";
-		tinsert(displayBuilder, {
-			text = BONUS_SKILLPOINTS:format(skillName),
-			icon = skillIcon,
-			count = skillPoints,
-			type = "skillpoint",
-			tooltipTitle = format(BONUS_SKILLPOINTS_TOOLTIP, skillPoints, skillName),
-		});
-	end
-
-	-- Currencies
-	local currencyCount = GetNumRewardCurrencies();
-	if currencyCount > 0 then
-		for i = 1, currencyCount, 1 do -- Some quest reward several currencies
-			local name, texture, numItems = GetQuestCurrencyInfo("reward", i);
-			if name and texture and numItems then
-				tinsert(displayBuilder, {
-					text = name,
-					icon = texture,
-					count = numItems,
-					index = i,
-					type = "currency"
-				});
-			end
+	for bucketType, bucket in pairs(rewardsBucket) do
+		if tsize(bucket) > 0 then
+			TRP3_API.utils.table.dump(bucket);
+			contentHeight = contentHeight + RewardsButtons.displayRewardsOnGrid(bucketType, bucket, Storyline_NPCFrameRewards.Content, previousText, CLICKING_ON_REWARDS_MEANS_CHOOSING_IT);
 		end
 	end
 
-	-- Spells
-	local numSpellRewards = GetNumRewardSpells();
-	local numQuestSpellRewards = 0;
+	-- Add some margin on the bottom
+	contentHeight = contentHeight + HOVERED_FRAME_TEXT_MARGIN;
 
-	for rewardSpellIndex = 1, numSpellRewards do
-		local texture, name, isTradeskillSpell, isSpellLearned, hideSpellLearnText, isBoostSpell, garrFollowerID, spellID = GetRewardSpell(rewardSpellIndex);
-		local knownSpell = IsSpellKnownOrOverridesKnown(spellID);
-
-		-- only allow the spell reward if user can learn it
-		if ( texture and not knownSpell and (not isBoostSpell or IsCharacterNewlyBoosted()) and (not garrFollowerID or not C_Garrison.IsFollowerCollected(garrFollowerID)) ) then
-			numQuestSpellRewards = numQuestSpellRewards + 1;
-		end
-	end
-
-	-- Setup spell rewards
-	if ( numQuestSpellRewards > 0 ) then
-		local spellBuckets = {};
-
-		for rewardSpellIndex = 1, numSpellRewards do
-			local texture, name, isTradeskillSpell, isSpellLearned, hideSpellLearnText, isBoostSpell, garrFollowerID, spellID = GetRewardSpell(rewardSpellIndex);
-			local knownSpell = IsSpellKnownOrOverridesKnown(spellID);
-			if texture and not knownSpell and (not isBoostSpell or IsCharacterNewlyBoosted()) and (not garrFollowerID or not C_Garrison.IsFollowerCollected(garrFollowerID)) then
-				if ( isTradeskillSpell ) then
-					AddSpellToBucket(spellBuckets, QUEST_SPELL_REWARD_TYPE_TRADESKILL_SPELL, rewardSpellIndex);
-				elseif ( isBoostSpell ) then
-					AddSpellToBucket(spellBuckets, QUEST_SPELL_REWARD_TYPE_ABILITY, rewardSpellIndex);
-				elseif ( garrFollowerID ) then
-					AddSpellToBucket(spellBuckets, QUEST_SPELL_REWARD_TYPE_FOLLOWER, rewardSpellIndex);
-				elseif ( not isSpellLearned ) then
-					AddSpellToBucket(spellBuckets, QUEST_SPELL_REWARD_TYPE_AURA, rewardSpellIndex);
-				else
-					AddSpellToBucket(spellBuckets, QUEST_SPELL_REWARD_TYPE_SPELL, rewardSpellIndex);
-				end
-			end
-		end
-
-		for orderIndex, spellBucketType in ipairs(QUEST_INFO_SPELL_REWARD_ORDERING) do
-			local spellBucket = spellBuckets[spellBucketType];
-			if spellBucket then
-				for i, rewardSpellIndex in ipairs(spellBucket) do
-					local texture, name, isTradeskillSpell, isSpellLearned, _, isBoostSpell, garrFollowerID = GetRewardSpell(rewardSpellIndex);
-					bestIcon = texture;
-					tinsert(displayBuilder, {
-						text = name,
-						icon = texture,
-						type = "spell",
-						garrFollowerID = garrFollowerID,
-						rewardSpellIndex = rewardSpellIndex,
-						spellBucketType = spellBucketType,
-						isUsable = true,
-					});
-				end
-			end
-		end
-	end
-
-
-	-- Item reward
-	if GetNumQuestChoices() == 1 or GetNumQuestRewards() > 0 then
-		if GetNumQuestChoices() == 1 then
-			local name, texture, numItems, quality, isUsable = GetQuestItemInfo("choice", 1);
-			bestIcon = texture;
-			tinsert(displayBuilder, {
-				text = name,
-				icon = texture,
-				count = numItems,
-				index = 1,
-				type = "item",
-				rewardType = "choice",
-				isUsable = isUsable,
-			});
-		end
-
-		for i = 1, GetNumQuestRewards() do
-			local name, texture, numItems, quality, isUsable = GetQuestItemInfo("reward", i);
-			bestIcon = texture;
-			tinsert(displayBuilder, {
-				text = name,
-				icon = texture,
-				count = numItems,
-				index = i,
-				type = "item",
-				rewardType = "reward",
-				isUsable = isUsable,
-			});
-		end
-	end
-
-	--*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
-	-- Displays rewards
-	--*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
-
-	local contentHeight = 20;
-	local previousForChoice = Storyline_NPCFrameRewards.Content.RewardText1;
-
-	resetGrid();
-	for index, buttonInfo in pairs(displayBuilder) do
-		local button = getQuestButton(Storyline_NPCFrameRewards.Content);
-		placeOnGrid(button, Storyline_NPCFrameRewards.Content.RewardText1);
-		if buttonInfo.type == "currency" then
-			decorateCurrencyButton(button, buttonInfo.index, "reward", buttonInfo.icon, buttonInfo.text, buttonInfo.count);
-		elseif buttonInfo.type == "spell" then
-			dispatchSpellButtonDecorator(button, buttonInfo);
-		elseif buttonInfo.type == "item" then
-			decorateItemButton(button, buttonInfo.index, buttonInfo.rewardType, buttonInfo.icon, buttonInfo.text, buttonInfo.count, buttonInfo.isUsable);
-		elseif buttonInfo.type == "skillpoint" then
-			decorateSkillPointButton(button, buttonInfo.icon, buttonInfo.text, buttonInfo.count, buttonInfo.tooltipTitle);
-		else
-			decorateStandardButton(button, buttonInfo.icon, buttonInfo.text, buttonInfo.tooltipTitle, buttonInfo.tooltipSub);
-		end
-		previousForChoice = button;
-	end
-	if #displayBuilder == 0 then
-		Storyline_NPCFrameRewards.Content.RewardText1:Hide();
-	else
-		Storyline_NPCFrameRewards.Content.RewardText1:Show();
-	end
-	contentHeight = contentHeight + gridHeight;
-
-	--*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
-	-- Reward choice
-	--*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
-
-	if GetNumQuestChoices() > 1 then
-
-		if faction and faction:len() > 0 then
-			bestIcon = "Interface\\ICONS\\battleground_strongbox_gold_" .. faction;
-		else
-			bestIcon = "Interface\\ICONS\\achievement_boss_spoils_of_pandaria";
-		end
-		contentHeight = contentHeight + 18;
-		Storyline_NPCFrameRewards.Content.RewardText3:Show();
-		Storyline_NPCFrameRewards.Content.RewardText3:SetPoint("TOP", previousForChoice, "BOTTOM", 0, -5);
-		previousForChoice = Storyline_NPCFrameRewards.Content.RewardText3;
-
-		wipe(displayBuilder);
-		for i = 1, GetNumQuestChoices() do
-			local name, texture, numItems, quality, isUsable = GetQuestItemInfo("choice", i);
-			bestIcon = texture;
-			tinsert(displayBuilder, {
-				text = name,
-				icon = texture,
-				count = numItems,
-				index = i,
-				rewardType = "choice",
-				isUsable = isUsable,
-			});
-		end
-
-		resetGrid();
-		for index, buttonInfo in pairs(displayBuilder) do
-			local button = getQuestButton(Storyline_NPCFrameRewards.Content);
-			placeOnGrid(button, Storyline_NPCFrameRewards.Content.RewardText3);
-			decorateItemButton(button, buttonInfo.index, buttonInfo.rewardType, buttonInfo.icon, buttonInfo.text, buttonInfo.count, buttonInfo.isUsable);
-			if index == 1 then
-				-- We remember the first choice reward so we can use it later (in our ConsolePort support)
-				Storyline_NPCFrameRewards.Content.firstChoice = button;
-			end
-			previousForChoice = button;
-		end
-
-		contentHeight = contentHeight + gridHeight;
-	end
-
-	showQuestPortraitFrame();
+	Storyline_NPCFrameObjectivesContent:SetHeight(contentHeight);
 
 	Storyline_NPCFrameRewardsItemIcon:SetTexture(bestIcon);
-	contentHeight = contentHeight + Storyline_NPCFrameRewards.Content.Title:GetHeight() + 15;
 	Storyline_NPCFrameRewards.Content:SetHeight(contentHeight);
 
+	showQuestPortraitFrame();
 	updateNPCFrienshipSatusBar();
 end
 
 local function handleEventSpecifics(event, texts, textIndex, eventInfo)
-	-- Options
-	for _, button in pairs(itemButtons) do
-		button:Hide();
-		button.Icon:SetVertexColor(1, 1, 1);
-	end
+
 	Storyline_NPCFrameGossipChoices:Hide();
 	Storyline_NPCFrameRewards:Hide();
 	Storyline_NPCFrameObjectives:Hide();
@@ -1050,11 +721,6 @@ local function handleEventSpecifics(event, texts, textIndex, eventInfo)
 	Storyline_NPCFrameObjectivesContent.Objectives:SetText('');
 	Storyline_NPCFrameObjectivesContent.Objectives:Hide();
 	Storyline_NPCFrameRewards.Content:Hide();
-	Storyline_NPCFrameRewards.Content.RewardText2:Hide();
-	Storyline_NPCFrameRewards.Content.RewardText3:Hide();
-	Storyline_NPCFrameRewards.Content.RewardTextSpell:Hide();
-	Storyline_NPCFrameRewards.Content.FollowerFrame:Hide();
-	Storyline_NPCFrameRewards.Content.SpellFrame:Hide();
 	setTooltipForSameFrame(Storyline_NPCFrameChatOption1);
 	setTooltipForSameFrame(Storyline_NPCFrameChatOption2);
 	setTooltipForSameFrame(Storyline_NPCFrameChatOption3);
@@ -1064,43 +730,13 @@ local function handleEventSpecifics(event, texts, textIndex, eventInfo)
 	Storyline_NPCFrameChatOption3:SetScript("OnEnter", nil);
 	Storyline_NPCFrameObjectivesImage:SetTexture("Interface\\FriendsFrame\\FriendsFrameScrollIcon");
 	QuestFrame_HideQuestPortrait();
-	Storyline_API.buttons.hideAllButtons();
-	Storyline_NPCFrameObjectivesContent.rewards:Hide();
+
+	DialogsScrollFrame.hide();
+	DialogsButtons.hideAllButtons();
+	RewardsButtons.hideAllButtons();
 
 	if textIndex == #texts and eventHandlers[event] then
 		eventHandlers[event](eventInfo);
-	end
-end
-
-local function refreshRewards(...)
-
-	local rewardsInfoUpdated = {};
-
-	for i = 1, GetNumQuestRewards() do
-		local name, texture, numItems, quality, isUsable = GetQuestItemInfo("reward", i);
-		rewardsInfoUpdated[i] = name;
-	end
-
-	for index, buttonInfo in pairs(displayBuilder) do
-		local button = itemButtons[index];
-
-		if not button then return end;
-
-		if rewardsInfoUpdated[buttonInfo.index] then
-			buttonInfo.text = rewardsInfoUpdated[buttonInfo.index];
-		end
-
-		if buttonInfo.type == "currency" then
-			decorateCurrencyButton(button, buttonInfo.index, "reward", buttonInfo.icon, buttonInfo.text, buttonInfo.count);
-		elseif buttonInfo.type == "spell" then
-			dispatchSpellButtonDecorator(button, buttonInfo);
-		elseif buttonInfo.type == "item" then
-			decorateItemButton(button, buttonInfo.index, buttonInfo.rewardType, buttonInfo.icon, buttonInfo.text, buttonInfo.count, buttonInfo.isUsable);
-		elseif buttonInfo.type == "skillpoint" then
-			decorateSkillPointButton(button, buttonInfo.icon, buttonInfo.text, buttonInfo.count, buttonInfo.tooltipTitle);
-		else
-			decorateStandardButton(button, buttonInfo.icon, buttonInfo.text, buttonInfo.tooltipTitle, buttonInfo.tooltipSub);
-		end
 	end
 end
 
@@ -1199,101 +835,25 @@ function Storyline_API.initEventsStructure()
 		["QUEST_GREETING"] = {
 			text = GetGreetingText,
 			finishMethod = function()
-				debug("QUEST_GREETING – Calling finish method");
-				-- I'm tidying frames into local variable here so the code is more readable
-				local activeQuestChoicesFrame = Storyline_NPCFrameChatOption1;
-				local availableQuestChoicesFrame = Storyline_NPCFrameChatOption2;
-				local firstChoiceAvailableInPopup = Storyline_ChoiceString0;
+				local firstChoice, bucketType, index = Dialogs.getFirstChoice(Dialogs.EVENT_TYPES.QUEST_GREETING);
 
-				-- We will try to pick the best choice available in the current situation
-				-- Meaning completing quest first and then picking up new quest
-				-- First we open the choices popup (only if not alreayd opened)
-				if not Storyline_NPCFrameGossipChoices:IsVisible() then
-					debug("QUEST_GREETING – Finish method : Gossip choice frame not shown.");
-					-- If we have active quests that are completed, they are the first to be picked
-					if GetNumActiveQuests() >= 1  then
-						-- Iterate through the active quests to check if one is completed
-						for i = 1, GetNumActiveQuests() do
-							local _, isCompleted = GetActiveTitle(i);
-							if isCompleted then
-								debug("QUEST_GREETING – Finish method : Active quest found with at least one completed.");
-								return activeQuestChoicesFrame:GetScript("OnClick")(activeQuestChoicesFrame);
-							end
-						end
-					end
-
-					-- Next if we have quest available we pick them
-					if GetNumAvailableQuests() >= 1 then
-						debug("QUEST_GREETING – Finish method : Available quest found.");
-						return availableQuestChoicesFrame:GetScript("OnClick")(availableQuestChoicesFrame);
-					end
-
-					-- Finally if we have active quests, but none are completed, they are the last to be picked
-					if GetNumActiveQuests() >= 1 then
-						debug("QUEST_GREETING – Finish method : Active quest found (none are completed).");
-						return activeQuestChoicesFrame:GetScript("OnClick")(activeQuestChoicesFrame);
-					end
-
+				if Dialogs.getDialogChoiceSelectorForEventType(Dialogs.EVENT_TYPES.QUEST_GREETING, bucketType) then
+					debug(("QUEST_GREETING – Finish method : Using selector method found for bucket type %s at index %s."):format(bucketType, index));
+					Dialogs.getDialogChoiceSelectorForEventType(Dialogs.EVENT_TYPES.QUEST_GREETING, bucketType)(index);
 				else
-					-- The choice popup is open, we will use the first choice in the popup
-					if firstChoiceAvailableInPopup and firstChoiceAvailableInPopup:GetScript("OnClick") then
-						debug("QUEST_GREETING – Finish method : Choice popup opened, picked first choice available");
-						return firstChoiceAvailableInPopup:GetScript("OnClick")();
-					end
+					debug("QUEST_GREETING – Finish method : No valid options found, fallback to closing quest.");
+					CloseQuest();
 				end
-
-				-- Our fallback is always to close the dialog if no correct action was to be found
-				debug("QUEST_GREETING – Finish method : No quest options found, fallback to closing dialog.");
-				CloseQuest()
 			end,
 			finishText = function()
-				-- The default finish text is goodbye.
 				local finishText = GOODBYE;
+				local firstChoice = Dialogs.getFirstChoice(Dialogs.EVENT_TYPES.QUEST_GREETING);
 
-				-- We will now check if we have dialog options available
-				-- The priority is first completed active quest, then quests available and then non-completed active quests
-				-- We'll do that in a reverse order so the text that stays in finishText at the end is the one
-				-- with the higher priority
-
-				-- Lets cache some value so we don't call the same functions multiple times
-				local numActiveQuests = GetNumActiveQuests();
-				local numAvailableQuests = GetNumAvailableQuests();
-				local multipleChoicesText = loc("SL_WELL");
-
-				local haveFoundCompletedQuests = false;
-
-				-- If we have active quests they are the first picked
-				if numActiveQuests >= 1  then
-					-- If we have more than one choice, use the multiple choices text
-					if numActiveQuests > 1 then
-						finishText = multipleChoicesText;
-					else
-					-- If we only have one quest, use the quest title for the text
-						finishText = GetActiveTitle(1);
-					end
-
-					-- Iterate through the active quests to check if one is completed
-					for i = 1, numActiveQuests do
-						local _, isCompleted = GetActiveTitle(i);
-						if isCompleted then
-							-- If one of the quest is completed, we remember that we found one
-							-- So we can give it full priority
-							haveFoundCompletedQuests = true;
-							break;
-						end
-					end
-				end
-
-				-- If we have available quests and we have not found a completed quest before
-				-- we can use the available quests for the text.
-				if numAvailableQuests >= 1 and not haveFoundCompletedQuests then
-					-- If we have more than one choice, use the multiple choices text
-					if numAvailableQuests > 1 then
-						finishText = multipleChoicesText;
-					else
-						-- If we only have one quest, use the quest title for the text
-						finishText = GetAvailableTitle(1);
-					end
+				if firstChoice then
+					finishText = firstChoice.title;
+					debug(("QUEST_GREETING – Finish text : Found first choice with text %s."):format(finishText));
+				else
+					debug(("QUEST_GREETING – Finish text : Could not find a first choice, using default finish text %s."):format(finishText));
 				end
 
 				return finishText;
@@ -1377,126 +937,26 @@ function Storyline_API.initEventsStructure()
 		["GOSSIP_SHOW"] = {
 			text = GetGossipText,
 			finishMethod = function()
-				debug("GOSSIP_SHOW – Calling finish method");
+				local firstChoice, bucketType, index = Dialogs.dialogs.getFirstChoice(Dialogs.EVENT_TYPES.GOSSIP_SHOW);
 
-				-- I'm tidying frames into local variable here so the code is more readable
-				local activeQuestChoicesFrame = Storyline_NPCFrameChatOption2;
-				local availableQuestChoicesFrame = Storyline_NPCFrameChatOption1;
-				local availableGossipChoicesFrame = Storyline_NPCFrameChatOption3;
-				local firstChoiceAvailableInPopup = Storyline_ChoiceString0;
-
-				-- We will try to pick the best choice available in the current situation
-				-- Meaning completing quest first, then picking up new quest
-				-- then gossip choices and finally active but not completed quests
-				-- First we open the choices popup (only if not alreayd opened)
-				if not Storyline_NPCFrameGossipChoices:IsVisible() then
-					debug("GOSSIP_SHOW – Finish method : Gossip choice frame not shown.");
-
-					-- If we have active quests that are completed, they are the first to be picked
-					if GetNumGossipActiveQuests() >= 1 then
-						-- Iterate through the active quests to check if one is completed
-						local data = { GetGossipActiveQuests() };
-						for i = 1, GetNumGossipActiveQuests() do
-							local isCompleted = data[(i * 5) - 1];
-							if isCompleted then
-								debug("GOSSIP_SHOW – Finish method : Active quest found with at least one completed.");
-								return activeQuestChoicesFrame:GetScript("OnClick")(activeQuestChoicesFrame);
-							end
-						end
-					end
-
-					-- Next if we have quest available we pick them
-					if GetNumGossipAvailableQuests() >= 1 then
-						debug("GOSSIP_SHOW – Finish method : Available quest found.");
-						return availableQuestChoicesFrame:GetScript("OnClick")(availableQuestChoicesFrame);
-					end
-
-					if GetNumGossipOptions() >= 1 then
-						debug("GOSSIP_SHOW – Finish method : Available gossip choices found.");
-						return availableGossipChoicesFrame:GetScript("OnClick")(availableGossipChoicesFrame);
-					end
-
-					-- Next if we have active quests, but none are completed, they are the last to be picked
-					if GetNumActiveQuests() >= 1 then
-						debug("GOSSIP_SHOW – Finish method : Active quest found (none are completed).");
-						return activeQuestChoicesFrame:GetScript("OnClick")(activeQuestChoicesFrame);
-					end
+				if firstChoice and Dialogs.getDialogChoiceSelectorForEventType(Dialogs.EVENT_TYPES.GOSSIP_SHOW, bucketType) then
+					debug(("GOSSIP_SHOW – Finish method : Using selector method found for bucket type %s at index %s."):format(bucketType, index));
+					Dialogs.getDialogChoiceSelectorForEventType(Dialogs.EVENT_TYPES.GOSSIP_SHOW, bucketType)(index);
 				else
-					-- The choice popup is open, we will use the first choice in the popup
-					if firstChoiceAvailableInPopup and firstChoiceAvailableInPopup.GetScript and firstChoiceAvailableInPopup:GetScript("OnClick") then
-						debug("GOSSIP_SHOW – Finish method : Choice popup opened, picked first choice available");
-						return firstChoiceAvailableInPopup:GetScript("OnClick")();
-					end
+					debug("GOSSIP_SHOW – Finish method : No valid options found, fallback to closing dialog.");
+					CloseGossip();
 				end
-
-				-- Our fallback is always to close the dialog if no correct action was to be found
-				debug("GOSSIP_SHOW – Finish method : No valid options found, fallback to closing dialog.");
-				CloseGossip();
 			end,
 			finishText = function()
-				-- The default finish text is goodbye.
 				local finishText = GOODBYE;
+				local firstChoice = Dialogs.getFirstChoice(Dialogs.EVENT_TYPES.GOSSIP_SHOW);
 
-				-- We will now check if we have dialog options available
-				-- The priority is first completed active quest, then quests available,
-				-- then gossip choices and finally non-completed active quests
-				-- We'll do that in a reverse order so the text that stays in finishText at the end is the one
-				-- with the higher priority.
-				-- (We'll only do active quest once, but remember if we found a completed quest)
-
-				-- Lets cache some value so we don't call the same functions multiple times
-				local numActiveQuests = GetNumGossipActiveQuests();
-				local numAvailableQuests = GetNumGossipAvailableQuests();
-				local numGossipOptions = GetNumGossipOptions();
-				local multipleChoicesText = loc("SL_WELL");
-
-				local haveFoundCompletedQuests = false;
-
-				-- If we have active quests they are the first picked
-				if numActiveQuests >= 1 then
-					-- If we have more than one choice, use the multiple choices text
-					if numActiveQuests > 1 then
-						finishText = multipleChoicesText;
-					else
-						-- If we only have one quest, use the quest title for the text
-						finishText = GetGossipActiveQuests();
-					end
-
-					-- Iterate through the active quests to check if one is completed
-					local data = { GetGossipActiveQuests() };
-					for i = 1, GetNumGossipActiveQuests() do
-						local isCompleted = data[(i * 5) - 1];
-						if isCompleted then
-							-- If one of the quest is completed, we remember that we found one
-							-- So we can give it full priority
-							haveFoundCompletedQuests = true;
-							break;
-						end
-					end
+				if firstChoice then
+					finishText = firstChoice.title;
+					debug(("GOSSIP_SHOW – Finish text : Found first choice with text %s."):format(finishText));
+				else
+					debug(("GOSSIP_SHOW – Finish text : Could not find a first choice, using default finish text %s."):format(finishText));
 				end
-
-				-- If we have gossip options and we have not found a completed quest before
-				-- we can use the gossip text for the text.
-				if numGossipOptions >= 1 and not haveFoundCompletedQuests then
-					if numGossipOptions > 1 then
-						finishText = loc("SL_WELL");
-					else
-						finishText = GetGossipOptions();
-					end
-				end
-
-				-- If we have available quests and we have not found a completed quest before
-				-- we can use the available quests for the text.
-				if numAvailableQuests >= 1 and not haveFoundCompletedQuests then
-					-- If we have more than one choice, use the multiple choices text
-					if numAvailableQuests > 1 then
-						finishText = multipleChoicesText;
-					else
-						-- If we only have one quest, use the quest title for the text
-						finishText = GetGossipAvailableQuests();
-					end
-				end
-
 
 				return finishText;
 			end,
@@ -1581,10 +1041,7 @@ function Storyline_API.initEventsStructure()
 	Storyline_NPCFrameObjectivesContent.RequiredItemText:SetText(TURN_IN_ITEMS);
 
 	Storyline_NPCFrameRewardsItem:SetScript("OnClick", function() EVENT_INFO["QUEST_COMPLETE"].finishMethod(); end);
-	Storyline_NPCFrameRewards.Content.RewardText1:SetText(REWARD_ITEMS_ONLY);
 	Storyline_NPCFrameRewards.Content.Title:SetText(REWARDS);
-	Storyline_NPCFrameRewards.Content.RewardText2:SetText(REWARD_ITEMS);
-	Storyline_NPCFrameRewards.Content.RewardText3:SetText(REWARD_CHOOSE);
 
 	-- Hook reward
 	hooksecurefunc("QuestInfo_ShowRewards", hideQuestRewardFrameIfNeed);

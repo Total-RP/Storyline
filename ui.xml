@@ -203,95 +203,6 @@
 		</Scripts>
 	</Button>
 
-	<Frame name="Storyline_DialogChoice" virtual="true" hidden="true">
-		<Size x="450" y="50"/>
-		<Layers>
-			<Layer level="BACKGROUND">
-				<Texture file="Interface/AdventureMap/AdventureMap">
-					<Size y="13" />
-					<Anchors>
-						<Anchor point="TOP" />
-						<Anchor point="LEFT" />
-						<Anchor point="RIGHT" />
-					</Anchors>
-					<TexCoords left="0.34" right="0.78" top="0.30" bottom="0.325"/>
-				</Texture>
-				<Texture file="Interface/AdventureMap/AdventureMap">
-					<Anchors>
-						<Anchor point="TOP" y="-13"/>
-						<Anchor point="BOTTOM" y="13"/>
-						<Anchor point="LEFT" />
-						<Anchor point="RIGHT" />
-					</Anchors>
-					<TexCoords left="0.34" right="0.78" top="0.33" bottom="0.34"/>
-				</Texture>
-				<Texture file="Interface/AdventureMap/AdventureMap">
-					<Size y="13" />
-					<Anchors>
-						<Anchor point="BOTTOM"/>
-						<Anchor point="LEFT" />
-						<Anchor point="RIGHT" />
-					</Anchors>
-					<TexCoords left="0.34" right="0.78" top="0.34" bottom="0.36"/>
-				</Texture>
-			</Layer>
-			<Layer>
-				<Texture parentKey="icon" file="Interface/GOSSIPFRAME/ChatBubbleGossipIcon">
-					<Size x="16" y="16"/>
-					<Anchors>
-						<Anchor point="LEFT" relativeKey="$parent" relativePoint="LEFT" x="90"/>
-					</Anchors>
-				</Texture>
-				<FontString parentKey="text" inherits="GameFontNormalMed1" justifyH="LEFT" justifyV="MIDDLE" wordwrap="true">
-					<Size x="250"/>
-					<Anchors>
-						<Anchor point="LEFT" relativePoint="RIGHT" relativeKey="$parent.icon" x="10"/>
-					</Anchors>
-				</FontString>
-				<FontString parentKey="binding" inherits="GameFontNormal" justifyH="RIGHT" justifyV="MIDDLE">
-					<Size x="50"/>
-					<Anchors>
-						<Anchor point="RIGHT" relativePoint="LEFT" relativeKey="$parent.icon" x="-5"/>
-					</Anchors>
-				</FontString>
-			</Layer>
-			<Layer level="OVERLAY">
-				<Texture parentKey="highlight" file="Interface\FriendsFrame\UI-FriendsFrame-HighlightBar" alpha="0" alphaMode="ADD">
-					<Anchors>
-						<Anchor point="TOPLEFT" y="-5" x="20"/>
-						<Anchor point="BOTTOMRIGHT" y="5" x="-20"/>
-					</Anchors>
-				</Texture>
-			</Layer>
-		</Layers>
-		<Animations>
-			<AnimationGroup parentKey="fadeIn">
-				<Alpha fromAlpha="0.0" toAlpha="1" duration="0.2" smoothing="OUT"/>
-			</AnimationGroup>
-			<AnimationGroup parentKey="onClickedAnimation">
-				<Translation offsetX="0" offsetY="-3" duration="0.1" />
-			</AnimationGroup>
-			<AnimationGroup parentKey="onEnterAnimation" setToFinalAlpha="true">
-				<Alpha childKey="highlight" fromAlpha="0.0" toAlpha="0.4" duration="0.1" smoothing="OUT"/>
-			</AnimationGroup>
-			<AnimationGroup parentKey="onLeaveAnimation" setToFinalAlpha="true">
-				<Alpha childKey="highlight" fromAlpha="0.4" toAlpha="0.0" duration="0.1" smoothing="OUT"/>
-			</AnimationGroup>
-		</Animations>
-		<Scripts>
-			<OnEnter>
-				self.onEnterAnimation:Play();
-			</OnEnter>
-			<OnLeave>
-				self.onLeaveAnimation:Play();
-			</OnLeave>
-			<OnMouseDown>
-				self.onClickedAnimation:Stop();
-				self.onClickedAnimation:Play();
-			</OnMouseDown>
-		</Scripts>
-	</Frame>
-
 	<Frame name="Storyline_NPCFrame" inherits="Storyline_StandardParchmentFrame" toplevel="true" parent="UIParent" frameStrata="MEDIUM" enableMouse="true" clampedToScreen="true" hidden="true" movable="true">
 		<Size x="700" y="450"/>
 
@@ -389,7 +300,7 @@
 			</Frame>
 
 			<ScrollFrame name="Storyline_DialogChoicesScrollFrame" inherits="UIPanelScrollFrameCodeTemplate" frameStrata="HIGH">
-				<Size x="400" y="250"/>
+				<Size x="450" y="250"/>
 				<Anchors>
 					<Anchor point="CENTER" relativePoint="CENTER" relativeTo="$parent"/>
 				</Anchors>
@@ -438,6 +349,9 @@
 				<ScrollChild>
 					<Frame parentKey="container">
 						<Size x="400" y="250" />
+						<Anchors>
+							<Anchor point="CENTER" relativePoint="CENTER" relativeTo="$parent"/>
+						</Anchors>
 					</Frame>
 				</ScrollChild>
 			</ScrollFrame>
@@ -484,9 +398,11 @@
 							</Anchors>
 							<Color r="1" g="1" b="0.4"/>
 						</FontString>
-						<FontString name="Storyline_NPCFrameChatNextText" text="[POUIC]" inherits="GameFontNormalSmall" justifyH="RIGHT" justifyV="BOTTOM">
+						<FontString name="Storyline_NPCFrameChatNextText" text="[POUIC]" inherits="GameFontNormalSmall" justifyH="CENTER" justifyV="BOTTOM" wordwrap="false">
 							<Anchors>
 								<Anchor point="BOTTOM" x="0" y="17"/>
+								<Anchor point="LEFT" x="60" />
+								<Anchor point="RIGHT"  x="-60" />
 							</Anchors>
 							<Color r="1" g="1" b="0.4"/>
 						</FontString>
@@ -674,7 +590,6 @@
 								<FontString parentKey="Title" inherits="GameFontNormalLarge" justifyH="CENTER" justifyV="TOP">
 									<Size x="0" y="20"/>
 									<Anchors>
-										<Anchor point="TOP" x="0" y="-10"/>
 										<Anchor point="LEFT" x="10" y="0"/>
 										<Anchor point="RIGHT" x="-10" y="0"/>
 									</Anchors>
@@ -683,17 +598,12 @@
 									<Size x="310" y="0"/>
 									<Anchors>
 										<Anchor point="TOP" relativePoint="BOTTOM" relativeKey="$parent.Title" x="0" y="-5"/>
-										<!--<Anchor point="LEFT" x="10" y="0"/>-->
-										<!--<Anchor point="RIGHT" x="-10" y="0"/>-->
 									</Anchors>
 									<Color r="0.95" g="0.95" b="0.95"/>
 								</FontString>
-								<FontString parentKey="GroupSuggestion" inherits="GameFontNormal" justifyH="LEFT"
-											justifyV="TOP">
+								<FontString parentKey="GroupSuggestion" inherits="GameFontNormal" justifyH="LEFT" justifyV="TOP">
 									<Size x="0" y="0"/>
 									<Anchors>
-										<Anchor point="TOP" relativePoint="BOTTOM"
-												relativeKey="$parent.Objectives" x="0" y="-5"/>
 										<Anchor point="LEFT" x="10" y="0"/>
 										<Anchor point="RIGHT" x="-10" y="0"/>
 									</Anchors>
@@ -702,25 +612,6 @@
 								<FontString parentKey="RequiredItemText" inherits="GameFontNormal" justifyH="LEFT" justifyV="TOP">
 									<Size x="0" y="0"/>
 									<Anchors>
-										<Anchor point="TOP" relativePoint="BOTTOM" relativeKey="$parent.Objectives" x="0" y="-5"/>
-										<Anchor point="LEFT" x="10" y="0"/>
-										<Anchor point="RIGHT" x="-10" y="0"/>
-									</Anchors>
-									<Color r="0.95" g="0.65" b="0"/>
-								</FontString>
-								<FontString parentKey="rewards" inherits="GameFontNormal" justifyH="LEFT" justifyV="TOP">
-									<Size x="0" y="0"/>
-									<Anchors>
-										<Anchor point="TOP" relativePoint="BOTTOM" relativeKey="$parent.RequiredItemText" x="0" y="-5"/>
-										<Anchor point="LEFT" x="10" y="0"/>
-										<Anchor point="RIGHT" x="-10" y="0"/>
-									</Anchors>
-									<Color r="0.95" g="0.65" b="0"/>
-								</FontString>
-								<FontString parentKey="choices" inherits="GameFontNormal" justifyH="LEFT" justifyV="TOP">
-									<Size x="0" y="0"/>
-									<Anchors>
-										<Anchor point="TOP" relativePoint="BOTTOM" relativeKey="$parent.rewards" x="0" y="-5"/>
 										<Anchor point="LEFT" x="10" y="0"/>
 										<Anchor point="RIGHT" x="-10" y="0"/>
 									</Anchors>
@@ -786,67 +677,8 @@
 										<Anchor point="RIGHT" x="-10" y="0"/>
 									</Anchors>
 								</FontString>
-								<FontString parentKey="RewardText1" inherits="GameFontNormal" justifyH="LEFT" justifyV="TOP">
-									<Size x="0" y="0"/>
-									<Anchors>
-										<Anchor point="TOP" relativePoint="BOTTOM" relativeKey="$parent.Title" x="0" y="-5"/>
-										<Anchor point="LEFT" x="10" y="0"/>
-										<Anchor point="RIGHT" x="-10" y="0"/>
-									</Anchors>
-									<Color r="0.95" g="0.95" b="0.95"/>
-								</FontString>
-								<FontString parentKey="RewardText1Value" inherits="GameFontNormal" justifyH="LEFT" justifyV="TOP">
-									<Size x="0" y="0"/>
-									<Anchors>
-										<Anchor point="TOP" relativePoint="BOTTOM" relativeKey="$parent.RewardText1" x="0" y="-5"/>
-										<Anchor point="LEFT" x="20" y="0"/>
-										<Anchor point="RIGHT" x="-20" y="0"/>
-									</Anchors>
-									<Color r="0.95" g="0.95" b="0.95"/>
-								</FontString>
-								<FontString parentKey="RewardText2" inherits="GameFontNormal" justifyH="LEFT" justifyV="TOP">
-									<Size x="0" y="0"/>
-									<Anchors>
-										<Anchor point="TOP" relativePoint="BOTTOM" relativeKey="$parent.RewardText1Value" x="0" y="-5"/>
-										<Anchor point="LEFT" x="10" y="0"/>
-										<Anchor point="RIGHT" x="-10" y="0"/>
-									</Anchors>
-									<Color r="0.95" g="0.95" b="0.95"/>
-								</FontString>
-								<FontString parentKey="RewardText3" inherits="GameFontNormal" justifyH="LEFT" justifyV="TOP">
-									<Size x="0" y="0"/>
-									<Anchors>
-										<Anchor point="TOP" relativePoint="BOTTOM" relativeKey="$parent.RewardText2" x="0" y="-5"/>
-										<Anchor point="LEFT" x="10" y="0"/>
-										<Anchor point="RIGHT" x="-10" y="0"/>
-									</Anchors>
-									<Color r="0.95" g="0.95" b="0.95"/>
-								</FontString>
-								<FontString parentKey="RewardTextSpell" inherits="GameFontNormal" justifyH="LEFT" justifyV="TOP">
-									<Size x="0" y="0"/>
-									<Anchors>
-										<Anchor point="TOP" relativePoint="BOTTOM" relativeKey="$parent.RewardText3" x="0" y="-5"/>
-										<Anchor point="LEFT" x="10" y="0"/>
-										<Anchor point="RIGHT" x="-10" y="0"/>
-									</Anchors>
-									<Color r="0.95" g="0.95" b="0.95"/>
-								</FontString>
 							</Layer>
 						</Layers>
-						<Frames>
-							<Button parentKey="SpellFrame" inherits="SmallItemButtonTemplate, QuestInfoRewardSpellCodeTemplate" hidden="true">
-								<Anchors>
-									<Anchor point="TOP" relativePoint="BOTTOM" relativeKey="$parent.RewardTextSpell" x="0" y="-5"/>
-									<Anchor point="LEFT" x="10" y="0"/>
-								</Anchors>
-							</Button>
-							<Button parentKey="FollowerFrame" inherits="QuestInfoRewardFollowerTemplate" hidden="true">
-								<Anchors>
-									<Anchor point="TOP" relativePoint="BOTTOM" relativeKey="$parent.RewardTextSpell" x="0" y="-5"/>
-									<Anchor point="LEFT" x="10" y="0"/>
-								</Anchors>
-							</Button>
-						</Frames>
 					</Frame>
 				</Frames>
 			</Frame>
@@ -925,9 +757,10 @@
 
 	<Include file="options.xml"/>
 	<Include file="debug.xml"/>
+	<Include file="dialogs\dialogs.xml"/>
+	<Include file="rewards\rewards.xml"/>
 
 	<Script file="rewards.lua"/>
-	<Script file="dialogs.lua"/>
 	<Script file="layout.lua"/>
 	<Script file="utils.lua"/>
 	<Script file="selections.lua"/>

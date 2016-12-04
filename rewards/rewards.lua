@@ -21,13 +21,22 @@
 --- Rewards getters
 ---------------------------------------------
 
+local tinsert, pairs = tinsert, pairs;
+local GetQuestItemInfo, GetNumQuestChoices = GetQuestItemInfo, GetNumQuestChoices;
+local IsFollowerCollected, IsCharacterNewlyBoosted, IsSpellKnownOrOverridesKnown, GetRewardSpell, GetNumRewardSpells = C_Garrison.IsFollowerCollected, IsCharacterNewlyBoosted, IsSpellKnownOrOverridesKnown, GetRewardSpell, GetNumRewardSpells;
+
 Storyline_API.rewards = {};
+local API = Storyline_API.rewards;
+
+local REWARDS_DEFAULT_ICON = [[Interface\ICONS\trade_archaeology_chestoftinyglassanimals]];
 
 local BUCKET_TYPES = {
 	RECEIVED = 1,
-	CHOICE = 2
+	CHOICE = 2,
+	AURA = 3,
+	FOLLOWER = 4,
 };
-Storyline_API.rewards.BUCKET_TYPES = BUCKET_TYPES;
+API.BUCKET_TYPES = BUCKET_TYPES;
 
 local REWARD_TYPES = {
 	XP = 1,
@@ -36,8 +45,10 @@ local REWARD_TYPES = {
 	CURRENCY = 4,
 	SKILL_POINTS = 5,
 	ITEMS = 6,
+	SPELL = 7,
+	FOLLOWER = 8,
 }
-Storyline_API.rewards.REWARD_TYPES = REWARD_TYPES;
+API.REWARD_TYPES = REWARD_TYPES;
 
 local MONEY_ICONS = {
 	COPPER = "Interface\\ICONS\\inv_misc_coin_05",
@@ -118,7 +129,7 @@ local REWARD_GETTERS = {
 				tinsert(rewards, {
 					text         = BONUS_SKILLPOINTS:format(skillName),
 					icon         = skillIcon,
-					count        = skillPoints,
+					skillPoints  = skillPoints,
 					type         = "skillpoint",
 					tooltipTitle = format(BONUS_SKILLPOINTS_TOOLTIP, skillPoints, skillName),
 				});
@@ -135,6 +146,7 @@ local REWARD_GETTERS = {
 					count      = count,
 					index      = i,
 					type       = "item",
+					quality    = quality,
 					rewardType = "reward",
 					isUsable   = isUsable,
 				});
@@ -147,6 +159,7 @@ local REWARD_GETTERS = {
 					icon       = texture,
 					count      = count,
 					index      = 1,
+					quality    = quality,
 					rewardType = "choice",
 					isUsable   = isUsable,
 				});
@@ -157,36 +170,99 @@ local REWARD_GETTERS = {
 	[BUCKET_TYPES.CHOICE] = {
 		[REWARD_TYPES.ITEMS] = function()
 			local choices = {};
+			local numberOfItemChoices = GetNumQuestChoices();
 			-- If there is only one choice, we already dealt with it in the getItemsReward() function
-			if GetNumQuestChoices() == 1 then return end
-			for i = 1, GetNumQuestChoices() do
+			if numberOfItemChoices == 1 then return choices end
+			for i = 1, numberOfItemChoices do
 				local name, texture, numItems, quality, isUsable = GetQuestItemInfo("choice", i);
 				tinsert(choices, {
-					text = name,
-					icon = texture,
-					count = numItems,
-					index = i,
+					text       = name,
+					icon       = texture,
+					count      = numItems,
+					quality    = quality,
+					index      = i,
 					rewardType = "choice",
-					isUsable = isUsable,
+					isUsable   = isUsable,
 				});
 			end
 			return choices;
 		end
+	},
+	[BUCKET_TYPES.AURA] = {
+		[REWARD_TYPES.SPELL] = function()
+			local auraRewards = {};
+			local numberOfSpellRewards = GetNumRewardSpells();
+
+			for rewardSpellIndex = 1, numberOfSpellRewards do
+				local texture, name, isTradeskillSpell, isSpellLearned, hideSpellLearnText, isBoostSpell, garrFollowerID, spellID = GetRewardSpell(rewardSpellIndex);
+				local knownSpell = IsSpellKnownOrOverridesKnown(spellID);
+
+				-- Filter out already learned spell or garrison followers
+				if texture and not knownSpell and (not isBoostSpell or IsCharacterNewlyBoosted()) and (not garrFollowerID or not IsFollowerCollected(garrFollowerID)) then
+					-- Filter out tradeskill spells, boost spells, followers or spell learned, so we only have auras
+					if not isTradeskillSpell and not isBoostSpell and not garrFollowerID and not isSpellLearned then
+						tinsert(auraRewards, {
+							text   			 = name,
+							icon   			 = texture,
+							spellID			 = spellID,
+							rewardSpellIndex = rewardSpellIndex
+						});
+					end
+				end
+			end
+
+			return auraRewards;
+		end,
+	},
+	[BUCKET_TYPES.FOLLOWER] = {
+		[REWARD_TYPES.FOLLOWER] = function()
+			local followerRewards = {};
+			local numberOfSpellRewards = GetNumRewardSpells();
+
+			for rewardSpellIndex = 1, numberOfSpellRewards do
+				local texture, name, _, _, _, isBoostSpell, garrFollowerID, spellID = GetRewardSpell(rewardSpellIndex);
+				local knownSpell = IsSpellKnownOrOverridesKnown(spellID);
+
+				-- Filter out already learned spell or garrison followers
+				if texture and not knownSpell and (not isBoostSpell or IsCharacterNewlyBoosted()) and (not garrFollowerID or not IsFollowerCollected(garrFollowerID)) then
+					-- If we have a follower ID then it is a follower
+					if garrFollowerID then
+						tinsert(followerRewards, {
+							text   			 = name,
+							icon   			 = texture,
+							garrFollowerID   = garrFollowerID,
+							rewardSpellIndex = rewardSpellIndex
+						});
+					end
+				end
+			end
+
+			return followerRewards;
+		end,
 	}
 }
 
-function Storyline_API.rewards.getRewards()
+function API.getRewards()
 	local rewardsBucket = {}
+	local bestIcon = REWARDS_DEFAULT_ICON;
 
 	for _, bucketType in pairs(BUCKET_TYPES) do
+		-- Create a new reward bucket for this bucket type
 		rewardsBucket[bucketType] = {};
 		for _, rewardType in pairs(REWARD_TYPES) do
+			-- If we have reward getters for this bucket type and this reward type we use it to retreive the rewards
 			if REWARD_GETTERS[bucketType] and REWARD_GETTERS[bucketType][rewardType] then
-				rewardsBucket[bucketType][rewardType] = REWARD_GETTERS[bucketType][rewardType]();
+				local rewards = REWARD_GETTERS[bucketType][rewardType]();
+				-- Only use the rewards table if it contains something
+				if #rewards > 0 then
+					for _, reward in pairs(rewards) do
+						bestIcon = reward.icon or bestIcon;
+					end
+					rewardsBucket[bucketType][rewardType] = rewards;
+				end
 			end
 		end
 	end
 
-	return rewardsBucket;
+	return rewardsBucket, bestIcon;
 end
-
