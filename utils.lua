@@ -30,12 +30,12 @@ local after, tostring, print = C_Timer.After, tostring, print;
 --
 -- @param message
 --
-local debug = function(message)
+local debug = function(message, ...)
 	local DEFAULT_DEBUG_MESSAGE = "Debug function called, but message was empty ¯\\_(^_^)_/¯";
 	local header = "|cffffa500[Storyline debug]|r: %s"
 
 	if Storyline_Data.config.debug then
-		print(header:format(message or DEFAULT_DEBUG_MESSAGE));
+		print(header:format(message or DEFAULT_DEBUG_MESSAGE), ...);
 	end
 end
 Storyline_API.debug = debug;
@@ -111,10 +111,12 @@ local animationLib = LibStub:GetLibrary("TRP-Dialog-Animation-DB");
 local Storyline_NPCFrameModelsMe, Storyline_NPCFrameModelsYou = Storyline_NPCFrameModelsMe, Storyline_NPCFrameModelsYou;
 
 function Storyline_API.playSelfAnim(sequence)
+	if not Storyline_NPCFrameModelsMe:GetModelFileID() then return end
 	animationLib:PlayAnimationAndStand(Storyline_NPCFrameModelsMe, sequence, animationLib:GetAnimationDuration(tostring(Storyline_NPCFrameModelsMe:GetModelFileID()), sequence), getId());
 end
 
 local function playTargetAnim(sequence)
+	if not Storyline_NPCFrameModelsYou:GetModelFileID() then return end
 	animationLib:PlayAnimationAndStand(Storyline_NPCFrameModelsYou, sequence, animationLib:GetAnimationDuration(tostring(Storyline_NPCFrameModelsYou:GetModelFileID()), sequence), getId());
 end
 Storyline_NPCFrameDebugSequenceYou.playTargetAnim = playTargetAnim;

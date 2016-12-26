@@ -98,7 +98,7 @@ local function getGossipActiveQuestsChoices()
 			lvl          = activeQuests[j - (NUMBER_OF_PARAMETERS_FOR_ACTIVE_QUESTS - 2)],
 			isTrivial    = activeQuests[j - (NUMBER_OF_PARAMETERS_FOR_ACTIVE_QUESTS - 3)],
 			isCompleted  = activeQuests[j - (NUMBER_OF_PARAMETERS_FOR_ACTIVE_QUESTS - 4)],
-			isRepeatable = activeQuests[j - (NUMBER_OF_PARAMETERS_FOR_ACTIVE_QUESTS - 5)],
+			isLegendary  = activeQuests[j - (NUMBER_OF_PARAMETERS_FOR_ACTIVE_QUESTS - 5)],
 			isIgnored    = activeQuests[j - (NUMBER_OF_PARAMETERS_FOR_ACTIVE_QUESTS - 6)]
 		};
 		-- Place the choice in the appropriate bucket

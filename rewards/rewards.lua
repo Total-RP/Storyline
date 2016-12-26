@@ -24,6 +24,10 @@
 local tinsert, pairs = tinsert, pairs;
 local GetQuestItemInfo, GetNumQuestChoices = GetQuestItemInfo, GetNumQuestChoices;
 local IsFollowerCollected, IsCharacterNewlyBoosted, IsSpellKnownOrOverridesKnown, GetRewardSpell, GetNumRewardSpells = C_Garrison.IsFollowerCollected, IsCharacterNewlyBoosted, IsSpellKnownOrOverridesKnown, GetRewardSpell, GetNumRewardSpells;
+local GetCoinTextureString, GetQuestMoneyToGet, GetNumQuestItems, GetQuestCurrencyInfo, GetNumQuestCurrencies, GetMoney = GetCoinTextureString, GetQuestMoneyToGet, GetNumQuestItems, GetQuestCurrencyInfo, GetNumQuestCurrencies, GetMoney;
+local BreakUpLargeNumbers, GetRewardXP, GetNumRewardCurrencies, GetRewardTitle, GetRewardMoney, GetNumQuestRewards, GetRewardSkillPoints = BreakUpLargeNumbers, GetRewardXP, GetNumRewardCurrencies, GetRewardTitle, GetRewardMoney, GetNumQuestRewards, GetRewardSkillPoints;
+
+local debug = Storyline_API.debug;
 
 Storyline_API.rewards = {};
 local API = Storyline_API.rewards;
@@ -35,8 +39,14 @@ local BUCKET_TYPES = {
 	CHOICE = 2,
 	AURA = 3,
 	FOLLOWER = 4,
+	OBJECTIVES = 9,
 };
 API.BUCKET_TYPES = BUCKET_TYPES;
+
+local BUCKET_TYPES_ORDER = {};
+for key, value in pairs(BUCKET_TYPES) do
+	BUCKET_TYPES_ORDER[value] = key;
+end
 
 local REWARD_TYPES = {
 	XP = 1,
@@ -49,6 +59,11 @@ local REWARD_TYPES = {
 	FOLLOWER = 8,
 }
 API.REWARD_TYPES = REWARD_TYPES;
+
+local REWARD_TYPES_ORDER = {};
+for key, value in pairs(REWARD_TYPES) do
+	REWARD_TYPES_ORDER[value] = key;
+end
 
 local MONEY_ICONS = {
 	COPPER = "Interface\\ICONS\\inv_misc_coin_05",
@@ -242,14 +257,20 @@ local REWARD_GETTERS = {
 	}
 }
 
+function API.getRewardsForBucketTypeAndRewardType(bucketType, rewardType)
+	assert(REWARD_GETTERS[bucketType], ("No reward getter for bucket type %s."):format(bucketType or "NO BUCKET TYPE"));
+	assert(REWARD_GETTERS[bucketType][rewardType], ("No reward getter for reward type %s in bucket type %s."):format(rewardType or "NO REWARD TYPE", bucketType));
+	return REWARD_GETTERS[bucketType][rewardType]();
+end
+
 function API.getRewards()
 	local rewardsBucket = {}
 	local bestIcon = REWARDS_DEFAULT_ICON;
 
-	for _, bucketType in pairs(BUCKET_TYPES) do
+	for bucketType, _ in pairs(BUCKET_TYPES_ORDER) do
 		-- Create a new reward bucket for this bucket type
 		rewardsBucket[bucketType] = {};
-		for _, rewardType in pairs(REWARD_TYPES) do
+		for rewardType, _ in pairs(REWARD_TYPES_ORDER) do
 			-- If we have reward getters for this bucket type and this reward type we use it to retreive the rewards
 			if REWARD_GETTERS[bucketType] and REWARD_GETTERS[bucketType][rewardType] then
 				local rewards = REWARD_GETTERS[bucketType][rewardType]();
@@ -265,4 +286,79 @@ function API.getRewards()
 	end
 
 	return rewardsBucket, bestIcon;
+end
+
+local OBJECTIVES_GETTERS = {
+	[REWARD_TYPES.MONNEY] = function()
+		local money = {};
+		local moneyObjective = GetQuestMoneyToGet();
+		if moneyObjective > 0 then
+			local icon;
+			if moneyObjective < COPPER_PER_SILVER then
+				icon = MONEY_ICONS.COPPER;
+			elseif moneyObjective < COPPER_PER_GOLD then
+				icon = MONEY_ICONS.SILVER;
+			else
+				icon = MONEY_ICONS.GOLD;
+			end
+			local moneyString = GetCoinTextureString(moneyObjective);
+			tinsert(money, {
+				text = moneyString,
+				icon = icon,
+				tooltipTitle = REQUIRED_MONEY .. " " ..moneyString,
+				isNotUsable = moneyObjective > GetMoney();
+			});
+		end
+		return money;
+	end,
+	[REWARD_TYPES.ITEMS] = function()
+		local itemObjectives = {};
+		for i = 1, GetNumQuestItems() do
+			local name, texture, numItems, quality, isUsable = GetQuestItemInfo("required", i);
+			tinsert(itemObjectives, {
+				text = name,
+				icon = texture,
+				count = numItems,
+				index = i,
+				type = "item",
+				rewardType = "required",
+				isUsable = isUsable,
+			});
+		end
+		return itemObjectives;
+	end,
+	[REWARD_TYPES.CURRENCY] = function()
+		local currencies = {};
+		for i = 1, GetNumQuestCurrencies() do
+			local name, texture, numItems = GetQuestCurrencyInfo("required", i);
+			tinsert(currencies, {
+				text = name,
+				icon = texture,
+				count = numItems,
+				index = i,
+				type = "currency",
+				rewardType = "required",
+			});
+		end
+		return currencies;
+	end
+}
+
+local OBJECTIVES_DEFAULT_ICON = [[Interface\ICONS\trade_archaeology_chestoftinyglassanimals]];
+
+function API.getObjectiveItems()
+	local objectivesBag = {}
+	local bestIcon = OBJECTIVES_DEFAULT_ICON;
+
+	for objectiveType, getter in pairs(OBJECTIVES_GETTERS) do
+		local objectives = getter();
+		if #objectives > 0 then
+			for _, objective in pairs(objectives) do
+				bestIcon = objective.icon or bestIcon;
+			end
+			objectivesBag[objectiveType] = objectives;
+		end
+	end
+
+	return objectivesBag, bestIcon;
 end

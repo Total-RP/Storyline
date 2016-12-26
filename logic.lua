@@ -494,25 +494,9 @@ function Storyline_API.addon:OnEnable()
 			closeDialog();
 		else
 			local keyNumber = tonumber(key);
-			if not keyNumber then
+			if not keyNumber or not Storyline_API.dialogs.buttons.selectOptionAtIndex(keyNumber) then
 				self:SetPropagateKeyboardInput(true);
-				return;
 			end
-
-			local foundFrames = 0;
-			for i = 1, 9 do
-				if _G["Storyline_NPCFrameChatOption" .. i] and _G["Storyline_NPCFrameChatOption" .. i].IsVisible and _G["Storyline_NPCFrameChatOption" .. i]:IsVisible() then
-					foundFrames = foundFrames + 1;
-					if foundFrames == keyNumber then
-						_G["Storyline_NPCFrameChatOption" .. i]:Click();
-						self:SetPropagateKeyboardInput(false);
-						return;
-					end
-				end
-			end
-
-			self:SetPropagateKeyboardInput(true);
-			return;
 		end
 	end);
 

@@ -68,6 +68,7 @@ local function decorateTextOptions(title, optionKey, affectedText)
 		affectedText:SetFont(font, scale, outline);
 		StorylineTextOptionsPanel[optionKey].TextSample:SetFont(font, scale, outline);
 		Storyline_Data.config[optionKey].Size = scale;
+		Storyline_NPCFrameChat:SetHeight(Storyline_NPCFrameChatText:GetHeight() + Storyline_NPCFrameChatName:GetHeight() + Storyline_NPCFrameChatNextText:GetHeight() + 50);
 	end);
 	StorylineTextOptionsPanel[optionKey].SizeSlider:SetValue(Storyline_Data.config[optionKey].Size or select(2, affectedText:GetFont()));
 
@@ -90,6 +91,46 @@ local function decorateTextOptions(title, optionKey, affectedText)
 		Storyline_Data.config[optionKey].Font = fontIndex;
 	end, nil, 100, true, true);
 	StorylineTextOptionsPanel[optionKey].FontDropDown:SetSelectedValue(Storyline_Data.config[optionKey].Font);
+end
+
+local function decorateTextTemplateOptions(title, optionKey, defaultTextOptions, callback)
+
+	if not Storyline_Data.config[optionKey] then
+		Storyline_Data.config[optionKey] = {
+			Font = Storyline_API.lib.getDefaultFont(),
+			Size = defaultTextOptions[2],
+			Outline = defaultTextOptions[3]
+		}
+	end
+
+	-- Option title & text sample
+	StorylineTextOptionsPanel[optionKey].Title:SetText(title);
+	StorylineTextOptionsPanel[optionKey].TextSample:SetText(loc("SL_CONFIG_SAMPLE_TEXT"));
+
+	-- Size slider
+	_G["StorylineTextOptionsPanel" .. optionKey .. "SizeSliderLow"]:SetText(9);
+	_G["StorylineTextOptionsPanel" .. optionKey .. "SizeSliderHigh"]:SetText(25);
+	StorylineTextOptionsPanel[optionKey].SizeSlider:SetScript("OnValueChanged", function(self, scale)
+		_G["StorylineTextOptionsPanel" .. optionKey .. "SizeSliderText"]:SetText(scale);
+		Storyline_Data.config[optionKey].Size = scale;
+		StorylineTextOptionsPanel[optionKey].TextSample:SetFont(Storyline_Data.config[optionKey].Font, Storyline_Data.config[optionKey].Size, Storyline_Data.config[optionKey].Outline);
+		callback(Storyline_Data.config[optionKey]);
+	end);
+	StorylineTextOptionsPanel[optionKey].SizeSlider:SetValue(Storyline_Data.config[optionKey].Size);
+
+	local fonts = Storyline_API.lib.getFonts();
+	local font = Storyline_API.lib.getFontPath(Storyline_Data.config[optionKey].Font);
+	StorylineTextOptionsPanel[optionKey].TextSample:SetFont(font, Storyline_Data.config[optionKey].Size, Storyline_Data.config[optionKey].Outline);
+
+	setupListBox(StorylineTextOptionsPanel[optionKey].FontDropDown, fonts, function(fontIndex)
+		Storyline_Data.config[optionKey].Font = fontIndex;
+		local font = Storyline_API.lib.getFontPath(fontIndex);
+		StorylineTextOptionsPanel[optionKey].TextSample:SetFont(font, Storyline_Data.config[optionKey].Size, Storyline_Data.config[optionKey].Outline);
+		callback(Storyline_Data.config[optionKey]);
+	end, nil, 100, true, true);
+	StorylineTextOptionsPanel[optionKey].FontDropDown:SetSelectedValue(Storyline_Data.config[optionKey].Font);
+
+	callback(Storyline_Data.config[optionKey]);
 end
 
 Storyline_API.options.init = function()
@@ -129,7 +170,6 @@ Storyline_API.options.init = function()
 	-- Hide original frames option
 	StorylineOptionsPanel.HideOriginalFrames.Text:SetText(loc("SL_CONFIG_HIDEORIGINALFRAMES"));
 	StorylineOptionsPanel.HideOriginalFrames.tooltip = loc("SL_CONFIG_HIDEORIGINALFRAMES_TT");
-	StorylineOptionsPanel.HideOriginalFrames:SetChecked(Storyline_Data.config.hideOriginalFrames);
 	StorylineOptionsPanel.HideOriginalFrames:SetScript("OnClick", function(self)
 		Storyline_Data.config.hideOriginalFrames = self:GetChecked() == true;
 		if Storyline_Data.config.hideOriginalFrames then
@@ -141,6 +181,7 @@ Storyline_API.options.init = function()
 	if Storyline_Data.config.hideOriginalFrames == nil then
 		Storyline_Data.config.hideOriginalFrames = true;
 	end
+	StorylineOptionsPanel.HideOriginalFrames:SetChecked(Storyline_Data.config.hideOriginalFrames);
 	if Storyline_Data.config.hideOriginalFrames then
 		Storyline_API.layout.hideDefaultFrames();
 	end
@@ -256,6 +297,7 @@ Storyline_API.options.init = function()
 	decorateTextOptions(loc("SL_CONFIG_DIALOG_TEXT"), "DialogText", Storyline_NPCFrameChatText);
 	decorateTextOptions(loc("SL_CONFIG_NPC_NAME"), "NPCName", Storyline_NPCFrameChatName);
 	decorateTextOptions(loc("SL_CONFIG_NEXT_ACTION"), "NextAction", Storyline_NPCFrameChatNextText);
+	decorateTextTemplateOptions("Dialog choices", "DialogOptions", Storyline_API.dialogs.buttons.getDefaultFontStyle(), Storyline_API.dialogs.buttons.setFontStyle);
 
 	-- Miscellaneous options panel
 	StorylineMiscellaneousOptionsPanel.Title:SetText(loc("SL_CONFIG_MISCELLANEOUS"));

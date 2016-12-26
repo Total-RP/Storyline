@@ -22,8 +22,12 @@
 
 local assert, tinsert, pairs = assert, tinsert, pairs;
 local CreateFrame = CreateFrame;
-local debug = Storyline_API.debug;
 local tsize = Storyline_API.lib.tsize;
+local format = format;
+
+local GetQuestReward, HandleModifiedItemClick, GetQuestItemLink, GameTooltip_ShowCompareItem = GetQuestReward, HandleModifiedItemClick, GetQuestItemLink, GameTooltip_ShowCompareItem;
+local getFollowerInfo = C_Garrison.GetFollowerInfo;
+local IsShiftKeyDown, IsModifiedClick = IsShiftKeyDown, IsModifiedClick;
 
 Storyline_API.rewards.buttons = {};
 local API = Storyline_API.rewards.buttons;
@@ -36,22 +40,22 @@ local function decorateItemButton(button, index, type, texture, name, numItems, 
 	button.Icon:SetTexture(texture);
 	button.Name:SetText(name or RETRIEVING_DATA);
 	button.Count:SetText(numItems > 1 and numItems or "");
+	button.hasItem = true; -- Has item is checked by CursorOnUpdate to know if it must show a magnifier icon
 	if not isUsable then
 		button.Icon:SetVertexColor(1, 0, 0);
 	end
 	button:SetScript("OnEnter", function(self)
 		GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
 		GameTooltip:SetQuestItem(self.type, self.index);
-		GameTooltip_ShowCompareItem(GameTooltip);
-	end);
-	button:SetScript("OnClick", function(self)
-		local itemLink = GetQuestItemLink(self.type, self.index);
-		if not HandleModifiedItemClick(itemLink) and self.type == "choice" then
-			GetQuestReward(self.index);
-			autoEquip(itemLink);
-			autoEquipAllReward();
+		if IsShiftKeyDown() then
+			GameTooltip_ShowCompareItem(GameTooltip);
 		end
 	end);
+	button:SetScript("OnClick", function(self)
+		if IsModifiedClick() then
+			HandleModifiedItemClick(GetQuestItemLink(self.type, self.index));
+		end
+	end)
 end
 
 local function decorateCurrencyButton(button, index, type, texture, name, numItems)
@@ -65,7 +69,6 @@ local function decorateCurrencyButton(button, index, type, texture, name, numIte
 		GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
 		GameTooltip:SetQuestCurrency(self.type, self.index);
 	end);
-	button:SetScript("OnClick", nil);
 end
 
 local function decorateStandardButton(button, texture, name, tt, ttsub, isNotUsable)
@@ -83,7 +86,6 @@ local function decorateStandardButton(button, texture, name, tt, ttsub, isNotUsa
 		end
 		GameTooltip:Show();
 	end);
-	button:SetScript("OnClick", nil);
 end
 
 local function decorateSkillPointButton(button, texture, name, skillPoints)
@@ -104,7 +106,7 @@ local function decorateSpellButton(button, texture, name, rewardSpellIndex)
 end
 
 local function decorateFollowerButton(button, garrFollowerID)
-	local followerInfo = C_Garrison.GetFollowerInfo(garrFollowerID);
+	local followerInfo = getFollowerInfo(garrFollowerID);
 	button.Name:SetText(followerInfo.name);
 	button.Class:SetAtlas(followerInfo.classAtlas);
 	button.PortraitFrame:SetupPortrait(followerInfo);
@@ -164,6 +166,23 @@ local function resetGrid()
 	gridCount = 0;
 end
 
+--- Refreshes a button by fetching the data again and re-decorating the button
+-- @param button
+--
+local function refreshButton(button)
+	local rewards = Rewards.getRewardsForBucketTypeAndRewardType(button.rewardBucketType, button.rewardType);
+	local reward = rewards[button.rewardIndex];
+	decorateRewardButton(button, button.rewardType, reward);
+end
+
+local REWARD_BUTTON_SHARED_SCRIPTS = {
+	["OnLeave"] = function()
+		GameTooltip:Hide();
+		ResetCursor();
+	end,
+	["OnUpdate"] = CursorOnUpdate
+}
+
 local REWARDS_BUTTON_FRAME_NAME = "Storyline_RewardButton";
 local REWARD_BUTTON_FRAME_TEMPLATES = {
 	DEFAULT = "LargeItemButtonTemplate",
@@ -196,12 +215,13 @@ local function getRewardButton(parentFrame, rewardType)
 		button = CreateFrame("Button", REWARDS_BUTTON_FRAME_NAME .. #itemButtons, nil, REWARD_BUTTON_FRAME_TEMPLATES[rewardType] or REWARD_BUTTON_FRAME_TEMPLATES.DEFAULT);
 		-- Save inside the button structure if it is a large button type
 		button.isLargeButton = LARGE_BUTTONS[rewardType] == true;
-		-- TODO Improve this. Maybe have our own virtual frame that already have this script
-		button:SetScript("OnLeave", function(self)
-			GameTooltip:Hide();
-		end);
+		for scriptName, scriptFunction in pairs(REWARD_BUTTON_SHARED_SCRIPTS) do
+			button:SetScript(scriptName, scriptFunction);
+		end
+		button.Refresh = refreshButton;
 		tinsert(itemButtons[rewardType], button);
 	end
+	button.hasItem = false;
 	button:SetParent(parentFrame);
 	-- TODO Do not show the button immediately for animations ? Remplace IsShown() up there by .available
 	button:Show();
@@ -222,6 +242,7 @@ local REWARDS_HEADER_TEXT = {
 	[Rewards.BUCKET_TYPES.CHOICE] = REWARD_CHOICES,
 	[Rewards.BUCKET_TYPES.AURA] = REWARD_AURA,
 	[Rewards.BUCKET_TYPES.FOLLOWER] = REWARD_FOLLOWER,
+	[Rewards.BUCKET_TYPES.OBJECTIVES] = TURN_IN_ITEMS,
 };
 
 local rewardsHeadersBag = {};
@@ -268,21 +289,43 @@ function API.displayRewardsOnGrid(rewardBucketType, rewardsBucket, parent, previ
 	local previousAnchor = header;
 	resetGrid();
 	for rewardType, rewards in pairs(rewardsBucket) do
-		for _, reward in pairs(rewards) do
+		for rewardIndex, reward in pairs(rewards) do
 			local button = getRewardButton(parent, rewardType);
 			placeOnGrid(button, previousAnchor);
 			decorateRewardButton(button, rewardType, reward);
 
-			-- If the reward is a choice and we were ask to bind the clicking event to choosing the reward
+			-- Store these information inside the button as we will need it for refreshing
+			button.rewardBucketType = rewardBucketType;
+			button.rewardType = rewardType;
+			button.rewardIndex = rewardIndex;
+
+				-- If the reward is a choice and we were ask to bind the clicking event to choosing the reward
 			-- we set it's OnClick script
-			if rewardBucketType == Storyline_API.rewards.BUCKET_TYPES.CHOICE and bindClickingOnChoosingReward then
-				-- TODO Set click script to choose reward
+			if rewardBucketType == Rewards.BUCKET_TYPES.CHOICE and bindClickingOnChoosingReward then
+				button:SetScript("OnClick", function(self)
+					local itemLink = GetQuestItemLink(self.type, self.index);
+					if not HandleModifiedItemClick(itemLink) and self.type == "choice" then
+						GetQuestReward(self.index);
+						Storyline_API.autoEquip(itemLink);
+						Storyline_API.autoEquipAllReward();
+					end
+				end);
 			end
 			previousAnchor = button;
 		end
 	end
 
 	return gridHeight + header:GetHeight() + REWARDS_HEADER_MARGIN;
+end
+
+function API.refreshButtons()
+	for _, buttonBag in pairs(itemButtons) do
+		for _, button in pairs(buttonBag) do
+			if not button.isAvailable then
+				button:Refresh();
+			end
+		end
+	end
 end
 
 function API.hideAllButtons()

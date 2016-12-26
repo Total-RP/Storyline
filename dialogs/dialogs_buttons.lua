@@ -49,6 +49,7 @@ local DIALOG_CHOICE_BUTTON_MARGIN = 5;
 local DIALOG_CHOICE_BUTTON_PADDING = 25;
 
 local BUTTON_TEMPLATE = "Storyline_DialogChoiceButton";
+local defaultButton = CreateFrame("Button", nil, nil, BUTTON_TEMPLATE);
 
 function API.getMargin()
 	return DIALOG_CHOICE_BUTTON_MARGIN;
@@ -177,6 +178,7 @@ local BUTTON_API = {
 		-- we display the shortcut on the binding text.
 		if buttonIndex < 10 and Storyline_Data.config.useKeyboard then
 			self:SetBindingText(buttonIndex);
+			self.bindingKey = buttonIndex;
 		else
 			self:HideBidingText();
 		end
@@ -195,6 +197,9 @@ local BUTTON_API = {
 		after(0.05 * buttonIndex, function()
 			self:FadeIn();
 		end);
+	end,
+	SetFont = function(self, ...)
+		self.text:SetFont(...);
 	end
 
 }
@@ -230,6 +235,10 @@ function API.getButton(parent, anchor)
 		-- We insert our custom API inside the button
 		merge(button, BUTTON_API);
 
+		-- Apply font
+		local fontSettings = API.getFontSettings();
+		button:SetFont(fontSettings.font, fontSettings.size, fontSettings.outline);
+
 		-- Insert this new button inside our buttons bag
 		tinsert(buttonsBag, button);
 	end
@@ -246,4 +255,48 @@ function API.hideAllButtons()
 		existingButton.isAvailable = true;
 		existingButton:Hide();
 	end
+end
+
+function API.selectOptionAtIndex(buttonIndex)
+	local foundOptionForIndex = false;
+	for _, existingButton in pairs(buttonsBag) do
+		if existingButton.bindingKey == buttonIndex and existingButton:IsShown() then
+			existingButton:Click();
+			foundOptionForIndex = true;
+		end
+	end
+	return foundOptionForIndex;
+end
+
+local DEFAULT_FONT_SETTINGS = { defaultButton.text:GetFont() };
+local fontSettings = {};
+defaultButton:Hide();
+
+local function applyFontStyleToEveryExistingButtons()
+	local fontSettings = API.getFontSettings();
+	local totalButtonHeights = 0;
+	for _, existingButton in pairs(buttonsBag) do
+		existingButton:SetFont(fontSettings.font, fontSettings.size, fontSettings.outline);
+		existingButton:RefreshHeight();
+		totalButtonHeights = totalButtonHeights + existingButton:GetHeight() + API.getMargin();
+	end
+	Storyline_API.dialogs.scrollFrame.show(totalButtonHeights);
+end
+
+function API.getDefaultFontStyle()
+	return DEFAULT_FONT_SETTINGS;
+end
+
+function API.getFontSettings()
+	return fontSettings;
+end
+
+function API.setFontStyle(fontStyle)
+	fontSettings = {
+		font = Storyline_API.lib.getFontPath(fontStyle.Font),
+		size = fontStyle.Size,
+		outline = fontStyle.Outline
+	}
+	applyFontStyleToEveryExistingButtons();
+
 end

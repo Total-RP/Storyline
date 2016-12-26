@@ -540,7 +540,7 @@
 					</Layer>
 					<Layer level="BORDER" textureSubLevel="3">
 						<Texture file="Interface\UNITPOWERBARALT\PandarenTrainingLarge_Circular_Frame">
-							<Size x="100" y="100"/>
+							<Size x="115" y="115"/>
 							<Anchors>
 								<Anchor point="CENTER" x="0" y="0"/>
 							</Anchors>

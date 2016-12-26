@@ -61,13 +61,13 @@
                 <Texture parentKey="icon" file="Interface/GOSSIPFRAME/ChatBubbleGossipIcon">
                     <Size x="16" y="16"/>
                     <Anchors>
-                        <Anchor point="LEFT" relativeKey="$parent" relativePoint="LEFT" x="90"/>
+                        <Anchor point="LEFT" relativeKey="$parent" relativePoint="LEFT" x="70"/>
                     </Anchors>
                 </Texture>
                 <FontString parentKey="text" inherits="GameFontNormalMed1" justifyH="LEFT" justifyV="MIDDLE" wordwrap="true">
                     <Anchors>
                         <Anchor point="LEFT" relativePoint="RIGHT" relativeKey="$parent.icon" x="10"/>
-                        <Anchor point="RIGHT" relativePoint="RIGHT" relativeTo="$parent" x="-30"/>
+                        <Anchor point="RIGHT" relativePoint="RIGHT" relativeTo="$parent" x="-70"/>
                     </Anchors>
                 </FontString>
                 <FontString parentKey="binding" inherits="GameFontNormal" justifyH="RIGHT" justifyV="MIDDLE">

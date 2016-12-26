@@ -74,6 +74,7 @@ local GetSuggestedGroupNum = GetSuggestedGroupNum;
 local UnitIsDead = UnitIsDead;
 local QuestIsFromAreaTrigger, QuestGetAutoAccept = QuestIsFromAreaTrigger, QuestGetAutoAccept;
 local BreakUpLargeNumbers = BreakUpLargeNumbers;
+local UnignoreQuest, IgnoreQuest, IsQuestIgnored, CanIgnoreQuest, IsShiftKeyDown = UnignoreQuest, IgnoreQuest, IsQuestIgnored, CanIgnoreQuest, IsShiftKeyDown;
 -- UI
 local Storyline_NPCFrameChatOption1, Storyline_NPCFrameChatOption2, Storyline_NPCFrameChatOption3 = Storyline_NPCFrameChatOption1, Storyline_NPCFrameChatOption2, Storyline_NPCFrameChatOption3;
 local Storyline_NPCFrameObjectives, Storyline_NPCFrameObjectivesNo, Storyline_NPCFrameObjectivesYes = Storyline_NPCFrameObjectives, Storyline_NPCFrameObjectivesNo, Storyline_NPCFrameObjectivesYes;
@@ -92,7 +93,6 @@ local RewardsButtons = Storyline_API.rewards.buttons;
 
 -- Constants
 local OPTIONS_MARGIN, OPTIONS_TOP = 175, -175;
-local CHAT_MARGIN = 70;
 local GOSSIP_DELAY = 0.2;
 local gossipColor = "|cffffffff";
 local EVENT_INFO;
@@ -199,6 +199,7 @@ local function autoEquip(itemLink)
 		end);
 	end
 end
+Storyline_API.autoEquip = autoEquip;
 
 local function autoEquipAllReward()
 	if GetNumQuestRewards() > 0 then
@@ -208,7 +209,7 @@ local function autoEquipAllReward()
 		end
 	end
 end
-
+Storyline_API.autoEquipAllReward = autoEquipAllReward;
 --*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
 -- Utils
 --*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
@@ -252,200 +253,8 @@ local function acceptQuest()
 end
 
 --*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
--- Grid system
---*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
-
-local placeItemOnTheLeft = true;
-local gridHeight, gridCount;
-local previousElementOnTheLeft;
-
-local function placeOnGrid(button, initialPlacement)
-	previousElementOnTheLeft = previousElementOnTheLeft or initialPlacement;
-
-	if placeItemOnTheLeft then
-		button:SetPoint("TOPLEFT", previousElementOnTheLeft, "BOTTOMLEFT", gridCount == 0 and 0 or -157, -5);
-	else
-		button:SetPoint("TOPLEFT", previousElementOnTheLeft, "TOPRIGHT", 10, 0);
-	end
-	previousElementOnTheLeft = button;
-
-	placeItemOnTheLeft = not placeItemOnTheLeft;
-	gridHeight = gridHeight + (placeItemOnTheLeft and 0 or 50);
-	gridCount = gridCount + 1;
-end
-
-local function resetGrid()
-	previousElementOnTheLeft = nil;
-	placeItemOnTheLeft = true;
-	gridHeight = 0;
-	gridCount = 0;
-end
-
-local itemButtons = {};
-local function getQuestButton(parentFrame)
-	local available;
-	for _, button in pairs(itemButtons) do
-		if not button:IsShown() then
-			available = button;
-			break;
-		end
-	end
-	if not available then
-		available = CreateFrame("Button", "Storyline_ItemButton" .. #itemButtons, nil, "LargeItemButtonTemplate");
-		available:SetScript("OnLeave", function(self)
-			GameTooltip:Hide();
-		end);
-		tinsert(itemButtons, available);
-	end
-	available:SetParent(parentFrame);
-	available:Show();
-	return available;
-end
-
-local function decorateItemButton(button, index, type, texture, name, numItems, isUsable)
-	numItems = numItems or 0;
-	button.index = index;
-	button.type = type;
-	button.Icon:SetTexture(texture);
-	button.Name:SetText(name or RETRIEVING_DATA);
-	button.Count:SetText(numItems > 1 and numItems or "");
-	if not isUsable then
-		button.Icon:SetVertexColor(1, 0, 0);
-	end
-	button:SetScript("OnEnter", function(self)
-		GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
-		GameTooltip:SetQuestItem(self.type, self.index);
-		GameTooltip_ShowCompareItem(GameTooltip);
-	end);
-	button:SetScript("OnClick", function(self)
-		local itemLink = GetQuestItemLink(self.type, self.index);
-		if not HandleModifiedItemClick(itemLink) and self.type == "choice" then
-			GetQuestReward(self.index);
-			autoEquip(itemLink);
-			autoEquipAllReward();
-		end
-	end);
-end
-
-local function decorateCurrencyButton(button, index, type, texture, name, numItems)
-	numItems = numItems or 0;
-	button.index = index;
-	button.type = type;
-	button.Icon:SetTexture(texture);
-	button.Name:SetText(name);
-	button.Count:SetText(numItems > 1 and numItems or "");
-	button:SetScript("OnEnter", function(self)
-		GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
-		GameTooltip:SetQuestCurrency(self.type, self.index);
-	end);
-	button:SetScript("OnClick", nil);
-end
-
-local function decorateStandardButton(button, texture, name, tt, ttsub, isNotUsable)
-	button.Icon:SetTexture(texture);
-	button.Name:SetText(name);
-	button.Count:SetText("");
-	if isNotUsable then
-		button.Icon:SetVertexColor(1, 0, 0);
-	end
-	button:SetScript("OnEnter", function(self)
-		GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
-		GameTooltip:AddLine("|cffffffff" .. tt);
-		if ttsub then
-			GameTooltip:AddLine("|cffffffff" .. ttsub);
-		end
-		GameTooltip:Show();
-	end);
-	button:SetScript("OnClick", nil);
-end
-
-local function decorateSkillPointButton(button, texture, name, count, tt, ttsub)
-	button.Icon:SetTexture(texture);
-	button.Name:SetText(name);
-	button.Count:SetText(count > 1 and count or "");
-	button:SetScript("OnEnter", function(self)
-		GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
-		GameTooltip:AddLine("|cffffffff" .. tt);
-		GameTooltip:Show();
-	end);
-	-- TODO skill point nice circle
-	-- Storyline_NPCFrameRewards.Content.SkillPointFrame.ValueText:SetText(skillPoints);
-	button:SetScript("OnClick", nil);
-end
-
-local function decorateSpellButton(button, texture, name, rewardSpellIndex)
-	button.Icon:SetTexture(texture);
-	button.Name:SetText(name);
-	button.Count:Hide();
-	button.rewardSpellIndex = rewardSpellIndex;
-	button:SetScript("OnEnter", function(self)
-		GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
-		if ( QuestInfoFrame.questLog ) then
-			GameTooltip:SetQuestLogRewardSpell(self.rewardSpellIndex);
-		else
-			GameTooltip:SetQuestRewardSpell(self.rewardSpellIndex);
-		end
-	end);
-	button:SetScript("OnClick", function(self)
-		if ( IsModifiedClick("CHATLINK") ) then
-			if ( QuestInfoFrame.questLog ) then
-				ChatEdit_InsertLink(GetQuestLogSpellLink(self.rewardSpellIndex));
-			else
-				ChatEdit_InsertLink(GetQuestSpellLink(self.rewardSpellIndex));
-			end
-		end
-	end);
-end
-
-local function decorateFollowerButton(button, followerID)
-	local followerInfo = C_Garrison.GetFollowerInfo(followerID);
-	button.Name:SetText(followerInfo.name);
-	button.Icon:SetTexture(followerInfo.portraitIconID or "Interface\\Garrison\\Portraits\\FollowerPortrait_NoPortrait");
-
-	local showILevelOnFollower = followerInfo.followerTypeID and GarrisonFollowerOptions[followerInfo.followerTypeID].showILevelOnFollower or false;
-	local hideLevelOnFollower = followerInfo.isTroop or (followerInfo.quality < GarrisonFollowerOptions[followerInfo.followerTypeID].minQualityLevelToShowLevel);
-
-	if (hideLevelOnFollower) then
-		button.Count:Hide();
-	elseif showILevelOnFollower then
-		button.Count:Show();
-		button.Count:SetText(followerInfo.iLevel);
-	else
-		button.Count:Show();
-		button.Count:SetText(followerInfo.level);
-	end
-
-	button.ID = followerID;
-
-	button:SetScript("OnEnter", function(self)
-		GarrisonFollowerTooltip:ClearAllPoints();
-		GarrisonFollowerTooltip:SetPoint("BOTTOMLEFT", self, "TOPRIGHT");
-		local link = C_Garrison.GetFollowerLinkByID(self.ID);
-		local _, garrisonFollowerID, quality, level, itemLevel, ability1, ability2, ability3, ability4, trait1, trait2, trait3, trait4, spec1 = strsplit(":", link);
-
-		GarrisonFollowerTooltip_Show(tonumber(garrisonFollowerID), false, tonumber(quality), tonumber(level), 0, 0, tonumber(itemLevel), tonumber(spec1), tonumber(ability1), tonumber(ability2), tonumber(ability3), tonumber(ability4), tonumber(trait1), tonumber(trait2), tonumber(trait3), tonumber(trait4));
-	end);
-
-	button:SetScript("OnLeave", function(self)
-		GarrisonFollowerTooltip:Hide();
-	end)
-end
-
-local function dispatchSpellButtonDecorator(button, buttonInfo)
-	if buttonInfo.garrFollowerID then
-		debug("Spell reward is a follower.");
-		decorateFollowerButton(button, buttonInfo.garrFollowerID)
-	elseif button.spellBucketType == QUEST_INFO_SPELL_REWARD_ORDERING.QUEST_SPELL_REWARD_TYPE_AURA then
-		debug("Spell reward is aura.");
-		decorateSpellButton(button, buttonInfo.icon, buttonInfo.text, buttonInfo.rewardSpellIndex);
-	end
-end
-
---*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
 -- EVENT PART
 --*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
-
-local displayBuilder = {};
 
 local statusBar = Storyline_NPCFriendshipStatusBar;
 local GetFriendshipReputation = GetFriendshipReputation;
@@ -572,102 +381,40 @@ eventHandlers["QUEST_DETAIL"] = function()
 end
 
 eventHandlers["QUEST_PROGRESS"] = function()
+
+	local previousText = Storyline_NPCFrameObjectivesContent.Title;
+
+	Storyline_NPCFrameObjectivesContent.Title:SetPoint("TOP", 0, -1 * HOVERED_FRAME_TITLE_MARGIN);
+	local contentHeight = Storyline_NPCFrameObjectivesContent.Title:GetHeight() + HOVERED_FRAME_TITLE_MARGIN;
+
 	Storyline_NPCFrameObjectives:Show();
 	Storyline_NPCFrameObjectivesImage:SetDesaturated(not IsQuestCompletable());
 	setTooltipForSameFrame(Storyline_NPCFrameObjectives, "TOP", 0, 0, QUEST_OBJECTIVES, loc("SL_CHECK_OBJ"));
-
-	local contentHeight = Storyline_NPCFrameObjectivesContent.Title:GetHeight() + 15;
-
-	local questObjectives = getQuestData(GetTitleText());
-	if IsQuestCompletable() and questObjectives:len() > 0 then
-		questObjectives = getTextureString("Interface\\RAIDFRAME\\ReadyCheck-Ready", 15) .. " |cff00ff00" .. questObjectives;
-	elseif questObjectives:len() > 0 then
-		questObjectives = getTextureString("Interface\\RAIDFRAME\\ReadyCheck-NotReady", 15) .. " |cffff0000" .. questObjectives;
+	local objectives = GetObjectiveText();
+	if objectives:len() > 0 then
+		if IsQuestCompletable() then
+			objectives = getTextureString("Interface\\RAIDFRAME\\ReadyCheck-Ready", 15) .. " |cff00ff00" .. objectives;
+		else
+			objectives = getTextureString("Interface\\RAIDFRAME\\ReadyCheck-NotReady", 15) .. " |cffff0000" .. objectives;
+		end
+		contentHeight = contentHeight + setObjectiveText(Storyline_NPCFrameObjectivesContent.Objectives, objectives, previousText);
+		previousText = Storyline_NPCFrameObjectivesContent.Objectives;
 	end
 
-	if questObjectives:len() > 0 then
-		Storyline_NPCFrameObjectivesContent.Objectives:SetText(questObjectives);
-		Storyline_NPCFrameObjectivesContent.Objectives:Show();
-		contentHeight = contentHeight + 10 + Storyline_NPCFrameObjectivesContent.Objectives:GetHeight()
+	local groupNum = GetSuggestedGroupNum();
+	if groupNum > 0 then
+		contentHeight = contentHeight +  setObjectiveText(Storyline_NPCFrameObjectivesContent.GroupSuggestion, format(QUEST_SUGGESTED_GROUP_NUM, groupNum), previousText);
+		previousText = Storyline_NPCFrameObjectivesContent.GroupSuggestion;
 	end
 
-	if GetNumQuestItems() > 0 or GetNumQuestCurrencies() > 0 or GetQuestMoneyToGet() > 0 then
-		Storyline_NPCFrameObjectivesContent.RequiredItemText:Show();
-		local bestIcon = "Interface\\ICONS\\trade_archaeology_chestoftinyglassanimals";
+	local objectivesBucket = Rewards.getObjectiveItems();
 
-		--*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
-		-- Prepare display structure
-		--*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
-
-		wipe(displayBuilder);
-
-		local money = GetQuestMoneyToGet();
-		if money > 0 then
-			bestIcon = "Interface\\ICONS\\inv_misc_coin_03";
-			if money < 100 then
-				bestIcon = "Interface\\ICONS\\inv_misc_coin_05";
-			elseif money > 9999 then
-				bestIcon = "Interface\\ICONS\\inv_misc_coin_01";
-			end
-			local moneyString = GetCoinTextureString(money);
-			tinsert(displayBuilder, {
-				text = moneyString,
-				icon = bestIcon,
-				tooltipTitle = REQUIRED_MONEY .. " " ..moneyString,
-				isNotUsable = money > GetMoney()
-			});
-		end
-
-		for i = 1, GetNumQuestItems() do
-			local name, texture, numItems, quality, isUsable = GetQuestItemInfo("required", i);
-			bestIcon = texture;
-			tinsert(displayBuilder, {
-				text = name,
-				icon = texture,
-				count = numItems,
-				index = i,
-				type = "item",
-				rewardType = "required",
-				isUsable = isUsable,
-			});
-		end
-
-		for i = 1, GetNumQuestCurrencies() do
-			local name, texture, numItems = GetQuestCurrencyInfo("required", i);
-			bestIcon = texture;
-			tinsert(displayBuilder, {
-				text = name,
-				icon = texture,
-				count = numItems,
-				index = i,
-				type = "currency",
-				rewardType = "required",
-			});
-		end
-
-		Storyline_NPCFrameObjectivesImage:SetTexture(bestIcon);
-
-		--*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
-		-- Displays structure content
-		--*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
-
-		resetGrid();
-		for index, buttonInfo in pairs(displayBuilder) do
-			local button = getQuestButton(Storyline_NPCFrameObjectivesContent);
-			placeOnGrid(button, Storyline_NPCFrameObjectivesContent.RequiredItemText);
-			if buttonInfo.type == "currency" then
-				decorateCurrencyButton(button, buttonInfo.index, buttonInfo.rewardType, buttonInfo.icon, buttonInfo.text, buttonInfo.count);
-			elseif buttonInfo.type == "item" then
-				decorateItemButton(button, buttonInfo.index, buttonInfo.rewardType, buttonInfo.icon, buttonInfo.text, buttonInfo.count, buttonInfo.isUsable);
-			elseif buttonInfo.type == "spell" then
-				dispatchSpellButtonDecorator(button, buttonInfo);
-			else
-				decorateStandardButton(button, buttonInfo.icon, buttonInfo.text, buttonInfo.tooltipTitle, buttonInfo.tooltipSub, buttonInfo.isNotUsable);
-			end
-		end
-		contentHeight = contentHeight + gridHeight;
-		contentHeight = contentHeight + Storyline_NPCFrameObjectivesContent.RequiredItemText:GetHeight() + 10;
+	if tsize(objectivesBucket) > 0 then
+		contentHeight = contentHeight + RewardsButtons.displayRewardsOnGrid(Rewards.BUCKET_TYPES.OBJECTIVES, objectivesBucket, Storyline_NPCFrameObjectivesContent, previousText);
 	end
+
+	-- Add some margin on the bottom
+	contentHeight = contentHeight + HOVERED_FRAME_TEXT_MARGIN;
 
 	Storyline_NPCFrameObjectivesContent:SetHeight(contentHeight);
 
@@ -684,11 +431,10 @@ eventHandlers["QUEST_COMPLETE"] = function(eventInfo)
 	Storyline_NPCFrameRewards.Content.Title:SetPoint("TOP", 0, -1 * HOVERED_FRAME_TITLE_MARGIN);
 	local contentHeight = Storyline_NPCFrameRewards.Content.Title:GetHeight() + HOVERED_FRAME_TITLE_MARGIN;
 
-	local rewardsBucket, bestIcon = Storyline_API.rewards.getRewards();
+	local rewardsBucket, bestIcon = Rewards.getRewards();
 
 	for bucketType, bucket in pairs(rewardsBucket) do
 		if tsize(bucket) > 0 then
-			TRP3_API.utils.table.dump(bucket);
 			contentHeight = contentHeight + RewardsButtons.displayRewardsOnGrid(bucketType, bucket, Storyline_NPCFrameRewards.Content, previousText, CLICKING_ON_REWARDS_MEANS_CHOOSING_IT);
 		end
 	end
@@ -790,7 +536,7 @@ local function playText(textIndex, targetModel)
 
 	handleEventSpecifics(Storyline_NPCFrameChat.event, Storyline_NPCFrameChat.texts, textIndex, Storyline_NPCFrameChat.eventInfo);
 
-	Storyline_NPCFrameChat:SetHeight(Storyline_NPCFrameChatText:GetHeight() + CHAT_MARGIN + 5);
+	Storyline_NPCFrameChat:SetHeight(Storyline_NPCFrameChatText:GetHeight() + Storyline_NPCFrameChatName:GetHeight() + Storyline_NPCFrameChatNextText:GetHeight() + 50);
 end
 
 function Storyline_API.playNext(targetModel)
@@ -872,6 +618,16 @@ function Storyline_API.initEventsStructure()
 					setTooltipForSameFrame(Storyline_NPCFrameObjectives, "TOP", 0, 0, nil, nil);
 					Storyline_MainTooltip:Hide();
 					Storyline_NPCFrameObjectivesYes:Show();
+
+					local canIgnore = CanIgnoreQuest();
+					local isIgnored = IsQuestIgnored();
+					local declineTooltipText;
+					if isIgnored then
+						declineTooltipText = "Shift-click: " .. UNIGNORE_QUEST;
+					elseif canIgnore and not isIgnored then
+						declineTooltipText = "Shift-click: " .. IGNORE_QUEST;
+					end
+					setTooltipForSameFrame(Storyline_NPCFrameObjectivesNo, "TOP", 0, 0,loc("SL_DECLINE"), declineTooltipText);
 					Storyline_NPCFrameObjectivesNo:Show();
 					Storyline_NPCFrameChatNextText:SetText(loc("SL_ACCEPTANCE"));
 					showQuestPortraitFrame();
@@ -937,7 +693,7 @@ function Storyline_API.initEventsStructure()
 		["GOSSIP_SHOW"] = {
 			text = GetGossipText,
 			finishMethod = function()
-				local firstChoice, bucketType, index = Dialogs.dialogs.getFirstChoice(Dialogs.EVENT_TYPES.GOSSIP_SHOW);
+				local firstChoice, bucketType, index = Dialogs.getFirstChoice(Dialogs.EVENT_TYPES.GOSSIP_SHOW);
 
 				if firstChoice and Dialogs.getDialogChoiceSelectorForEventType(Dialogs.EVENT_TYPES.GOSSIP_SHOW, bucketType) then
 					debug(("GOSSIP_SHOW – Finish method : Using selector method found for bucket type %s at index %s."):format(bucketType, index));
@@ -1007,7 +763,7 @@ function Storyline_API.initEventsStructure()
 		end);
 	end
 
---	registerHandler("QUEST_ITEM_UPDATE", refreshRewards);
+	registerHandler("QUEST_ITEM_UPDATE", RewardsButtons.refreshButtons);
 	registerHandler("GOSSIP_CLOSED", function()
 		storylineFrameShouldOpen = false;
 	end);
@@ -1030,7 +786,19 @@ function Storyline_API.initEventsStructure()
 		playSelfAnim(185);
 		refreshTooltipForFrame(self);
 	end);
-	Storyline_NPCFrameObjectivesNo:SetScript("OnClick", DeclineQuest);
+	Storyline_NPCFrameObjectivesNo:SetScript("OnClick", function()
+		if IsShiftKeyDown() then
+			local canIgnore = CanIgnoreQuest();
+			local isIgnored = IsQuestIgnored();
+			if canIgnore and not isIgnored then
+				IgnoreQuest();
+			else
+				UnignoreQuest();
+			end
+		else
+			DeclineQuest();
+		end
+	end);
 	Storyline_NPCFrameObjectivesNo:SetScript("OnEnter", function(self)
 		playSelfAnim(186);
 		refreshTooltipForFrame(self);

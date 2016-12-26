@@ -253,9 +253,15 @@
 					<Anchor point="RIGHT" x="-32" />
 				</Anchors>
 			</Frame>
-			<Frame name="$parentNPCName" parentKey="NPCName" inherits="StorylineTextOptionsTemplate">
+			<Frame name="$parentDialogOptions" parentKey="DialogOptions" inherits="StorylineTextOptionsTemplate">
 				<Anchors>
 					<Anchor point="TOPLEFT" relativeKey="$parent.DialogText" relativePoint="BOTTOMLEFT" y="-10" />
+					<Anchor point="RIGHT" x="-32" />
+				</Anchors>
+			</Frame>
+			<Frame name="$parentNPCName" parentKey="NPCName" inherits="StorylineTextOptionsTemplate">
+				<Anchors>
+					<Anchor point="TOPLEFT" relativeKey="$parent.DialogOptions" relativePoint="BOTTOMLEFT" y="-10" />
 					<Anchor point="RIGHT" x="-32" />
 				</Anchors>
 			</Frame>
