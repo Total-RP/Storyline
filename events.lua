@@ -90,6 +90,7 @@ local DialogsButtons = Storyline_API.dialogs.buttons;
 local DialogsScrollFrame = Storyline_API.dialogs.scrollFrame;
 local Rewards = Storyline_API.rewards;
 local RewardsButtons = Storyline_API.rewards.buttons;
+local ReputationBar = Storyline_API.reputationBar;
 
 -- Constants
 local OPTIONS_MARGIN, OPTIONS_TOP = 175, -175;
@@ -256,43 +257,6 @@ end
 -- EVENT PART
 --*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
 
-local statusBar = Storyline_NPCFriendshipStatusBar;
-local GetFriendshipReputation = GetFriendshipReputation;
-
-local customReputationColors = {
-	[1391545] = { -- Arcane thirst of the Nightfallen
-		r = .227,
-		g = .203,
-		b = .745
-	},
-	["DEFAULT"] = {
-		r = .709,
-		g = .396,
-		b = .031
-	}
-}
-
-local function updateNPCFrienshipSatusBar()
-	local id, rep, maxRep, name, text, texture, reaction, threshold, nextThreshold = GetFriendshipReputation();
-	if ( id and id > 0 ) then
-		if ( not nextThreshold ) then
-			threshold, nextThreshold, rep = 0, 1, 1;
-		end
-
-		statusBar.icon:SetTexture(texture or "Interface\\Common\\friendship-heart");
-
-		-- Nice touch: we will recolor the status bar for some specific rep, because its prettier :3
-		local statusBarColor = customReputationColors[texture] or customReputationColors["DEFAULT"];
-		statusBar:SetStatusBarColor(statusBarColor.r, statusBarColor.g, statusBarColor.b);
-
-		statusBar:SetMinMaxValues(threshold, nextThreshold);
-		statusBar:SetValue(rep);
-		statusBar:Show();
-	else
-		statusBar:Hide();
-	end
-end
-
 local function gossipEventHandler(eventType)
 	local dialogChoices = Storyline_API.dialogs.getChoices(eventType);
 	local buttonIndex = 0;
@@ -316,7 +280,7 @@ local function gossipEventHandler(eventType)
 		DialogsScrollFrame.show(totalButtonHeights);
 	end
 
-	updateNPCFrienshipSatusBar();
+	ReputationBar.update();
 end
 
 eventHandlers[Dialogs.EVENT_TYPES.GOSSIP_SHOW] = function()
@@ -377,7 +341,7 @@ eventHandlers["QUEST_DETAIL"] = function()
 		Storyline_NPCFrameObjectivesImage:SetTexture(icon);
 	end
 
-	updateNPCFrienshipSatusBar();
+	ReputationBar.update();
 end
 
 eventHandlers["QUEST_PROGRESS"] = function()
@@ -418,7 +382,7 @@ eventHandlers["QUEST_PROGRESS"] = function()
 
 	Storyline_NPCFrameObjectivesContent:SetHeight(contentHeight);
 
-	updateNPCFrienshipSatusBar();
+	ReputationBar.update();
 end
 
 local CLICKING_ON_REWARDS_MEANS_CHOOSING_IT = true;
@@ -448,7 +412,7 @@ eventHandlers["QUEST_COMPLETE"] = function(eventInfo)
 	Storyline_NPCFrameRewards.Content:SetHeight(contentHeight);
 
 	showQuestPortraitFrame();
-	updateNPCFrienshipSatusBar();
+	ReputationBar.update();
 end
 
 local function handleEventSpecifics(event, texts, textIndex, eventInfo)

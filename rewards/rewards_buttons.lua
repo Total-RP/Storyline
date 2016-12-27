@@ -118,9 +118,7 @@ local function decorateFollowerButton(button, garrFollowerID)
 end
 
 local function decorateRewardButton(button, rewardType, reward)
-	if rewardType == Rewards.REWARD_TYPES.XP or rewardType == Rewards.REWARD_TYPES.MONNEY then
-		decorateStandardButton(button, reward.icon, reward.text, reward.tooltipTitle, reward.tooltipSub);
-	elseif rewardType == Rewards.REWARD_TYPES.CURRENCY then
+	if rewardType == Rewards.REWARD_TYPES.CURRENCY then
 		decorateCurrencyButton(button, reward.index, "reward", reward.icon, reward.text, reward.count);
 	elseif rewardType == Rewards.REWARD_TYPES.SPELL then
 		decorateSpellButton(button, reward.icon, reward.text, reward.rewardSpellIndex);
@@ -130,6 +128,8 @@ local function decorateRewardButton(button, rewardType, reward)
 		decorateFollowerButton(button, reward.garrFollowerID);
 	elseif rewardType == Rewards.REWARD_TYPES.SKILL_POINTS then
 		decorateSkillPointButton(button, reward.icon, reward.text, reward.skillPoints);
+	else
+		decorateStandardButton(button, reward.icon, reward.text, reward.tooltipTitle, reward.tooltipSub);
 	end
 end
 

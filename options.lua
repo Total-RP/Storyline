@@ -297,7 +297,7 @@ Storyline_API.options.init = function()
 	decorateTextOptions(loc("SL_CONFIG_DIALOG_TEXT"), "DialogText", Storyline_NPCFrameChatText);
 	decorateTextOptions(loc("SL_CONFIG_NPC_NAME"), "NPCName", Storyline_NPCFrameChatName);
 	decorateTextOptions(loc("SL_CONFIG_NEXT_ACTION"), "NextAction", Storyline_NPCFrameChatNextText);
-	decorateTextTemplateOptions("Dialog choices", "DialogOptions", Storyline_API.dialogs.buttons.getDefaultFontStyle(), Storyline_API.dialogs.buttons.setFontStyle);
+	decorateTextTemplateOptions(loc("SL_CONFIG_DIALOG_CHOICES"), "DialogOptions", Storyline_API.dialogs.buttons.getDefaultFontStyle(), Storyline_API.dialogs.buttons.setFontStyle);
 
 	-- Miscellaneous options panel
 	StorylineMiscellaneousOptionsPanel.Title:SetText(loc("SL_CONFIG_MISCELLANEOUS"));
