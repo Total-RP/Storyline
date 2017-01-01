@@ -30,6 +30,23 @@ local borderTop = Storyline_DialogChoicesScrollFrame.borderTop;
 local container = Storyline_DialogChoicesScrollFrame.container;
 API.container = container;
 
+local FRAME_PROPORTIONS = {
+	TOP = {
+		ANCHOR = "Storyline_NPCFrame",
+		MAX = 500,
+		MIN = 60
+	},
+	BOTTOM = {
+		ANCHOR = "Storyline_NPCFrameChat",
+		MAX = 450,
+		MIN = 20
+	},
+	WIDTH = {
+		MAX = 650,
+		MIN = 300
+	}
+}
+
 function API.show(totalButtonHeights)
 	if totalButtonHeights and totalButtonHeights > API.getHeight() then
 		API.showBorderBottom();
@@ -66,6 +83,44 @@ function API.hide()
 	scrollFrame:Hide();
 	API.hideBorderBottom();
 	API.hideBorderTop();
+end
+
+function API.refreshMargins(width, height)
+	if not width then
+		width = Storyline_NPCFrame:GetWidth();
+	end
+	if not height then
+		height = Storyline_NPCFrame:GetHeight();
+	end
+	local availableHeight = height - _G[FRAME_PROPORTIONS.BOTTOM.ANCHOR]:GetHeight();
+
+	local marginTop = 20 * availableHeight / 100;
+	local marginBottom = 10 * availableHeight / 100;
+
+
+	if marginTop > FRAME_PROPORTIONS.TOP.MAX then
+		marginTop = FRAME_PROPORTIONS.TOP.MAX
+	elseif marginTop < FRAME_PROPORTIONS.TOP.MIN then
+		marginTop = FRAME_PROPORTIONS.TOP.MIN
+	end
+	if marginBottom > FRAME_PROPORTIONS.BOTTOM.MAX then
+		marginBottom = FRAME_PROPORTIONS.BOTTOM.MAX
+	elseif marginBottom < FRAME_PROPORTIONS.BOTTOM.MIN then
+		marginBottom = FRAME_PROPORTIONS.BOTTOM.MIN
+	end
+
+	local frameWidth = 35 * width / 100;
+
+	if frameWidth > FRAME_PROPORTIONS.WIDTH.MAX then
+		frameWidth = FRAME_PROPORTIONS.WIDTH.MAX
+	elseif frameWidth < FRAME_PROPORTIONS.WIDTH.MIN then
+		frameWidth = FRAME_PROPORTIONS.WIDTH.MIN
+	end
+
+	scrollFrame:SetPoint("TOP", _G[FRAME_PROPORTIONS.TOP.ANCHOR], "TOP", 0, -1 * marginTop);
+	scrollFrame:SetPoint("BOTTOM", _G[FRAME_PROPORTIONS.BOTTOM.ANCHOR], "TOP", 0, marginBottom);
+	scrollFrame:SetWidth(frameWidth);
+	scrollFrame.container:SetWidth(frameWidth);
 end
 
 scrollFrame:HookScript("OnMousewheel", function(self, delta)

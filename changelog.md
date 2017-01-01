@@ -1,3 +1,11 @@
+# Change-log for version 2.0.1 of Storyline
+
+## Bug fixes
+
+- Comparison tooltips are now always visible, just like in the default UI.
+- The dialog options scrolling frame is now dynamically resized with Storyline's frame so that the options do not overlap the dialog text when Storyline is displayed in a small window and additional margins are applied when Storyline is displayed as a bigger window.
+
+
 # Change-log for version 2.0 of Storyline
 
 This is the best update to Storyline yet. We have addressed many shortcomings and greatly improved the UI to make Storyline an even better way to experience questing than before!

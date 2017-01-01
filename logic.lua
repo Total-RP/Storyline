@@ -582,8 +582,10 @@ function Storyline_API.addon:OnEnable()
 		resizeChat();
 		Storyline_Data.config.width = width;
 		Storyline_Data.config.height = height;
+		Storyline_API.dialogs.scrollFrame.refreshMargins(width, height);
 	end;
 	mainFrame:SetSize(Storyline_Data.config.width or 700, Storyline_Data.config.height or 450);
+	Storyline_NPCFrameResizeButton.onResizeStop(Storyline_Data.config.width or 700, Storyline_Data.config.height or 450);
 	resizeChat();
 
 	-- Debug

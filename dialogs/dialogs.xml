@@ -61,7 +61,7 @@
                 <Texture parentKey="icon" file="Interface/GOSSIPFRAME/ChatBubbleGossipIcon">
                     <Size x="16" y="16"/>
                     <Anchors>
-                        <Anchor point="LEFT" relativeKey="$parent" relativePoint="LEFT" x="70"/>
+                        <Anchor point="LEFT" relativeKey="$parent" relativePoint="LEFT" x="50"/>
                     </Anchors>
                 </Texture>
                 <FontString parentKey="text" inherits="GameFontNormalMed1" justifyH="LEFT" justifyV="MIDDLE" wordwrap="true">
@@ -117,6 +117,65 @@
             </PostClick>
         </Scripts>
     </Button>
+
+    <ScrollFrame name="Storyline_DialogChoicesScrollFrame" inherits="UIPanelScrollFrameCodeTemplate" frameStrata="HIGH" parent="Storyline_NPCFrame">
+        <Size x="450" />
+        <Anchors>
+            <Anchor point="CENTER" relativePoint="CENTER" relativeTo="$parent"/>
+            <Anchor point="TOP" relativePoint="TOP" relativeTo="$parent" y="-20"/>
+            <Anchor point="BOTTOM" relativePoint="TOP" relativeTo="Storyline_NPCFrameChat" y="20"/>
+        </Anchors>
+        <Frames>
+            <Slider name="$parentScrollBar" inherits="UIPanelScrollBarTemplate" parentKey="ScrollBar" hidden="true" alpha="0">
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativePoint="TOPRIGHT" x="6" y="-16"/>
+                    <Anchor point="BOTTOMLEFT" relativePoint="BOTTOMRIGHT" x="6" y="16"/>
+                </Anchors>
+            </Slider>
+        </Frames>
+        <Layers>
+            <Layer level="OVERLAY">
+                <Texture parentKey="borderTop" file="Interface\ACHIEVEMENTFRAME\UI-Achievement-Borders" alpha="1" hidden="true">
+                    <TexCoords left="0.12" right="0.87" top="0.25" bottom="0" />
+                    <Size y="30"/>
+                    <Anchors>
+                        <Anchor point="BOTTOM" relativePoint="TOP" relativeTo="$parent" />
+                        <Anchor point="LEFT" relativePoint="LEFT" relativeTo="$parent" />
+                        <Anchor point="RIGHT" relativePoint="RIGHT" relativeTo="$parent" />
+                    </Anchors>
+                    <Animations>
+                        <AnimationGroup parentKey="pulse" looping="REPEAT">
+                            <Alpha fromAlpha="1" toAlpha="0.5" order="1" duration="0.7" smoothing="OUT"/>
+                            <Alpha fromAlpha="0.5" toAlpha="1" order="2" duration="0.7" smoothing="IN"/>
+                        </AnimationGroup>
+                    </Animations>
+                </Texture>
+                <Texture parentKey="borderBottom" file="Interface\ACHIEVEMENTFRAME\UI-Achievement-Borders" alpha="1" hidden="true">
+                    <TexCoords left="0.12" right="0.87" top="0" bottom="0.25" />
+                    <Size y="30"/>
+                    <Anchors>
+                        <Anchor point="TOP" relativePoint="BOTTOM" relativeTo="$parent" />
+                        <Anchor point="LEFT" relativePoint="LEFT" relativeTo="$parent" />
+                        <Anchor point="RIGHT" relativePoint="RIGHT" relativeTo="$parent" />
+                    </Anchors>
+                    <Animations>
+                        <AnimationGroup parentKey="pulse" looping="REPEAT">
+                            <Alpha fromAlpha="1" toAlpha="0.5" order="1" duration="0.7" smoothing="OUT"/>
+                            <Alpha fromAlpha="0.5" toAlpha="1" order="2" duration="0.7" smoothing="IN"/>
+                        </AnimationGroup>
+                    </Animations>
+                </Texture>
+            </Layer>
+        </Layers>
+        <ScrollChild>
+            <Frame parentKey="container" setAllPoints="true">
+                <Size y="250" />
+                <Anchors>
+                    <Anchor point="CENTER" relativePoint="CENTER" relativeTo="$parent"/>
+                </Anchors>
+            </Frame>
+        </ScrollChild>
+    </ScrollFrame>
 
     <!-- Load Lua scripts -->
     <Script file="dialogs.lua"/>

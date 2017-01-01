@@ -47,9 +47,7 @@ local function decorateItemButton(button, index, type, texture, name, numItems, 
 	button:SetScript("OnEnter", function(self)
 		GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
 		GameTooltip:SetQuestItem(self.type, self.index);
-		if IsShiftKeyDown() then
-			GameTooltip_ShowCompareItem(GameTooltip);
-		end
+		GameTooltip_ShowCompareItem(GameTooltip);
 	end);
 	button:SetScript("OnClick", function(self)
 		if IsModifiedClick() then
@@ -180,7 +178,9 @@ local REWARD_BUTTON_SHARED_SCRIPTS = {
 		GameTooltip:Hide();
 		ResetCursor();
 	end,
-	["OnUpdate"] = CursorOnUpdate
+	["OnUpdate"] = function(self, elapsed)
+		CursorOnUpdate(self, elapsed)
+	end
 }
 
 local REWARDS_BUTTON_FRAME_NAME = "Storyline_RewardButton";
