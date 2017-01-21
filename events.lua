@@ -387,29 +387,35 @@ end
 
 local CLICKING_ON_REWARDS_MEANS_CHOOSING_IT = true;
 eventHandlers["QUEST_COMPLETE"] = function(eventInfo)
-	Storyline_NPCFrameRewards:Show();
-	setTooltipForSameFrame(Storyline_NPCFrameRewardsItem, "TOP", 0, 0, REWARDS, loc("SL_GET_REWARD"));
 
-	local previousText = Storyline_NPCFrameRewards.Content.Title;
+	local rewardsBucket, bestIcon, totalNumberOfRewards = Rewards.getRewards();
 
-	Storyline_NPCFrameRewards.Content.Title:SetPoint("TOP", 0, -1 * HOVERED_FRAME_TITLE_MARGIN);
-	local contentHeight = Storyline_NPCFrameRewards.Content.Title:GetHeight() + HOVERED_FRAME_TITLE_MARGIN;
+	if totalNumberOfRewards > 0 then
 
-	local rewardsBucket, bestIcon = Rewards.getRewards();
+		Storyline_NPCFrameRewards:Show();
+		setTooltipForSameFrame(Storyline_NPCFrameRewardsItem, "TOP", 0, 0, REWARDS, loc("SL_GET_REWARD"));
 
-	for bucketType, bucket in pairs(rewardsBucket) do
-		if tsize(bucket) > 0 then
-			contentHeight = contentHeight + RewardsButtons.displayRewardsOnGrid(bucketType, bucket, Storyline_NPCFrameRewards.Content, previousText, CLICKING_ON_REWARDS_MEANS_CHOOSING_IT);
+		local previousText = Storyline_NPCFrameRewards.Content.Title;
+
+		Storyline_NPCFrameRewards.Content.Title:SetPoint("TOP", 0, -1 * HOVERED_FRAME_TITLE_MARGIN);
+		local contentHeight = Storyline_NPCFrameRewards.Content.Title:GetHeight() + HOVERED_FRAME_TITLE_MARGIN;
+
+		for bucketType, bucket in pairs(rewardsBucket) do
+			if tsize(bucket) > 0 then
+				contentHeight = contentHeight + RewardsButtons.displayRewardsOnGrid(bucketType, bucket, Storyline_NPCFrameRewards.Content, previousText, CLICKING_ON_REWARDS_MEANS_CHOOSING_IT);
+			end
 		end
+
+		-- Add some margin on the bottom
+		contentHeight = contentHeight + HOVERED_FRAME_TEXT_MARGIN;
+
+		Storyline_NPCFrameObjectivesContent:SetHeight(contentHeight);
+
+		Storyline_NPCFrameRewardsItemIcon:SetTexture(bestIcon);
+		Storyline_NPCFrameRewards.Content:SetHeight(contentHeight);
+	else
+		Storyline_NPCFrameRewards:Hide();
 	end
-
-	-- Add some margin on the bottom
-	contentHeight = contentHeight + HOVERED_FRAME_TEXT_MARGIN;
-
-	Storyline_NPCFrameObjectivesContent:SetHeight(contentHeight);
-
-	Storyline_NPCFrameRewardsItemIcon:SetTexture(bestIcon);
-	Storyline_NPCFrameRewards.Content:SetHeight(contentHeight);
 
 	showQuestPortraitFrame();
 	ReputationBar.update();
@@ -631,7 +637,9 @@ function Storyline_API.initEventsStructure()
 		["QUEST_COMPLETE"] = {
 			text = GetRewardText,
 			finishMethod = function()
-				if not Storyline_NPCFrameRewards.Content:IsVisible() then
+				local rewardsBucket, bestIcon, totalNumberOfRewards = Rewards.getRewards();
+
+				if not Storyline_NPCFrameRewards.Content:IsVisible() and totalNumberOfRewards > 0 then
 					configureHoverFrame(Storyline_NPCFrameRewards.Content, Storyline_NPCFrameRewardsItem, "TOP");
 					setTooltipForSameFrame(Storyline_NPCFrameRewardsItem, "TOP", 0, 0);
 					Storyline_MainTooltip:Hide();
@@ -650,7 +658,11 @@ function Storyline_API.initEventsStructure()
 					autoEquipAllReward();
 				end
 			end,
-			finishText = loc("SL_GET_REWARD"),
+			finishText = function()
+				local rewardsBucket, bestIcon, totalNumberOfRewards = Rewards.getRewards();
+
+				return totalNumberOfRewards > 0 and loc("SL_GET_REWARD") or Storyline_NPCFrameChatNextText:SetText(loc("SL_CONTINUE"));
+			end,
 			cancelMethod = CloseQuest,
 			titleGetter = GetTitleText,
 		},

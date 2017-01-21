@@ -32,6 +32,8 @@ local debug = Storyline_API.debug;
 Storyline_API.rewards = {};
 local API = Storyline_API.rewards;
 
+local OBJECTIVES_GETTERS;
+
 local REWARDS_DEFAULT_ICON = [[Interface\ICONS\trade_archaeology_chestoftinyglassanimals]];
 
 local BUCKET_TYPES = {
@@ -258,14 +260,15 @@ local REWARD_GETTERS = {
 }
 
 function API.getRewardsForBucketTypeAndRewardType(bucketType, rewardType)
-	assert(REWARD_GETTERS[bucketType], ("No reward getter for bucket type %s."):format(bucketType or "NO BUCKET TYPE"));
-	assert(REWARD_GETTERS[bucketType][rewardType], ("No reward getter for reward type %s in bucket type %s."):format(rewardType or "NO REWARD TYPE", bucketType));
-	return REWARD_GETTERS[bucketType][rewardType]();
+	assert(REWARD_GETTERS[bucketType] or OBJECTIVES_GETTERS[rewardType], ("No reward getter for bucket type %s."):format(bucketType or "NO BUCKET TYPE"));
+	assert(REWARD_GETTERS[bucketType] and REWARD_GETTERS[bucketType][rewardType] or OBJECTIVES_GETTERS[rewardType], ("No reward getter for reward type %s in bucket type %s."):format(rewardType or "NO REWARD TYPE", bucketType));
+	return REWARD_GETTERS[bucketType] and REWARD_GETTERS[bucketType][rewardType] and  REWARD_GETTERS[bucketType][rewardType]() or OBJECTIVES_GETTERS[rewardType]();
 end
 
 function API.getRewards()
 	local rewardsBucket = {}
 	local bestIcon = REWARDS_DEFAULT_ICON;
+	local totalNumberOfRewards = 0;
 
 	for bucketType, _ in pairs(BUCKET_TYPES_ORDER) do
 		-- Create a new reward bucket for this bucket type
@@ -278,6 +281,7 @@ function API.getRewards()
 				if #rewards > 0 then
 					for _, reward in pairs(rewards) do
 						bestIcon = reward.icon or bestIcon;
+						totalNumberOfRewards = totalNumberOfRewards + 1;
 					end
 					rewardsBucket[bucketType][rewardType] = rewards;
 				end
@@ -285,10 +289,10 @@ function API.getRewards()
 		end
 	end
 
-	return rewardsBucket, bestIcon;
+	return rewardsBucket, bestIcon, totalNumberOfRewards;
 end
 
-local OBJECTIVES_GETTERS = {
+OBJECTIVES_GETTERS = {
 	[REWARD_TYPES.MONNEY] = function()
 		local money = {};
 		local moneyObjective = GetQuestMoneyToGet();
