@@ -146,6 +146,9 @@ local BUTTON_API = {
 	GreyOutIcon = function(button)
 		button.icon:SetVertexColor(0.5, 0.5, 0.5);
 	end,
+	UnGreyOutIcon = function(button)
+		button.icon:SetVertexColor(1, 1, 1);
+	end,
 	-- Set the biding text, on the left of the button
 	SetBindingText = function(button, bindingText)
 		button.binding:SetText(bindingText);
@@ -200,8 +203,13 @@ local BUTTON_API = {
 	end,
 	SetFont = function(self, ...)
 		self.text:SetFont(...);
+	end,
+	-- Do everything we need to release the button so it can be used again later
+	Release = function(self)
+		self.isAvailable = true;
+		self:UnGreyOutIcon();
+		self:Hide();
 	end
-
 }
 
 local DEFAULT_ANCHOR_POINT = "BOTTOM";
@@ -249,11 +257,10 @@ function API.getButton(parent, anchor)
 	return button;
 end
 
--- Hide all buttons inside our buttons bag and make them available
+-- Release all buttons inside our buttons bag and make them available
 function API.hideAllButtons()
 	for _, existingButton in pairs(buttonsBag) do
-		existingButton.isAvailable = true;
-		existingButton:Hide();
+		existingButton:Release();
 	end
 end
 
