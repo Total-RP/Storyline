@@ -96,7 +96,10 @@ The frame cannot be moved when using the default position. This option requires 
 	
 	["frFR"] = {
 		localeText = "Français",
-		localeContent = {
+		localeContent =
+		--@localization(locale="frFR", format="lua_table", handle-unlocalized="ignore")@
+		--@do-not-package@
+		{
 			["SL_ACCEPTANCE"] = "J'accepte.",
 			["SL_CHECK_OBJ"] = "Vérifier objectifs",
 			["SL_CONFIG"] = "Configuration",
@@ -159,6 +162,7 @@ Expérience: |cffffffff%s xp|r
 			["SL_SELECT_REWARD"] = "Choisissez votre récompense",
 			["SL_STORYLINE"] = "Storyline",
 		}
+		--@end-do-not-package@
 	},
 
 	--*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
@@ -167,7 +171,10 @@ Expérience: |cffffffff%s xp|r
 
 	["esES"] = {
 		localeText = "Español",
-		localeContent = {
+		localeContent =
+		--@localization(locale="esES", format="lua_table", handle-unlocalized="ignore")@
+		--@do-not-package@
+		{
 			["SL_ACCEPTANCE"] = "Acepto",
 			["SL_CHECK_OBJ"] = "Comprueba los objetivos",
 			["SL_CONFIG"] = "Configuración",
@@ -226,6 +233,7 @@ Experiencia: |cffffffff%s exp|r
 			["SL_SELECT_REWARD"] = "Selecciona tu recompensa",
 			["SL_STORYLINE"] = "Storyline",
 		}
+		--@end-do-not-package@
 	},
 
 	--*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
@@ -234,7 +242,10 @@ Experiencia: |cffffffff%s exp|r
 
 	["deDE"] = {
 		localeText = "Deutsch",
-		localeContent = {
+		localeContent =
+		--@localization(locale="deDE", format="lua_table", handle-unlocalized="ignore")@
+		--@do-not-package@
+		{
 			["SL_ACCEPTANCE"] = "Ich akzeptiere.",
 			["SL_CHECK_OBJ"] = "Questziele überprüfen",
 			["SL_CONFIG"] = "Einstellungen",
@@ -284,6 +295,7 @@ Erfahrung: |cffffffff%s EP|r
 			["SL_SELECT_REWARD"] = "Wählt Eure Belohnung",
 			["SL_STORYLINE"] = "Storyline",
 		}
+		--@end-do-not-package@
 
 	},
 
@@ -293,7 +305,10 @@ Erfahrung: |cffffffff%s EP|r
 
 	["itIT"] = {
 		localeText = "Italiano",
-		localeContent = {
+		localeContent =
+		--@localization(locale="itIT", format="lua_table", handle-unlocalized="ignore")@
+		--@do-not-package@
+		{
 			["SL_ACCEPTANCE"] = "Accetto.",
 			["SL_CHECK_OBJ"] = "Controlla gli obiettivi",
 			["SL_CONFIG"] = "Impostazioni",
@@ -352,6 +367,7 @@ Esperienza: |cffffffff%s xp|r
 			["SL_SELECT_REWARD"] = "Scegli la tua ricompensa",
 			["SL_STORYLINE"] = "Storyline",
 		}
+		--@end-do-not-package@
 
 	},
 
@@ -362,7 +378,10 @@ Esperienza: |cffffffff%s xp|r
 
 	["ruRU"] = {
 		localeText = "Russian",
-		localeContent = {
+		localeContent =
+		--@localization(locale="ruRU", format="lua_table", handle-unlocalized="ignore")@
+		--@do-not-package@
+		{
 			["SL_ACCEPTANCE"] = "Принимаю",
 			["SL_CHECK_OBJ"] = "Показать цель задания",
 			["SL_CONFIG"] = "Параметры",
@@ -419,6 +438,7 @@ Esperienza: |cffffffff%s xp|r
 			["SL_SELECT_REWARD"] = "Выберите награду",
 			["SL_STORYLINE"] = "Storyline",
 		}
+		--@end-do-not-package@
 	},
 
 	--*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
@@ -428,7 +448,10 @@ Esperienza: |cffffffff%s xp|r
 
 	["zhTW"] = {
 		localeText = "Traditional Chinese",
-		localeContent = {
+		localeContent =
+		--@localization(locale="zhTW", format="lua_table", handle-unlocalized="ignore")@
+		--@do-not-package@
+		{
 			["SL_ACCEPTANCE"] = "我接受。",
 			["SL_CHECK_OBJ"] = "任務目標是...",
 			["SL_CONFIG"] = "設定",
@@ -484,6 +507,7 @@ Esperienza: |cffffffff%s xp|r
 			["SL_SELECT_REWARD"] = "選擇你的獎勵",
 			["SL_STORYLINE"] = "任務故事劇情",
 		}
+		--@end-do-not-package@
 	},
 
 	--*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
@@ -493,7 +517,10 @@ Esperienza: |cffffffff%s xp|r
 
 	["koKR"] = {
 		localeText = "Korean",
-		localeContent = {
+		localeContent =
+		--@localization(locale="koKR", format="lua_table", handle-unlocalized="ignore")@
+		--@do-not-package@
+		{
 			["SL_ACCEPTANCE"] = "알겠습니다.",
 			["SL_CHECK_OBJ"] = "임무 확인하기",
 			["SL_CONFIG"] = "설정",
@@ -548,6 +575,8 @@ Esperienza: |cffffffff%s xp|r
 			["SL_SELECT_REWARD"] = "보상을 선택하십시오",
 			["SL_STORYLINE"] = "스토리라인",
 		}
+		--@end-do-not-package@
+
 	},
 
 
@@ -557,7 +586,10 @@ Esperienza: |cffffffff%s xp|r
 
 	["ptBR"] = {
 		localeText = "Brazilian Portuguese",
-		localeContent = {
+		localeContent =
+		--@localization(locale="ptBR", format="lua_table", handle-unlocalized="ignore")@
+		--@do-not-package@
+		{
 			["SL_ACCEPTANCE"] = "Aceito.",
 			["SL_CHECK_OBJ"] = "Checar objetivos.",
 			["SL_CONFIG"] = "Configurações.",
@@ -612,6 +644,7 @@ Experiência: |cffffffff%s|r
 			["SL_SELECT_REWARD"] = "Escolha a recompensa",
 			["SL_STORYLINE"] = "Enredo",
 		}
+		--@end-do-not-package@
 
 	},
 }

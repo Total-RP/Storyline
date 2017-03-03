@@ -1,0 +1,23 @@
+package-as: Storyline
+enable-nolib-creation: no
+
+externals:
+  # Ace libs
+  lib/AceAddon-3.0:
+      url: https://repos.wowace.com/wow/ace3/trunk/AceAddon-3.0
+  lib/AceConsole-3.0:
+      url: https://repos.wowace.com/wow/ace3/trunk/AceConsole-3.0
+  lib/CallbackHandler-1.0:
+      url: https://repos.wowace.com/wow/ace3/trunk/CallbackHandler-1.0
+  lib/LibSharedMedia-3.0:
+      url: https://repos.wowace.com/wow/libsharedmedia-3-0/trunk/LibSharedMedia-3.0
+  lib/LibStub:
+      url: https://repos.wowace.com/wow/ace3/trunk/LibStub
+
+  # Our own scaling and animation lib
+  lib/TRP-Anim-DB:
+      url: git://github.com/Ellypse/TRP-Anim-DB.git
+
+manual-changelog:
+  filename: changelog.md
+  markup-type: markdown
