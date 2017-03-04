@@ -74,7 +74,6 @@ local GetSuggestedGroupNum = GetSuggestedGroupNum;
 local UnitIsDead = UnitIsDead;
 local QuestIsFromAreaTrigger, QuestGetAutoAccept = QuestIsFromAreaTrigger, QuestGetAutoAccept;
 local BreakUpLargeNumbers = BreakUpLargeNumbers;
-local UnignoreQuest, IgnoreQuest, IsQuestIgnored, CanIgnoreQuest, IsShiftKeyDown = UnignoreQuest, IgnoreQuest, IsQuestIgnored, CanIgnoreQuest, IsShiftKeyDown;
 -- UI
 local Storyline_NPCFrameChatOption1, Storyline_NPCFrameChatOption2, Storyline_NPCFrameChatOption3 = Storyline_NPCFrameChatOption1, Storyline_NPCFrameChatOption2, Storyline_NPCFrameChatOption3;
 local Storyline_NPCFrameObjectives, Storyline_NPCFrameObjectivesNo, Storyline_NPCFrameObjectivesYes = Storyline_NPCFrameObjectives, Storyline_NPCFrameObjectivesNo, Storyline_NPCFrameObjectivesYes;
@@ -588,16 +587,7 @@ function Storyline_API.initEventsStructure()
 					setTooltipForSameFrame(Storyline_NPCFrameObjectives, "TOP", 0, 0, nil, nil);
 					Storyline_MainTooltip:Hide();
 					Storyline_NPCFrameObjectivesYes:Show();
-
-					local canIgnore = CanIgnoreQuest();
-					local isIgnored = IsQuestIgnored();
-					local declineTooltipText;
-					if isIgnored then
-						declineTooltipText = "Shift-click: " .. UNIGNORE_QUEST;
-					elseif canIgnore and not isIgnored then
-						declineTooltipText = "Shift-click: " .. IGNORE_QUEST;
-					end
-					setTooltipForSameFrame(Storyline_NPCFrameObjectivesNo, "TOP", 0, 0,loc("SL_DECLINE"), declineTooltipText);
+					setTooltipForSameFrame(Storyline_NPCFrameObjectivesNo, "TOP", 0, 0,loc("SL_DECLINE"));
 					Storyline_NPCFrameObjectivesNo:Show();
 					Storyline_NPCFrameChatNextText:SetText(loc("SL_ACCEPTANCE"));
 					showQuestPortraitFrame();
@@ -762,19 +752,7 @@ function Storyline_API.initEventsStructure()
 		playSelfAnim(185);
 		refreshTooltipForFrame(self);
 	end);
-	Storyline_NPCFrameObjectivesNo:SetScript("OnClick", function()
-		if IsShiftKeyDown() then
-			local canIgnore = CanIgnoreQuest();
-			local isIgnored = IsQuestIgnored();
-			if canIgnore and not isIgnored then
-				IgnoreQuest();
-			else
-				UnignoreQuest();
-			end
-		else
-			DeclineQuest();
-		end
-	end);
+	Storyline_NPCFrameObjectivesNo:SetScript("OnClick", DeclineQuest);
 	Storyline_NPCFrameObjectivesNo:SetScript("OnEnter", function(self)
 		playSelfAnim(186);
 		refreshTooltipForFrame(self);
