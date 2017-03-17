@@ -1,10 +1,6 @@
-# Change-log for version 2.0.2 of Storyline
+# Change-log for version 2.0.3 of Storyline
 
-## Enhancements
+## Bug fixes for patch 7.2
 
-- When a quest has no reward at all, not even XP, the reward popup will no longer be displayed and the quest can be finished directly at the end of the dialog.
-
-## Bug fixes
-
-- Fixed a Lua error when data is not available for item objectives and the icon has to be refreshed.
-- Fixed the dialog options icon staying greyed out after seeing a trivial quest.
+- Removed ignore quest feature, as it is removed from the game ([ticket #28](https://wow.curseforge.com/projects/total-rp-3-storyline/issues/28))
+- Updated animation library to better support models with more than one animation for an emote (Bloodelves, Worgens).
