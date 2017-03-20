@@ -4,3 +4,4 @@
 
 - Removed ignore quest feature, as it is removed from the game ([ticket #28](https://wow.curseforge.com/projects/total-rp-3-storyline/issues/28))
 - Updated animation library to better support models with more than one animation for an emote (Bloodelves, Worgens).
+- Minor Text Fixes
