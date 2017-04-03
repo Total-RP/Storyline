@@ -224,17 +224,9 @@ function Storyline_API.startDialog(targetType, fullText, event, eventInfo)
 	-- Load player in the left model
 	mainFrame.models.me:SetUnit("player", false);
 
-	if Storyline_FunnyAF then
-		mainFrame.models.me:SetDisplayInfo(math.random(1, 5000));
-	end
-
 	-- Load unit in the right model
 	if UnitExists(targetType) and not UnitIsUnit("player", "npc") then
 		mainFrame.models.you:SetUnit(targetType, false);
-
-		if Storyline_FunnyAF then
-			mainFrame.models.you:SetDisplayInfo(math.random(1, 5000));
-		end
 	else
 		mainFrame.models.you:SetUnit("none");
 		mainFrame.models.you.modelLoaded = true;
