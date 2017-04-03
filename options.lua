@@ -135,13 +135,6 @@ end
 
 Storyline_API.options.init = function()
 
-	Storyline_FunnyAF = false;
-	local currentDate = date("*t");
-	if currentDate.month == 4 and currentDate.day == 1 then
-		Storyline_FunnyAF = true;
-	end
-
-
 	-- Options main panel
 	StorylineOptionsPanel.Title:SetText(loc("SL_CONFIG"));
 	StorylineOptionsPanel.SubText:SetText(loc("SL_CONFIG_WELCOME"));
