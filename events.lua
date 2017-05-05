@@ -75,7 +75,6 @@ local UnitIsDead = UnitIsDead;
 local QuestIsFromAreaTrigger, QuestGetAutoAccept = QuestIsFromAreaTrigger, QuestGetAutoAccept;
 local BreakUpLargeNumbers = BreakUpLargeNumbers;
 -- UI
-local Storyline_NPCFrameChatOption1, Storyline_NPCFrameChatOption2, Storyline_NPCFrameChatOption3 = Storyline_NPCFrameChatOption1, Storyline_NPCFrameChatOption2, Storyline_NPCFrameChatOption3;
 local Storyline_NPCFrameObjectives, Storyline_NPCFrameObjectivesNo, Storyline_NPCFrameObjectivesYes = Storyline_NPCFrameObjectives, Storyline_NPCFrameObjectivesNo, Storyline_NPCFrameObjectivesYes;
 local Storyline_NPCFrameObjectivesImage = Storyline_NPCFrameObjectivesImage;
 local Storyline_NPCFrameRewardsItemIcon, Storyline_NPCFrameRewardsItem, Storyline_NPCFrameRewards = Storyline_NPCFrameRewardsItemIcon, Storyline_NPCFrameRewardsItem, Storyline_NPCFrameRewards;
@@ -425,9 +424,6 @@ local function handleEventSpecifics(event, texts, textIndex, eventInfo)
 	Storyline_NPCFrameGossipChoices:Hide();
 	Storyline_NPCFrameRewards:Hide();
 	Storyline_NPCFrameObjectives:Hide();
-	Storyline_NPCFrameChatOption1:Hide();
-	Storyline_NPCFrameChatOption2:Hide();
-	Storyline_NPCFrameChatOption3:Hide();
 	Storyline_NPCFrameObjectivesYes:Hide();
 	Storyline_NPCFrameObjectivesNo:Hide();
 	Storyline_NPCFrameObjectives.OK:Hide();
@@ -436,13 +432,7 @@ local function handleEventSpecifics(event, texts, textIndex, eventInfo)
 	Storyline_NPCFrameObjectivesContent.Objectives:SetText('');
 	Storyline_NPCFrameObjectivesContent.Objectives:Hide();
 	Storyline_NPCFrameRewards.Content:Hide();
-	setTooltipForSameFrame(Storyline_NPCFrameChatOption1);
-	setTooltipForSameFrame(Storyline_NPCFrameChatOption2);
-	setTooltipForSameFrame(Storyline_NPCFrameChatOption3);
 	setTooltipForSameFrame(Storyline_NPCFrameObjectives);
-	Storyline_NPCFrameChatOption1:SetScript("OnEnter", nil);
-	Storyline_NPCFrameChatOption2:SetScript("OnEnter", nil);
-	Storyline_NPCFrameChatOption3:SetScript("OnEnter", nil);
 	Storyline_NPCFrameObjectivesImage:SetTexture("Interface\\FriendsFrame\\FriendsFrameScrollIcon");
 	QuestFrame_HideQuestPortrait();
 
@@ -460,8 +450,7 @@ local function playText(textIndex, targetModel)
 	wipe(animTab);
 
 	local text = Storyline_NPCFrameChat.texts[textIndex];
-	local sound;
-	local delay = 0;
+	local delay = GOSSIP_DELAY;
 	local textLineToken = getId();
 
 	Storyline_NPCFrameChatText:SetTextColor(ChatTypeInfo["MONSTER_SAY"].r, ChatTypeInfo["MONSTER_SAY"].g, ChatTypeInfo["MONSTER_SAY"].b);

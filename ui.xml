@@ -277,9 +277,6 @@
 							</Button>
 						</Frames>
 					</CinematicModel>
-					<Button name="Storyline_NPCFrameChatOption1" inherits="Storyline_ChoiceButton" frameStrata="HIGH"/>
-					<Button name="Storyline_NPCFrameChatOption2" inherits="Storyline_ChoiceButton" frameStrata="HIGH"/>
-					<Button name="Storyline_NPCFrameChatOption3" inherits="Storyline_ChoiceButton" frameStrata="HIGH"/>
 					<Frame name="Storyline_NPCFrameGossipChoices" inherits="Storyline_HoveredFrame" hidden="true">
 						<Size x="325" y="150"/>
 						<Layers>
