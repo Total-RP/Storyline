@@ -85,7 +85,7 @@
                     self:GetStatusBarTexture():SetGradient("VERTICAL", 8/255, 93/255, 72/255, 11/255, 136/255, 105/255);
             </OnLoad>
             <OnEnter>
-                    ShowFriendshipReputationTooltip(nil, self, "ANCHOR_TOPRIGHT")
+                    ShowFriendshipReputationTooltip(self.friendshipFactionID, self, "ANCHOR_TOPRIGHT")
             </OnEnter>
             <OnLeave>
                     GameTooltip:Hide();
