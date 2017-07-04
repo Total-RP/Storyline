@@ -152,7 +152,7 @@ local showStorylineFrame = function()
 	else
 		Storyline_NPCFrame:Show();
 	end
-	PlaySound("QUESTLOGOPEN");
+	PlaySound(SOUNDKIT.IG_QUEST_LOG_OPEN);
 end
 Storyline_API.layout.showStorylineFrame = showStorylineFrame;
 
@@ -164,7 +164,7 @@ local hideStorylineFrame = function()
 	else
 		Storyline_NPCFrame:Hide();
 	end
-	PlaySound("QUESTLOGCLOSE");
+	PlaySound(SOUNDKIT.IG_QUEST_LOG_CLOSE);
 end
 Storyline_API.layout.hideStorylineFrame = hideStorylineFrame;
 
