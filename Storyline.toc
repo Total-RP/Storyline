@@ -1,4 +1,4 @@
-## Interface: 70200
+## Interface: 70300
 ## Title: Storyline
 ## Author: Telkostrasz & Ellypse
 ## Version: @project-version@
