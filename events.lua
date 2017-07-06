@@ -88,7 +88,6 @@ local DialogsButtons = Storyline_API.dialogs.buttons;
 local DialogsScrollFrame = Storyline_API.dialogs.scrollFrame;
 local Rewards = Storyline_API.rewards;
 local RewardsButtons = Storyline_API.rewards.buttons;
-local ReputationBar = Storyline_API.reputationBar;
 
 -- Constants
 local OPTIONS_MARGIN, OPTIONS_TOP = 175, -175;
@@ -277,8 +276,6 @@ local function gossipEventHandler(eventType)
 	if buttonIndex > 0 then
 		DialogsScrollFrame.show(totalButtonHeights);
 	end
-
-	ReputationBar.update();
 end
 
 eventHandlers[Dialogs.EVENT_TYPES.GOSSIP_SHOW] = function()
@@ -338,8 +335,6 @@ eventHandlers["QUEST_DETAIL"] = function()
 		local _, icon = GetQuestItemInfo("required", 1);
 		Storyline_NPCFrameObjectivesImage:SetTexture(icon);
 	end
-
-	ReputationBar.update();
 end
 
 eventHandlers["QUEST_PROGRESS"] = function()
@@ -379,8 +374,6 @@ eventHandlers["QUEST_PROGRESS"] = function()
 	contentHeight = contentHeight + HOVERED_FRAME_TEXT_MARGIN;
 
 	Storyline_NPCFrameObjectivesContent:SetHeight(contentHeight);
-
-	ReputationBar.update();
 end
 
 local CLICKING_ON_REWARDS_MEANS_CHOOSING_IT = true;
@@ -416,7 +409,6 @@ eventHandlers["QUEST_COMPLETE"] = function(eventInfo)
 	end
 
 	showQuestPortraitFrame();
-	ReputationBar.update();
 end
 
 local function handleEventSpecifics(event, texts, textIndex, eventInfo)
