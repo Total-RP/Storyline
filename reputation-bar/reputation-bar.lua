@@ -27,11 +27,10 @@ local GetFriendshipReputation = GetFriendshipReputation;
 local customReputationColors = {
 	[1391545]   = CreateColor(0.227,0.203,0.745, 1), -- Arcane thirst of the Nightfallen
 	["DEFAULT"] = CreateColor(0.709,0.396,0.031, 1),
-	-- TODO Add support for Chromie
 }
 local DEFAULT_ICON = [[Interface\Common\friendship-heart]];
 
-hooksecurefunc(NPCFriendshipStatusBar_Update, function(_, factionID --[[ = nil ]])
+hooksecurefunc("NPCFriendshipStatusBar_Update", function(_, factionID --[[ = nil ]])
 	local id, rep, maxRep, name, text, texture, reaction, threshold, nextThreshold = GetFriendshipReputation(factionID);
 	StorylineReputationBar.friendshipFactionID = id;
 	if ( id and id > 0 ) then

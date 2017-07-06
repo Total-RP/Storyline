@@ -1,2 +1,3 @@
-- Updated TOC for 7.2
-- Removed code related to April Fools' Day
+## Bug fixes
+
+- Improved the reputation status bar so it is more reliable and correctly appear for the first dialog with Chromie.
