@@ -75,7 +75,6 @@ local UnitIsDead = UnitIsDead;
 local QuestIsFromAreaTrigger, QuestGetAutoAccept = QuestIsFromAreaTrigger, QuestGetAutoAccept;
 local BreakUpLargeNumbers = BreakUpLargeNumbers;
 -- UI
-local Storyline_NPCFrameChatOption1, Storyline_NPCFrameChatOption2, Storyline_NPCFrameChatOption3 = Storyline_NPCFrameChatOption1, Storyline_NPCFrameChatOption2, Storyline_NPCFrameChatOption3;
 local Storyline_NPCFrameObjectives, Storyline_NPCFrameObjectivesNo, Storyline_NPCFrameObjectivesYes = Storyline_NPCFrameObjectives, Storyline_NPCFrameObjectivesNo, Storyline_NPCFrameObjectivesYes;
 local Storyline_NPCFrameObjectivesImage = Storyline_NPCFrameObjectivesImage;
 local Storyline_NPCFrameRewardsItemIcon, Storyline_NPCFrameRewardsItem, Storyline_NPCFrameRewards = Storyline_NPCFrameRewardsItemIcon, Storyline_NPCFrameRewardsItem, Storyline_NPCFrameRewards;
@@ -89,7 +88,6 @@ local DialogsButtons = Storyline_API.dialogs.buttons;
 local DialogsScrollFrame = Storyline_API.dialogs.scrollFrame;
 local Rewards = Storyline_API.rewards;
 local RewardsButtons = Storyline_API.rewards.buttons;
-local ReputationBar = Storyline_API.reputationBar;
 
 -- Constants
 local OPTIONS_MARGIN, OPTIONS_TOP = 175, -175;
@@ -278,8 +276,6 @@ local function gossipEventHandler(eventType)
 	if buttonIndex > 0 then
 		DialogsScrollFrame.show(totalButtonHeights);
 	end
-
-	ReputationBar.update();
 end
 
 eventHandlers[Dialogs.EVENT_TYPES.GOSSIP_SHOW] = function()
@@ -339,8 +335,6 @@ eventHandlers["QUEST_DETAIL"] = function()
 		local _, icon = GetQuestItemInfo("required", 1);
 		Storyline_NPCFrameObjectivesImage:SetTexture(icon);
 	end
-
-	ReputationBar.update();
 end
 
 eventHandlers["QUEST_PROGRESS"] = function()
@@ -380,8 +374,6 @@ eventHandlers["QUEST_PROGRESS"] = function()
 	contentHeight = contentHeight + HOVERED_FRAME_TEXT_MARGIN;
 
 	Storyline_NPCFrameObjectivesContent:SetHeight(contentHeight);
-
-	ReputationBar.update();
 end
 
 local CLICKING_ON_REWARDS_MEANS_CHOOSING_IT = true;
@@ -417,7 +409,6 @@ eventHandlers["QUEST_COMPLETE"] = function(eventInfo)
 	end
 
 	showQuestPortraitFrame();
-	ReputationBar.update();
 end
 
 local function handleEventSpecifics(event, texts, textIndex, eventInfo)
@@ -425,9 +416,6 @@ local function handleEventSpecifics(event, texts, textIndex, eventInfo)
 	Storyline_NPCFrameGossipChoices:Hide();
 	Storyline_NPCFrameRewards:Hide();
 	Storyline_NPCFrameObjectives:Hide();
-	Storyline_NPCFrameChatOption1:Hide();
-	Storyline_NPCFrameChatOption2:Hide();
-	Storyline_NPCFrameChatOption3:Hide();
 	Storyline_NPCFrameObjectivesYes:Hide();
 	Storyline_NPCFrameObjectivesNo:Hide();
 	Storyline_NPCFrameObjectives.OK:Hide();
@@ -436,13 +424,7 @@ local function handleEventSpecifics(event, texts, textIndex, eventInfo)
 	Storyline_NPCFrameObjectivesContent.Objectives:SetText('');
 	Storyline_NPCFrameObjectivesContent.Objectives:Hide();
 	Storyline_NPCFrameRewards.Content:Hide();
-	setTooltipForSameFrame(Storyline_NPCFrameChatOption1);
-	setTooltipForSameFrame(Storyline_NPCFrameChatOption2);
-	setTooltipForSameFrame(Storyline_NPCFrameChatOption3);
 	setTooltipForSameFrame(Storyline_NPCFrameObjectives);
-	Storyline_NPCFrameChatOption1:SetScript("OnEnter", nil);
-	Storyline_NPCFrameChatOption2:SetScript("OnEnter", nil);
-	Storyline_NPCFrameChatOption3:SetScript("OnEnter", nil);
 	Storyline_NPCFrameObjectivesImage:SetTexture("Interface\\FriendsFrame\\FriendsFrameScrollIcon");
 	QuestFrame_HideQuestPortrait();
 
@@ -460,8 +442,7 @@ local function playText(textIndex, targetModel)
 	wipe(animTab);
 
 	local text = Storyline_NPCFrameChat.texts[textIndex];
-	local sound;
-	local delay = 0;
+	local delay = GOSSIP_DELAY;
 	local textLineToken = getId();
 
 	Storyline_NPCFrameChatText:SetTextColor(ChatTypeInfo["MONSTER_SAY"].r, ChatTypeInfo["MONSTER_SAY"].g, ChatTypeInfo["MONSTER_SAY"].b);
