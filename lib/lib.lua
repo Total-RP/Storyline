@@ -23,9 +23,9 @@ Storyline_API.PlaySound = PlaySound;
 if select(4, GetBuildInfo()) == 70300 then
 	-- 7.3 uses IDs instead of sound strings. This table is mapping the IDs we need to use instead
 	local FILE_IDS_TO_OLD_PATHS = {
-		["QUESTLOGOPEN"] = SOUNDKIT.IG_QUEST_LOG_OPEN,
-		["QUESTLOGCLOSE"] = SOUNDKIT.IG_QUEST_LOG_CLOSE,
-		["igMainMenuOptionCheckBoxOn"] = SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON
+		["QUESTLOGOPEN"] = 844, -- SOUNDKIT.IG_QUEST_LOG_OPEN
+		["QUESTLOGCLOSE"] = 845, -- SOUNDKIT.IG_QUEST_LOG_CLOSE
+		["igMainMenuOptionCheckBoxOn"] = 856, -- SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON
 	}
 
 	function Storyline_API.PlaySound(sound)
