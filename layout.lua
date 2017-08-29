@@ -152,7 +152,7 @@ local showStorylineFrame = function()
 	else
 		Storyline_NPCFrame:Show();
 	end
-	PlaySound("QUESTLOGOPEN");
+	Storyline_API.PlaySound("QUESTLOGOPEN");
 end
 Storyline_API.layout.showStorylineFrame = showStorylineFrame;
 
@@ -164,7 +164,7 @@ local hideStorylineFrame = function()
 	else
 		Storyline_NPCFrame:Hide();
 	end
-	PlaySound("QUESTLOGCLOSE");
+	Storyline_API.PlaySound("QUESTLOGCLOSE");
 end
 Storyline_API.layout.hideStorylineFrame = hideStorylineFrame;
 

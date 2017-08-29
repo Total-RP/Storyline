@@ -159,7 +159,7 @@
 				Storyline_MainTooltip:Hide();
 			</OnLeave>
 			<PostClick>
-				PlaySound("gsCharacterSelection","SFX");
+				Storyline_API.PlaySound("igMainMenuOptionCheckBoxOn","SFX");
 			</PostClick>
 		</Scripts>
 		<HighlightTexture file="Interface\QuestFrame\UI-QuestTitleHighlight" alphaMode="ADD"/>
@@ -572,7 +572,7 @@
 					<OnClick>
 						Storyline_API.layout.lockFrame(self:GetChecked());
 						StorylineOptionsPanel.LockFrame:SetChecked(self:GetChecked());
-						PlaySound("gsCharacterSelection","SFX");
+						Storyline_API.PlaySound("igMainMenuOptionCheckBoxOn","SFX");
 					</OnClick>
 					<OnEnter>
 						Storyline_RefreshTooltipForFrame(self);

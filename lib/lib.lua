@@ -16,6 +16,23 @@
 --	limitations under the License.
 ----------------------------------------------------------------------------------
 
+--- Patch 7.3 compatibility preparation
+local PlaySound = PlaySound;
+Storyline_API.PlaySound = PlaySound;
+
+if select(4, GetBuildInfo()) == 70300 then
+	-- 7.3 uses IDs instead of sound strings. This table is mapping the IDs we need to use instead
+	local FILE_IDS_TO_OLD_PATHS = {
+		["QUESTLOGOPEN"] = 844, -- SOUNDKIT.IG_QUEST_LOG_OPEN
+		["QUESTLOGCLOSE"] = 845, -- SOUNDKIT.IG_QUEST_LOG_CLOSE
+		["igMainMenuOptionCheckBoxOn"] = 856, -- SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON
+	}
+
+	function Storyline_API.PlaySound(sound)
+		PlaySound(FILE_IDS_TO_OLD_PATHS[sound] or sound);
+	end
+end
+
 local date, math, string, assert, strconcat, tostring, _G = date, math, string, assert, strconcat, tostring, _G;
 
 local function generateID()
@@ -393,7 +410,7 @@ local function openDropDown(anchoredFrame, values, callback, space, addCancel)
 	);
 	dropDownFrame:SetParent(anchoredFrame);
 	ToggleDropDownMenu(1, nil, dropDownFrame, anchoredFrame:GetName(), -((space or -10)), 0);
-	PlaySound("igMainMenuOptionCheckBoxOn","SFX");
+	Storyline_API.PlaySound("igMainMenuOptionCheckBoxOn","SFX");
 	currentlyOpenedDrop = anchoredFrame;
 end
 

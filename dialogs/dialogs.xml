@@ -113,7 +113,7 @@
                 self.onClickedAnimation:Play();
             </PreClick>
             <PostClick>
-                PlaySound("gsCharacterSelection");
+                Storyline_API.PlaySound("igMainMenuOptionCheckBoxOn");
             </PostClick>
         </Scripts>
     </Button>
