@@ -1,6 +1,6 @@
 ## Interface: 70300
 ## Title: Storyline
-## Author: Telkostrasz & Ellypse
+## Author: Ellypse & Telkostrasz
 ## Version: @project-version@
 ## Notes: Enhanced quest storytelling
 ## URL: http://storyline-addon.com/

@@ -19,5 +19,5 @@ externals:
       url: git://github.com/Ellypse/TRP-Anim-DB.git
 
 manual-changelog:
-  filename: changelog.md
+  filename: CHANGELOG.md
   markup-type: markdown
