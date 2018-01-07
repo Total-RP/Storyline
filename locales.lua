@@ -81,6 +81,8 @@ You can follow Storyline developers on Twitter |cff55acee@EllypseCelwe|r and |cf
 			SL_CONFIG_DEBUG_TT = "Enable the debug frame showing development data under Storyline frame",
 			SL_CONFIG_DISABLE_IN_INSTANCES = "Disable Storyline in instances",
 			SL_CONFIG_DISABLE_IN_INSTANCES_TT = "Automatically disable Storyline when you are inside an instance (dungeon, battleground, raid, scenario…)",
+			SL_CONFIG_DISABLE_IN_DMF = "Disable Storyline on DMF island",
+			SL_CONFIG_DISABLE_IN_DMF_TT = "Automatically disable Storyline when you are in the Darkmoon Faire Island.",
 			SL_CONFIG_UI_LAYOUT_ENGINE = "Use default frames position",
 			SL_CONFIG_UI_LAYOUT_ENGINE_TT = [[Use the default layout so that Storyline appears on the left like the character or spell frame and gets pushed if new frames are opened.
 

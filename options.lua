@@ -248,17 +248,25 @@ Storyline_API.options.init = function()
 	end);
 	StorylineOptionsPanel.DisableInInstances:SetChecked(Storyline_Data.config.disableInInstances);
 
-	-- Disable Storyline for daily quests
-	if Storyline_Data.config.disableForDailies == nil then
-		Storyline_Data.config.disableForDailies = false; -- By default, this option is disabled
+	-- Disable Storyline when inside Darkmoon Faire Island
+	if Storyline_Data.config.disableInDMF == nil then
+		Storyline_Data.config.disableInDMF = false; -- By default, this option is disabled
 	end
-	StorylineOptionsPanel.DisableForDailies.Text:SetText("[PH] Disable Storyline for daily quests"); -- TODO localization
-	StorylineOptionsPanel.DisableForDailies.tooltip = "[PH] Disable Storyline for daily quests)"; -- TODO localization
-	StorylineOptionsPanel.DisableForDailies:SetScript("OnClick", function(self)
-		Storyline_Data.config.disableForDailies = self:GetChecked() == true;
-		Storyline_NPCFrameLock:SetChecked(Storyline_Data.config.disableForDailies);
+	StorylineOptionsPanel.DisableInDMF.Text:SetText(loc("SL_CONFIG_DISABLE_IN_DMF"));
+	StorylineOptionsPanel.DisableInDMF.tooltip = loc("SL_CONFIG_DISABLE_IN_DMF_TT");
+	StorylineOptionsPanel.DisableInDMF:SetScript("OnClick", function(self)
+		Storyline_Data.config.disableInDMF = self:GetChecked() == true;
+
+		local _, _, _, mapID = UnitPosition("player")
+		if mapID and mapID == 974 then
+			if Storyline_Data.config.disableInDMF then
+				Storyline_API.layout.showDefaultFrames();
+			else
+				Storyline_API.layout.hideDefaultFrames();
+			end
+		end
 	end);
-	StorylineOptionsPanel.DisableForDailies:SetChecked(Storyline_Data.config.disableForDailies);
+	StorylineOptionsPanel.DisableInDMF:SetChecked(Storyline_Data.config.disableInDMF);
 
 	-- Text speed slider
 	local textSpeedFactor = Storyline_Data.config.textSpeedFactor or 0.5;

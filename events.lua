@@ -695,6 +695,12 @@ function Storyline_API.initEventsStructure()
 					return
 				end
 			end
+			if Storyline_Data.config.disableInDMF then
+				local _, _, _, mapID = UnitPosition("player");
+				if mapID and mapID == 974 then
+					return
+				end
+			end
 
 			-- Thanks to Blizzard for firing GOSSIP_SHOW and then GOSSIP_CLOSED when ForceGossip is false...
 			if not ForceGossip() then

@@ -206,11 +206,18 @@ end
 Storyline_API.layout.hideDefaultFrames = hideDefaultFrames;
 
 Storyline_API.lib.registerHandler("PLAYER_ENTERING_WORLD", function()
-	if Storyline_Data.config.disableInInstances and Storyline_Data.config.hideOriginalFrames then
-		if IsInInstance() then
-			Storyline_API.layout.showDefaultFrames();
-		else
-			Storyline_API.layout.hideDefaultFrames();
+	if Storyline_Data.config.hideOriginalFrames then
+		Storyline_API.layout.hideDefaultFrames();
+		if Storyline_Data.config.disableInInstances then
+			if IsInInstance() then
+				Storyline_API.layout.showDefaultFrames();
+			end
+		end
+		if Storyline_Data.config.disableInDMF then
+			local _, _, _, mapID = UnitPosition("player");
+			if mapID and mapID == 974 then
+				Storyline_API.layout.showDefaultFrames();
+			end
 		end
 	end
 end)
