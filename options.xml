@@ -171,7 +171,7 @@
 					<Anchor point="LEFT" x="250"/>
 				</Anchors>
 			</CheckButton>
-			<CheckButton parentKey="DisableForDailies" inherits="StorylineOptionsCheckboxWithTooltip" hidden="true">
+			<CheckButton parentKey="DisableInDMF" inherits="StorylineOptionsCheckboxWithTooltip">
 				<Anchors>
 					<Anchor point="TOPLEFT" relativeKey="$parent.DisableInInstances" relativePoint="BOTTOMLEFT" y="-10"/>
 				</Anchors>
@@ -295,6 +295,11 @@
 				</Anchors>
 			</CheckButton>
 		</Frames>
+	</Frame>
+	<Frame name="StorylineAboutPanel" inherits="StorylineOptionFrameChildTemplate">
+		<KeyValues>
+			<KeyValue key="name" value="About" />
+		</KeyValues>
 	</Frame>
 
 </Ui>
