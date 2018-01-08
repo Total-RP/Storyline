@@ -1,3 +1,6 @@
 [submodule "lib/TRP-Anim-DB"]
 	path = lib/TRP-Anim-DB
 	url = https://github.com/Ellypse/TRP-Anim-DB.git
+[submodule "lib/Ellyb"]
+	path = lib/Ellyb
+	url = https://github.com/Ellypse/Ellyb

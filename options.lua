@@ -17,6 +17,11 @@
 -- limitations under the License.
 ----------------------------------------------------------------------------------
 
+---@type Storyline_API
+local _, Storyline_API = ...;
+
+local ColorManager = Storyline_API.Ellyb.ColorManager;
+
 -- Storyline API
 local loc = Storyline_API.locale.getText;
 local setupListBox = Storyline_API.lib.setupListBox;
@@ -357,9 +362,9 @@ Storyline_API.options.init = function()
 	}
 	table.sort(PATREON_SUPPORTERS);
 
-	local patreonMessage = "|cffffd100";
+	local patreonMessage = "";
 	for _, patreonSupporter in pairs(PATREON_SUPPORTERS) do
-		patreonMessage = strconcat(patreonMessage, "- ", patreonSupporter, "\n");
+		patreonMessage = strconcat(patreonMessage, "- ", ColorManager.YELLOW:WrapTextInColorCode(patreonSupporter), "\n");
 	end
 
 	-- Options main panel

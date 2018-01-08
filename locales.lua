@@ -17,6 +17,11 @@
 --	limitations under the License.
 ----------------------------------------------------------------------------------
 
+local _, Storyline_API = ...;
+
+_G["Storyline_API"] = Storyline_API;
+
+---@class Storyline_API
 Storyline_API = {
 	lib = {},
 	locale = {},

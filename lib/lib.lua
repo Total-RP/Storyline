@@ -16,6 +16,9 @@
 --	limitations under the License.
 ----------------------------------------------------------------------------------
 
+---@type Storyline_API
+local _, Storyline_API = ...;
+
 --- Patch 7.3 compatibility preparation
 local PlaySound = PlaySound;
 Storyline_API.PlaySound = PlaySound;
@@ -508,3 +511,5 @@ end
 function Storyline_API.lib.getFontPath(font)
 	return LSM3:Fetch(LSM3.MediaType.FONT, font);
 end
+
+Storyline_API.Ellyb = Ellyb("Storyline");
