@@ -17,10 +17,8 @@
 -- limitations under the License.
 ----------------------------------------------------------------------------------
 
----@type Storyline_API
-local _, Storyline_API = ...;
-
-local ColorManager = Storyline_API.Ellyb.ColorManager;
+local Ellyb = Ellyb:GetInstance(...);
+local ColorManager = Ellyb.ColorManager;
 
 -- Storyline API
 local loc = Storyline_API.locale.getText;
