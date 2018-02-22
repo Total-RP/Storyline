@@ -299,7 +299,7 @@ function API.displayRewardsOnGrid(rewardBucketType, rewardsBucket, parent, previ
 			button.rewardType = rewardType;
 			button.rewardIndex = rewardIndex;
 
-				-- If the reward is a choice and we were ask to bind the clicking event to choosing the reward
+			-- If the reward is a choice and we were ask to bind the clicking event to choosing the reward
 			-- we set it's OnClick script
 			if rewardBucketType == Rewards.BUCKET_TYPES.CHOICE and bindClickingOnChoosingReward then
 				button:SetScript("OnClick", function(self)
