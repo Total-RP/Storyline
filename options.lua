@@ -350,16 +350,35 @@ Storyline_API.options.init = function()
 	end
 	StorylineMiscellaneousOptionsPanel.DebugMode:SetChecked(Storyline_Data.config.debug);
 
-	local PATREON_SUPPORTERS = {
+	local sort = table.sort;
+	local PURPLE = CreateColor(0.5, 0, 1);
+	local GOLDEN_SUPPORTERS = {
+		"Bas(AstaLawl)",
 		"Connor Macleod",
-		"Bas (AstaLawl)",
 		"Vlad",
+		"Mooncubus",
 	}
-	table.sort(PATREON_SUPPORTERS);
 
-	local patreonMessage = "|cffffd100";
+	local PATREON_SUPPORTERS = {
+		"Nikradical",
+		"Solanya",
+		"Ripperley",
+		"Keyboardturner",
+		"Petr Cihelka",
+	}
+
+	sort(GOLDEN_SUPPORTERS);
+	sort(PATREON_SUPPORTERS);
+
+	local LINE_FORMAT = "- %s\n";
+
+	local patreonMessage = "";
+	for _, patreonSupporter in pairs(GOLDEN_SUPPORTERS) do
+		patreonMessage = patreonMessage .. LINE_FORMAT:format(PURPLE:WrapTextInColorCode(patreonSupporter));
+	end
+	patreonMessage = patreonMessage .. "\n";
 	for _, patreonSupporter in pairs(PATREON_SUPPORTERS) do
-		patreonMessage = strconcat(patreonMessage, "- ", patreonSupporter, "\n");
+		patreonMessage = patreonMessage .. LINE_FORMAT:format(patreonSupporter);
 	end
 
 	-- Options main panel
