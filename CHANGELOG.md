@@ -11,7 +11,7 @@
 ### Added
 
 - Added new option to disable Storyline while in the Darkmoon Faire Island (disabled by default)
-- Added thank you message panel for Ellype's Patreon supporters.
+- Added thank you message panel for Ellypse's Patreon supporters.
 
 ## [2.0.6] - 2017-06-20
 
