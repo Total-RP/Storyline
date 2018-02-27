@@ -140,6 +140,11 @@ end
 
 local AUTO_EQUIP_DELAY = 2;
 local function autoEquip(itemLink)
+	-- We do not need to do anything if auto equip is disabled
+	if not Storyline_Data.config.autoEquip then
+		return
+	end
+
 	local name, link, quality, lootLevel, reqLevel, class, subclass, maxStack, equipSlot, texture, vendorPrice = GetItemInfo(itemLink);
 	log(("autoEquip %s on slot %s"):format(name, equipSlot));
 
