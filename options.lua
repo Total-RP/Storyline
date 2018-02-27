@@ -18,7 +18,6 @@
 ----------------------------------------------------------------------------------
 
 local Ellyb = Ellyb(...);
-local ColorManager = Ellyb.ColorManager;
 
 -- Storyline API
 local loc = Storyline_API.locale.getText;
@@ -355,7 +354,7 @@ Storyline_API.options.init = function()
 
 	-- Options main panel
 	StorylineAboutPanel.Title:SetText(loc("SL_ABOUT"));
-	StorylineAboutPanel.SubText:SetText(loc("SL_ABOUT_TEXT"):format(ELLYPSE_PATREON_SUPPORTERS));
+	StorylineAboutPanel.SubText:SetText(loc("SL_ABOUT_TEXT"):format(Ellyb:GetPatreonSupporters()));
 	local font, _, flag = StorylineAboutPanel.SubText:GetFont();
 	StorylineAboutPanel.SubText:SetFont(font, 16, flag)
 

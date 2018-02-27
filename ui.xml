@@ -19,7 +19,6 @@
 		limitations under the License.
 	-->
 
-	<Script file="patreon.lua"/>
 	<Script file="locales.lua"/>
 
 	<Include file="lib\lib.xml"/>
