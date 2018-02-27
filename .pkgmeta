@@ -17,6 +17,9 @@ externals:
   # Our own scaling and animation lib
   lib/TRP-Anim-DB:
       url: git://github.com/Ellypse/TRP-Anim-DB.git
+  # Ellypse's shared library
+  lib/Ellyb:
+      url: git://github.com/Ellypse/Ellyb.git
 
 manual-changelog:
   filename: CHANGELOG.md
