@@ -1,5 +1,11 @@
 # Changelog
 
+## [2.0.8](https://github.com/Ellypse/Storyline/compare/2.0.6...2.0.8) - 2018-02-22
+
+### Fixed
+
+- Fixed an issue with the auto-equip rewards option caused by the scaling introduced in patch 7.3.5.
+
 ## [2.0.7] - 2018-01-07
 
 ### Added

@@ -140,10 +140,14 @@ end
 
 local AUTO_EQUIP_DELAY = 2;
 local function autoEquip(itemLink)
+
 	-- We do not need to do anything if auto equip is disabled
 	if not Storyline_Data.config.autoEquip then
 		return
 	end
+
+	-- Hotfix for a weir bug introduced with world scaling in 7.3.5: some quests rewards doesn't have item link (Blizz please…)
+	if not itemLink then return end;
 
 	local name, link, quality, lootLevel, reqLevel, class, subclass, maxStack, equipSlot, texture, vendorPrice = GetItemInfo(itemLink);
 	log(("autoEquip %s on slot %s"):format(name, equipSlot));
