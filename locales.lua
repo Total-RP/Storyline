@@ -91,7 +91,7 @@ The frame cannot be moved when using the default position. This option requires 
 			SL_RESIZE = "Resize",
 			SL_RESIZE_TT = "Drag and drop to resize",
 			SL_ABOUT = "About",
-			SL_ABOUT_TEXT = [[This is add-on is being maintained and updated thanks to the help of Ellype's Patreon (|cffcccccchttp://patreon.com/Ellypse|r) supporters:
+			SL_ABOUT_TEXT = [[This is add-on is being maintained and updated thanks to the help of Ellypse's Patreon (|cffcccccchttp://patreon.com/Ellypse|r) supporters:
 
 %s
 ]],
