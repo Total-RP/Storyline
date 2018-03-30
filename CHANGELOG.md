@@ -1,6 +1,13 @@
 # Changelog
 
-## [2.0.8](https://github.com/Ellypse/Storyline/compare/2.0.6...2.0.8) - 2018-02-22
+## [2.0.9](https://github.com/Ellypse/Storyline/compare/2.0.8...2.0.9) - 2018-03-30
+
+### Modified
+
+- Updated libraries and dependencies
+- 
+
+## [2.0.8](https://github.com/Ellypse/Storyline/compare/2.0.7...2.0.8) - 2018-02-22
 
 ### Fixed
 
