@@ -289,6 +289,11 @@
 					<Anchor point="TOPLEFT" relativeKey="$parent.AutoEquip" relativePoint="BOTTOMLEFT" y="-15"/>
 				</Anchors>
 			</CheckButton>
+			<CheckButton parentKey="SeriousBusiness" inherits="StorylineOptionsCheckboxWithTooltip">
+				<Anchors>
+					<Anchor point="TOPLEFT" relativeKey="$parent.UseKeyboard" relativePoint="BOTTOMLEFT" y="-15"/>
+				</Anchors>
+			</CheckButton>
 			<CheckButton parentKey="DebugMode" inherits="StorylineOptionsCheckboxWithTooltip">
 				<Anchors>
 					<Anchor point="BOTTOMLEFT" relativeKey="$parent" relativePoint="BOTTOMLEFT" x="5" y="5" />

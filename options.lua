@@ -137,13 +137,6 @@ end
 
 Storyline_API.options.init = function()
 
-	Storyline_FunnyAF = false;
-	local currentDate = date("*t");
-	if currentDate.month == 4 and currentDate.day == 1 then
-		Storyline_FunnyAF = true;
-	end
-
-
 	-- Options main panel
 	StorylineOptionsPanel.Title:SetText(loc("SL_CONFIG"));
 	StorylineOptionsPanel.SubText:SetText(loc("SL_CONFIG_WELCOME"));
@@ -342,6 +335,24 @@ Storyline_API.options.init = function()
 		Storyline_Data.config.useKeyboard = true;
 	end
 	StorylineMiscellaneousOptionsPanel.UseKeyboard:SetChecked(Storyline_Data.config.useKeyboard);
+
+	local currentDate = date("*t");
+	local seriousDay = currentDate.month == 4 and currentDate.day == 1
+
+	-- Serious business day
+	if seriousDay then
+		StorylineMiscellaneousOptionsPanel.SeriousBusiness.Text:SetText("Enable April Fools' joke");
+		StorylineMiscellaneousOptionsPanel.SeriousBusiness.tooltip = "Disable this option to remove the April Fools' joke that randomize each models";
+		StorylineMiscellaneousOptionsPanel.SeriousBusiness:SetScript("OnClick", function(self)
+			Storyline_Data.config.seriousBusiness = self:GetChecked() == true;
+		end);
+		if Storyline_Data.config.seriousBusiness == nil then
+			Storyline_Data.config.seriousBusiness = true;
+		end
+		StorylineMiscellaneousOptionsPanel.SeriousBusiness:SetChecked(Storyline_Data.config.seriousBusiness);
+	else
+		StorylineMiscellaneousOptionsPanel.SeriousBusiness:Hide();
+	end
 
 	-- Debug mode option
 	StorylineMiscellaneousOptionsPanel.DebugMode.Text:SetText(loc("SL_CONFIG_DEBUG"));

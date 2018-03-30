@@ -224,7 +224,7 @@ function Storyline_API.startDialog(targetType, fullText, event, eventInfo)
 	-- Load player in the left model
 	mainFrame.models.me:SetUnit("player", false);
 
-	if Storyline_FunnyAF then
+	if Storyline_Data.config.seriousBusiness then
 		mainFrame.models.me:SetDisplayInfo(math.random(1, 5000));
 	end
 
@@ -232,7 +232,7 @@ function Storyline_API.startDialog(targetType, fullText, event, eventInfo)
 	if UnitExists(targetType) and not UnitIsUnit("player", "npc") then
 		mainFrame.models.you:SetUnit(targetType, false);
 
-		if Storyline_FunnyAF then
+		if Storyline_Data.config.seriousBusiness then
 			mainFrame.models.you:SetDisplayInfo(math.random(1, 5000));
 		end
 	else
