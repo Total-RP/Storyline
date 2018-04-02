@@ -1,5 +1,11 @@
 # Changelog
 
+## [2.0.12](https://github.com/Ellypse/Storyline/compare/2.0.11...2.0.12) - 2018-04-01
+
+### Removed
+
+- Removed April fools' day joke.
+
 ## [2.0.11](https://github.com/Ellypse/Storyline/compare/2.0.10...2.0.11) - 2018-03-31
 
 ### Fixed
