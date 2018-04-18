@@ -384,6 +384,12 @@ local function resetDialog()
 	playNext(Storyline_NPCFrameModelsYou);
 end
 
+function Storyline_API.goBackToPreviousStep()
+	Storyline_NPCFrameObjectivesContent:Hide();
+	mainFrame.chat.currentIndex = mainFrame.chat.currentIndex - 2;
+	playNext(Storyline_NPCFrameModelsYou);
+end
+
 Storyline_API.addon = LibStub("AceAddon-3.0"):NewAddon("Storyline", "AceConsole-3.0");
 
 function Storyline_API.addon:OnEnable()
