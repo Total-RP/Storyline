@@ -2,6 +2,10 @@
 
 ## [2.0.13](https://github.com/Ellypse/Storyline/compare/2.0.12...2.0.13) - 2018-04-18
 
+### Fixed
+
+- Fixed an error with the tooltip for currency quest objectives (order hall resources, nethershards, etc.).
+
 ### Modified
 
 - Updated libraries and in-game list of Patreon supporters.
