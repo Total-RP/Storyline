@@ -1,5 +1,11 @@
 # Changelog
 
+## [2.0.13](https://github.com/Ellypse/Storyline/compare/2.0.12...2.0.13) - 2018-04-18
+
+### Modified
+
+- Updated libraries and in-game list of Patreon supporters.
+
 ## [2.0.12](https://github.com/Ellypse/Storyline/compare/2.0.11...2.0.12) - 2018-04-01
 
 ### Removed
