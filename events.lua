@@ -420,6 +420,12 @@ eventHandlers["QUEST_COMPLETE"] = function(eventInfo)
 	showQuestPortraitFrame();
 end
 
+local currentEvent;
+
+function Storyline_API.getCurrentEvent()
+	return currentEvent;
+end
+
 local function handleEventSpecifics(event, texts, textIndex, eventInfo)
 
 	Storyline_NPCFrameGossipChoices:Hide();
@@ -442,6 +448,7 @@ local function handleEventSpecifics(event, texts, textIndex, eventInfo)
 	RewardsButtons.hideAllButtons();
 
 	if textIndex == #texts and eventHandlers[event] then
+		currentEvent = event;
 		eventHandlers[event](eventInfo);
 	end
 end

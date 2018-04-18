@@ -117,7 +117,7 @@ end
 
 local function decorateRewardButton(button, rewardType, reward)
 	if rewardType == Rewards.REWARD_TYPES.CURRENCY then
-		decorateCurrencyButton(button, reward.index, "reward", reward.icon, reward.text, reward.count);
+		decorateCurrencyButton(button, reward.index, Storyline_API.getCurrentEvent() == "QUEST_PROGRESS" and "required" or "reward", reward.icon, reward.text, reward.count);
 	elseif rewardType == Rewards.REWARD_TYPES.SPELL then
 		decorateSpellButton(button, reward.icon, reward.text, reward.rewardSpellIndex);
 	elseif rewardType == Rewards.REWARD_TYPES.ITEMS then
