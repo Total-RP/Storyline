@@ -4,7 +4,11 @@
 
 ### Fixed
 
-- Fixed an error with the tooltip for currency quest objectives (order hall resources, nethershards, etc.).
+- Fixed an error when displaying the tooltip for currency quest objectives (order hall resources, nethershards, etc.).
+
+### Fixed
+
+- You can now right-click the objectives and rewards popup frames to close them.
 
 ### Modified
 

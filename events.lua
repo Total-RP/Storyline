@@ -770,4 +770,13 @@ function Storyline_API.initEventsStructure()
 
 	-- Hook reward
 	hooksecurefunc("QuestInfo_ShowRewards", hideQuestRewardFrameIfNeed);
+
+	local function goBackOnRightClick(_, button)
+		if button == "RightButton" then
+			Storyline_API.goBackToPreviousStep();
+		end
+	end
+
+	Storyline_NPCFrameObjectivesContent:SetScript("OnMouseDown", goBackOnRightClick);
+	Storyline_NPCFrameRewards.Content:SetScript("OnMouseDown", goBackOnRightClick);
 end
