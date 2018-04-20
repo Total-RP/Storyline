@@ -27,8 +27,6 @@ local IsFollowerCollected, IsCharacterNewlyBoosted, IsSpellKnownOrOverridesKnown
 local GetCoinTextureString, GetQuestMoneyToGet, GetNumQuestItems, GetQuestCurrencyInfo, GetNumQuestCurrencies, GetMoney = GetCoinTextureString, GetQuestMoneyToGet, GetNumQuestItems, GetQuestCurrencyInfo, GetNumQuestCurrencies, GetMoney;
 local BreakUpLargeNumbers, GetRewardXP, GetNumRewardCurrencies, GetRewardTitle, GetRewardMoney, GetNumQuestRewards, GetRewardSkillPoints = BreakUpLargeNumbers, GetRewardXP, GetNumRewardCurrencies, GetRewardTitle, GetRewardMoney, GetNumQuestRewards, GetRewardSkillPoints;
 
-local debug = Storyline_API.debug;
-
 Storyline_API.rewards = {};
 local API = Storyline_API.rewards;
 

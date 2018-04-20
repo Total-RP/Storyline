@@ -23,6 +23,8 @@
 
 	<Include file="lib\lib.xml"/>
 
+	<Script file="PlayerModelMixin.lua"/>
+
 	<!-- Art pieces to hide border seams
 	 	(copied from Blizzard, it adds a gradient texture between corners and borders so they blend)
 	 -->
@@ -253,7 +255,7 @@
 							<Anchor point="CENTER" x="0" y="0"/>
 						</Anchors>
 					</Frame>
-					<CinematicModel name="Storyline_NPCFrameModelsMe" parentKey="me" setAllPoints="true">
+					<CinematicModel name="Storyline_NPCFrameModelsMe" parentKey="me" setAllPoints="true" mixin="Storyline_PlayerModelMixin">
 						<Frames>
 							<Button parentKey="scroll" enableMouse="true">
 								<Anchors>
@@ -264,8 +266,13 @@
 								</Anchors>
 							</Button>
 						</Frames>
+						<Scripts>
+							<OnLoad method="OnLoad"/>
+							<OnModelLoaded method="OnModelLoaded"/>
+							<OnAnimFinished method="OnAnimFinished"/>
+						</Scripts>
 					</CinematicModel>
-					<CinematicModel name="Storyline_NPCFrameModelsYou" parentKey="you" setAllPoints="true">
+					<CinematicModel name="Storyline_NPCFrameModelsYou" parentKey="you" setAllPoints="true" mixin="Storyline_PlayerModelMixin">
 						<Frames>
 							<Button parentKey="scroll" enableMouse="true">
 								<Anchors>
@@ -276,6 +283,11 @@
 								</Anchors>
 							</Button>
 						</Frames>
+						<Scripts>
+							<OnLoad method="OnLoad"/>
+							<OnModelLoaded method="OnModelLoaded"/>
+							<OnAnimFinished method="OnAnimFinished"/>
+						</Scripts>
 					</CinematicModel>
 					<Frame name="Storyline_NPCFrameGossipChoices" inherits="Storyline_HoveredFrame" hidden="true">
 						<Size x="325" y="150"/>

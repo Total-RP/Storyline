@@ -479,7 +479,6 @@ local function playText(textIndex, targetModel)
 			animTab[#animTab + 1] = animationLib:GetDialogAnimation(targetModel.model, finder:sub(1, 1));
 		end);
 	end
-	animTab[#animTab + 1] = 0;
 
 	if #animTab == 0 then
 		animTab[1] = 0;
@@ -490,9 +489,9 @@ local function playText(textIndex, targetModel)
 		animTab[1] = 6;
 	end
 
-	for _, sequence in pairs(animTab) do
-		delay = animationLib:PlayAnimationDelay(targetModel, sequence, animationLib:GetAnimationDuration(targetModel.model, sequence), delay, textLineToken);
-	end
+	---@type PlayerModelMixin
+	local targetModel = Storyline_NPCFrame.models.you;
+	targetModel:PlayAnimSequence(animTab);
 
 	Storyline_NPCFrameChat.start = 0;
 
@@ -534,6 +533,12 @@ end
 --*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
 -- INIT
 --*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
+
+---@type Storyline_PlayerModelMixin
+local targetModel = Storyline_NPCFrame.models.you;
+---@type Storyline_PlayerModelMixin
+local playerModel = Storyline_NPCFrame.models.me;
+local ANIMATIONS = Storyline_API.ANIMATIONS;
 
 function Storyline_API.initEventsStructure()
 	local startDialog = Storyline_API.startDialog;
@@ -605,10 +610,10 @@ function Storyline_API.initEventsStructure()
 					if IsQuestCompletable() then
 						Storyline_NPCFrameObjectives.OK:Show();
 						Storyline_NPCFrameChatNextText:SetText(loc("SL_CONTINUE"));
-						playSelfAnim(68);
+						playerModel:PlayAnimation(ANIMATIONS.YES);
 					else
 						Storyline_NPCFrameChatNextText:SetText(loc("SL_NOT_YET"));
-						playSelfAnim(186);
+						playerModel:PlayAnimation(ANIMATIONS.NO);
 					end
 					showQuestPortraitFrame();
 				elseif IsQuestCompletable() then
@@ -755,12 +760,12 @@ function Storyline_API.initEventsStructure()
 	setTooltipForSameFrame(Storyline_NPCFrameObjectivesNo, "TOP", 0, 0, loc("SL_DECLINE"));
 	Storyline_NPCFrameObjectivesYes:SetScript("OnClick", acceptQuest);
 	Storyline_NPCFrameObjectivesYes:SetScript("OnEnter", function(self)
-		playSelfAnim(185);
+		playerModel:PlayAnimation(ANIMATIONS.CHEER);
 		refreshTooltipForFrame(self);
 	end);
 	Storyline_NPCFrameObjectivesNo:SetScript("OnClick", DeclineQuest);
 	Storyline_NPCFrameObjectivesNo:SetScript("OnEnter", function(self)
-		playSelfAnim(186);
+		playerModel:PlayAnimation(ANIMATIONS.NO);
 		refreshTooltipForFrame(self);
 	end);
 

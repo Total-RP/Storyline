@@ -509,3 +509,10 @@ end
 function Storyline_API.lib.getFontPath(font)
 	return LSM3:Fetch(LSM3.MediaType.FONT, font);
 end
+
+Storyline_API.ANIMATIONS = {
+	READING = 520,
+	YES = 68,
+	NO = 186,
+	CHEER = 185,
+}

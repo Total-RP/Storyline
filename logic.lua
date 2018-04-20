@@ -16,6 +16,7 @@
 -- See the License for the specific language governing permissions and
 -- limitations under the License.
 ----------------------------------------------------------------------------------
+local Ellyb = Ellyb(...);
 
 -- Storyline API
 local wipe, tContains = wipe, tContains;
@@ -129,8 +130,12 @@ end
 -- Called when the two models are loaded.
 -- This method initializes all scaling parameters.
 --
+---@type Storyline_PlayerModelMixin
+local targetModel = mainFrame.models.you;
+---@type Storyline_PlayerModelMixin
+local playerModel = mainFrame.models.me;
 local function modelsLoaded()
-	if mainFrame.models.you.modelLoaded and mainFrame.models.me.modelLoaded then
+	if targetModel.isModelLoaded and playerModel.isModelLoaded then
 
 		mainFrame.models.you.model = mainFrame.models.you:GetModelFileID();
 		if mainFrame.models.you.model then
@@ -142,7 +147,7 @@ local function modelsLoaded()
 		end
 
 
-		local dataMe, dataYou = getScalingStuctures(mainFrame.models.me.model, mainFrame.models.you.model);
+		local dataMe, dataYou = getScalingStuctures(playerModel:GetModelFileIDAsString(), targetModel:GetModelFileIDAsString());
 
 		-- Configuration for model Me.
 		loadScalingParameters(dataMe, "me", true);
@@ -152,15 +157,15 @@ local function modelsLoaded()
 			loadScalingParameters(dataYou, "you", false);
 		else
 			-- If there is no You model, play the read animation for the Me model.
-			mainFrame.models.me:SetAnimation(520);
+			playerModel:PlayAnimation(Storyline_API.ANIMATIONS.READING);
 		end
 
 		-- Place the modelIDs in the debug frame
-		if mainFrame.models.you.model then
-			mainFrame.debug.you:SetText(mainFrame.models.you.model);
+		if targetModel:GetModelFileIDAsString() then
+			mainFrame.debug.you:SetText(targetModel:GetModelFileIDAsString());
 		end
-		if mainFrame.models.me.model then
-			mainFrame.debug.me:SetText(mainFrame.models.me.model);
+		if playerModel:GetModelFileIDAsString() then
+			mainFrame.debug.me:SetText(playerModel:GetModelFileIDAsString());
 		end
 
 		mainFrame.debug.recorded:Hide();
@@ -170,6 +175,8 @@ local function modelsLoaded()
 	end
 end
 
+playerModel.ModelLoaded = modelsLoaded;
+targetModel.ModelLoaded = modelsLoaded;
 ---
 -- Start a dialog with unit ID targetType
 -- @param targetType
@@ -216,8 +223,6 @@ function Storyline_API.startDialog(targetType, fullText, event, eventInfo)
 		mainFrame.banner:Hide();
 	end
 
-	mainFrame.models.me.modelLoaded = false;
-	mainFrame.models.you.modelLoaded = false;
 	mainFrame.models.you.model = "";
 	mainFrame.models.me.model = "";
 
@@ -226,10 +231,9 @@ function Storyline_API.startDialog(targetType, fullText, event, eventInfo)
 
 	-- Load unit in the right model
 	if UnitExists(targetType) and not UnitIsUnit("player", "npc") then
-		mainFrame.models.you:SetUnit(targetType, false);
+		targetModel:SetModelUnit(targetType, false);
 	else
-		mainFrame.models.you:SetUnit("none");
-		mainFrame.models.you.modelLoaded = true;
+		targetModel:SetModelUnit("none");
 	end
 
 	fullText = fullText:gsub(LINE_FEED_CODE .. "+", "\n");
@@ -557,17 +561,6 @@ function Storyline_API.addon:OnEnable()
 
 	-- Register events
 	Storyline_API.initEventsStructure();
-
-	-- 3D models loaded
-	mainFrame.models.me:SetScript("OnModelLoaded", function()
-		mainFrame.models.me.modelLoaded = true;
-		modelsLoaded();
-	end);
-
-	mainFrame.models.you:SetScript("OnModelLoaded", function()
-		mainFrame.models.you.modelLoaded = true;
-		modelsLoaded();
-	end);
 
 	-- Closing
 	registerHandler("GOSSIP_CLOSED", function()
