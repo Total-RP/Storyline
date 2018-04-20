@@ -539,11 +539,13 @@ function Storyline_API.initEventsStructure()
 	local startDialog = Storyline_API.startDialog;
 
 	EVENT_INFO = {
+		--[[
+		TODO REMOVE
 		["SCALING_DEBUG"] = {
 			text = function() return "DEBUG TEXT" end,
 			cancelMethod = function() end,
 			titleGetter = function() return "DEBUG TITLE" end,
-		},
+		},]]
 		["QUEST_GREETING"] = {
 			text = GetGreetingText,
 			finishMethod = function()
@@ -681,6 +683,7 @@ function Storyline_API.initEventsStructure()
 			end,
 			cancelMethod = CloseGossip,
 		},
+		--[[ TODO REMOVE
 		["REPLAY"] = {
 			titleGetter = function()
 				local questTitle = GetQuestLogTitle(GetQuestLogSelection());
@@ -690,7 +693,7 @@ function Storyline_API.initEventsStructure()
 				return QUEST_LOG;
 			end,
 			finishText = CLOSE,
-		}
+		}]]
 	};
 	Storyline_API.EVENT_INFO = EVENT_INFO;
 
