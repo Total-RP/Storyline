@@ -5,6 +5,7 @@
 ### Added
 
 - The player model is now refreshed when changes happen to your character (equipment changes, druid forms, etc.).
+- The scaling between the two models is now animated when one of the models changes.
 
 ### Modified
 
@@ -13,6 +14,7 @@
 ### Fixed
 
 - Fixed Lua error when displaying spell rewards.
+- Models with no speaking animation will no longer start playing their idle animation from the beginning when they are being animated.
 - Fixed an issue that prevented dead NPCs to appear as dead in Storyline.
 - Fixed an issue where the player model would not be displayed correctly when Storyline was opened when the player model was not already loaded (typically during login).
 
