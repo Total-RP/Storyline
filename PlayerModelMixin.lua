@@ -81,6 +81,12 @@ function Storyline_PlayerModelMixin:GetValidSpeakingAnimation(animationID)
 	if animationID == ANIMATIONS.EXCLAMATION and not self:HasAnimation(animationID) then
 		animationID = ANIMATIONS.TALK;
 	end
+
+	-- If the animation is an exclamation and the model don't support it, fallback to a normal sentence
+	if animationID == ANIMATIONS.TALK and not self:HasAnimation(animationID) then
+		animationID = ANIMATIONS.STANDING;
+	end
+
 	return animationID
 end
 
@@ -94,6 +100,7 @@ end
 
 --- Play the idle animation (default is standing)
 function Storyline_PlayerModelMixin:PlayIdleAnimation()
+	self.currentAnimation = self.idleAnimationID;
 	self:SetAnimation(self.idleAnimationID);
 end
 
@@ -147,8 +154,13 @@ end
 ---@param animationID number
 function Storyline_PlayerModelMixin:SetAnimationWithFailSafe(animationID)
 	self.currentAnimation = animationID;
-	self.animationStartedTime = GetTime();
-	self:SetAnimation(animationID);
+	if animationID == self.idleAnimationID then
+		self.animationStartedTime = 0;
+		self:OnAnimFinished();
+	else
+		self.animationStartedTime = GetTime();
+		self:SetAnimation(animationID);
+	end
 end
 
 function Storyline_PlayerModelMixin:ReplayAnimation()
@@ -177,7 +189,9 @@ function Storyline_PlayerModelMixin:OnAnimFinished()
 	else
 		-- If the sequence is empty, set isPlayingAnimationSequence to false and play idle animation
 		self.isPlayingAnimationSequence = false;
-		self:PlayIdleAnimation();
+		if self.currentAnimation ~= self.idleAnimationID then
+			self:PlayIdleAnimation();
+		end
 	end
 end
 
