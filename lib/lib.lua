@@ -511,8 +511,12 @@ function Storyline_API.lib.getFontPath(font)
 end
 
 Storyline_API.ANIMATIONS = {
+	STANDING = 0,
 	READING = 520,
 	YES = 68,
 	NO = 186,
 	CHEER = 185,
+	EXCLAMATION = 64,
+	QUESTION = 65,
+	TALK = 60,
 }
