@@ -2,6 +2,10 @@
 
 ## 3.0 - Unreleased
 
+### Added
+
+- The player model is now refreshed when changes happen to your character (equipment changes, druid forms, etc.).
+
 ### Modified
 
 - Completely re-implemented the way animations are played on the 3D models. Using new in-game methods for timing animations, we no longer need our own database of animation timings. All models are now timed automatically by the game.
@@ -10,6 +14,7 @@
 
 - Fixed Lua error when displaying spell rewards.
 - Fixed an issue that prevented dead NPCs to appear as dead in Storyline.
+- Fixed an issue where the player model would not be displayed correctly when Storyline was opened when the player model was not already loaded (typically during login).
 
 ## [2.0.13](https://github.com/Ellypse/Storyline/compare/2.0.12...2.0.13) - 2018-04-18
 

@@ -18,6 +18,7 @@
 ----------------------------------------------------------------------------------
 
 local animationLib = LibStub:GetLibrary("TRP-Dialog-Animation-DB");
+local Ellyb = Ellyb(...);
 
 -- Storyline API
 local configureHoverFrame = Storyline_API.lib.configureHoverFrame;
@@ -739,6 +740,12 @@ function Storyline_API.initEventsStructure()
 			end
 		end);
 	end
+
+	Ellyb.GameEvents.registerHandler("UNIT_PORTRAIT_UPDATE", function(unit)
+		if unit == "player" and Storyline_NPCFrame:IsVisible() then
+			playerModel:SetModelUnit("player", false);
+		end
+	end)
 
 	registerHandler("QUEST_ITEM_UPDATE", RewardsButtons.refreshButtons);
 	registerHandler("GOSSIP_CLOSED", function()
