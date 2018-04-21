@@ -503,6 +503,7 @@ local function playText(textIndex, targetModel)
 	Storyline_NPCFrameChat:SetHeight(Storyline_NPCFrameChatText:GetHeight() + Storyline_NPCFrameChatName:GetHeight() + Storyline_NPCFrameChatNextText:GetHeight() + 50);
 end
 
+---@param targetModel Storyline_PlayerModelMixin
 function Storyline_API.playNext(targetModel)
 	Storyline_NPCFrameChatNext:Enable();
 	Storyline_NPCFrameChat.currentIndex = Storyline_NPCFrameChat.currentIndex + 1;

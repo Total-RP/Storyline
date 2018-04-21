@@ -135,37 +135,34 @@ local targetModel = mainFrame.models.you;
 ---@type Storyline_PlayerModelMixin
 local playerModel = mainFrame.models.me;
 local function modelsLoaded()
-	if targetModel.isModelLoaded and playerModel.isModelLoaded then
+	playerModel:ResetIdleAnimationID();
+	targetModel:ResetIdleAnimationID();
 
-		playerModel:ResetIdleAnimationID();
-		targetModel:ResetIdleAnimationID();
+	local dataMe, dataYou = getScalingStuctures(playerModel:GetModelFileIDAsString(), targetModel:GetModelFileIDAsString());
 
-		local dataMe, dataYou = getScalingStuctures(playerModel:GetModelFileIDAsString(), targetModel:GetModelFileIDAsString());
+	-- Configuration for model Me.
+	loadScalingParameters(dataMe, "me", true);
 
-		-- Configuration for model Me.
-		loadScalingParameters(dataMe, "me", true);
+	-- Configuration for model You, if available.
+	if targetModel:GetModelFileIDAsString() then
+		loadScalingParameters(dataYou, "you", false);
+	else
+		-- If there is no You model, play the read animation for the Me model.
+		playerModel:SetCustomIdleAnimationID(Storyline_API.ANIMATIONS.READING);
+		playerModel:PlayIdleAnimation();
+	end
 
-		-- Configuration for model You, if available.
-		if targetModel:GetModelFileIDAsString() then
-			loadScalingParameters(dataYou, "you", false);
-		else
-			-- If there is no You model, play the read animation for the Me model.
-			playerModel:SetCustomIdleAnimationID(Storyline_API.ANIMATIONS.READING);
-			playerModel:PlayIdleAnimation();
-		end
+	-- Place the modelIDs in the debug frame
+	if targetModel:GetModelFileIDAsString() then
+		mainFrame.debug.you:SetText(targetModel:GetModelFileIDAsString());
+	end
+	if playerModel:GetModelFileIDAsString() then
+		mainFrame.debug.me:SetText(playerModel:GetModelFileIDAsString());
+	end
 
-		-- Place the modelIDs in the debug frame
-		if targetModel:GetModelFileIDAsString() then
-			mainFrame.debug.you:SetText(targetModel:GetModelFileIDAsString());
-		end
-		if playerModel:GetModelFileIDAsString() then
-			mainFrame.debug.me:SetText(playerModel:GetModelFileIDAsString());
-		end
-
-		mainFrame.debug.recorded:Hide();
-		if scalingLib:IsRecorded(mainFrame.models.me.model, mainFrame.models.you.model) then
-			mainFrame.debug.recorded:Show();
-		end
+	mainFrame.debug.recorded:Hide();
+	if scalingLib:IsRecorded(mainFrame.models.me.model, mainFrame.models.you.model) then
+		mainFrame.debug.recorded:Show();
 	end
 end
 
@@ -221,14 +218,17 @@ function Storyline_API.startDialog(targetType, fullText, event, eventInfo)
 	mainFrame.models.me.model = "";
 
 	-- Load player in the left model
-	mainFrame.models.me:SetUnit("player", false);
+	local playerModelLoading = playerModel:SetModelUnit("player", false);
 
 	-- Load unit in the right model
+	local targetModelLoading;
 	if UnitExists(targetType) and not UnitIsUnit("player", "npc") then
-		targetModel:SetModelUnit(targetType, false);
+		targetModelLoading = targetModel:SetModelUnit(targetType, false);
 	else
-		targetModel:SetModelUnit("none", false);
+		targetModelLoading = targetModel:SetModelUnit("none", false);
 	end
+
+	Ellyb.Promises.all({ playerModelLoading, targetModelLoading }):Always(modelsLoaded);
 
 	fullText = fullText:gsub(LINE_FEED_CODE .. "+", "\n");
 	fullText = fullText:gsub(WEIRD_LINE_BREAK, "\n");

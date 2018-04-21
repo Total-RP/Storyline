@@ -1,15 +1,15 @@
 local Ellyb = Ellyb(...);
 
+local Promise = Ellyb.Promise;
 local After = C_Timer.After;
 local pop = table.remove;
+local GetTime = GetTime;
 local ANIMATIONS = Storyline_API.ANIMATIONS;
 
 ---@class Storyline_PlayerModelMixin : CinematicModel
 Storyline_PlayerModelMixin = {};
 
 function Storyline_PlayerModelMixin:OnLoad()
-	self.isModelLoaded = false;
-
 	-- Default idle animation is standing
 	self.idleAnimationID = ANIMATIONS.STANDING;
 
@@ -18,13 +18,10 @@ function Storyline_PlayerModelMixin:OnLoad()
 end
 
 function Storyline_PlayerModelMixin:OnModelLoaded()
-	self.isModelLoaded = true;
-
 	-- Save the displayed model ID as we will use it later
 	self.displayedModel = self:GetModelFileID();
 
-	-- Call the ModelLoaded method to execute a custom callback
-	self:ModelLoaded();
+	self.modelLoadedPromise:Resolve(self.displayedModel);
 end
 
 --- This function is called when the model is loaded. Override to use custom callback
@@ -52,12 +49,17 @@ function Storyline_PlayerModelMixin:ResetModel()
 	self.isModelLoaded = false;
 end
 
+---@return Promise modelLoadingPromise
 function Storyline_PlayerModelMixin:SetModelUnit(unit, animateIntoPosition)
 	self:ResetModel();
+	self.modelLoadedPromise = Promise();
 	self:SetUnit(unit, animateIntoPosition);
+
 	if unit == "none" then
-		self.isModelLoaded = true;
+		self.modelLoadedPromise:Resolve();
 	end
+
+	return self.modelLoadedPromise;
 end
 
 function Storyline_PlayerModelMixin:DisplayDead()
@@ -106,12 +108,12 @@ function Storyline_PlayerModelMixin:PlayAnimSequence(sequence)
 	self.isPlayingIntersticeAnimation = true;
 	-- We are now playing an animation sequence
 	self.isPlayingAnimationSequence = true;
-	-- Play the next available animation
+
+	-- This field will be use to monitor the tries when setting animations that fail on the first times
+	self.animationTries = 0;
+
 	self:PlayNextAnimation();
 end
-
--- TODO Playing the animations when the model is not loaded yet will result in all animations triggering OnAnimFinished.
--- TODO We need to wait of the model to be loaded to play the animation sequence (probably use Ellyb's promises)
 
 --- Play the next animation available in the current sequence
 function Storyline_PlayerModelMixin:PlayNextAnimation()
@@ -124,25 +126,50 @@ function Storyline_PlayerModelMixin:PlayNextAnimation()
 		self:PlayIdleAnimation();
 		-- After half a second, manually fire OnAnimFinished
 		-- TODO fix risk of racing issue here if the idle animation doesn't exist and OnAnimFinished is executed right away
-		After(0.5, self.bindedOnAnimFinished);
+		After(1, self.bindedOnAnimFinished);
 
 	else
 		-- We are no longer playing an interstice animation
-		self.isPlayingIntersticeAnimation = false;
+		self.isPlayingIntersticeAnimation = true;
 
 		-- Pop the next animation from the sequence table
 		local nextAnimation = pop(self.sequence, 1);
 		-- Get a valid speaking animation (non speaking animation are ignored)
 		nextAnimation = self:GetValidSpeakingAnimation(nextAnimation);
 
-		self:SetAnimation(nextAnimation);
+		self:SetAnimationWithFailSafe(nextAnimation);
 	end
+end
+
+--- Tries to set an animation with fail safe mechanisms in place to retry setting the animation a couple of times
+--- if it fails the first times.
+--- This is not as pretty as I wish it would be, but simply waiting for the model to be loaded or some other event doesn't work,
+--- whereas this technique works every time.
+---@param animationID number
+function Storyline_PlayerModelMixin:SetAnimationWithFailSafe(animationID)
+	self.currentAnimation = animationID;
+	self.animationStartedTime = GetTime();
+	self:SetAnimation(animationID);
+end
+
+function Storyline_PlayerModelMixin:ReplayAnimation()
+	self:SetAnimationWithFailSafe(self.currentAnimation);
 end
 
 function Storyline_PlayerModelMixin:OnAnimFinished()
 	-- Do not do anything if we are not currently playing a animation sequence
 	if not self.isPlayingAnimationSequence then
 		return
+	end
+
+	-- Check if the animation actually failed to be played (it took less than a second) and retry to play the animation
+	-- We only try that 50 times before bailing, to make sure we don't get into an infinite loop.
+	if self.animationTries < 50 and GetTime() - self.animationStartedTime < 1 then
+		self.animationTries = self.animationTries + 1;
+		return self:ReplayAnimation();
+	else
+		-- If the animation played correctly, make sure to reset the tries counter
+		self.animationTries = 0;
 	end
 
 	-- If we still have animation available in the sequence, play the next animation
