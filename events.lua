@@ -453,6 +453,7 @@ local function handleEventSpecifics(event, texts, textIndex, eventInfo)
 	end
 end
 
+---@param targetModel Storyline_PlayerModelMixin
 local function playText(textIndex, targetModel)
 	local animTab = targetModel.animTab;
 	wipe(animTab);
@@ -485,13 +486,11 @@ local function playText(textIndex, targetModel)
 	end
 
 	if UnitIsDead("npc") then
-		wipe(animTab)
-		animTab[1] = 6;
+		targetModel:DisplayDead();
+	else
+		targetModel:PlayAnimSequence(animTab);
 	end
 
-	---@type PlayerModelMixin
-	local targetModel = Storyline_NPCFrame.models.you;
-	targetModel:PlayAnimSequence(animTab);
 
 	Storyline_NPCFrameChat.start = 0;
 

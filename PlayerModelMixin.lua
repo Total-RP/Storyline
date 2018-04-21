@@ -55,6 +55,16 @@ end
 function Storyline_PlayerModelMixin:SetModelUnit(unit, animateIntoPosition)
 	self:ResetModel();
 	self:SetUnit(unit, animateIntoPosition);
+	if unit == "none" then
+		self.isModelLoaded = true;
+	end
+end
+
+function Storyline_PlayerModelMixin:DisplayDead()
+	-- Pick a dead animation. Some NPC only has stand and dead, so dead is actually the ID 1, because Blizzard.
+	local deadAnimation = self:HasAnimation(ANIMATIONS.DEAD) or 1;
+	-- Freeze the dead animation on the last frame
+	self:FreezeAnimation(deadAnimation, nil, -1)
 end
 
 --- Check the model for a speaking (".", "?" or "!") animation and returns a valid animation that the model can play
@@ -99,6 +109,9 @@ function Storyline_PlayerModelMixin:PlayAnimSequence(sequence)
 	-- Play the next available animation
 	self:PlayNextAnimation();
 end
+
+-- TODO Playing the animations when the model is not loaded yet will result in all animations triggering OnAnimFinished.
+-- TODO We need to wait of the model to be loaded to play the animation sequence (probably use Ellyb's promises)
 
 --- Play the next animation available in the current sequence
 function Storyline_PlayerModelMixin:PlayNextAnimation()

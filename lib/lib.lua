@@ -519,4 +519,5 @@ Storyline_API.ANIMATIONS = {
 	EXCLAMATION = 64,
 	QUESTION = 65,
 	TALK = 60,
+	DEAD = 6,
 }

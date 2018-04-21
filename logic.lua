@@ -137,15 +137,8 @@ local playerModel = mainFrame.models.me;
 local function modelsLoaded()
 	if targetModel.isModelLoaded and playerModel.isModelLoaded then
 
-		mainFrame.models.you.model = mainFrame.models.you:GetModelFileID();
-		if mainFrame.models.you.model then
-			mainFrame.models.you.model = tostring(mainFrame.models.you.model);
-		end
-		mainFrame.models.me.model = mainFrame.models.me:GetModelFileID();
-		if mainFrame.models.me.model then
-			mainFrame.models.me.model = tostring(mainFrame.models.me.model);
-		end
-
+		playerModel:ResetIdleAnimationID();
+		targetModel:ResetIdleAnimationID();
 
 		local dataMe, dataYou = getScalingStuctures(playerModel:GetModelFileIDAsString(), targetModel:GetModelFileIDAsString());
 
@@ -153,11 +146,12 @@ local function modelsLoaded()
 		loadScalingParameters(dataMe, "me", true);
 
 		-- Configuration for model You, if available.
-		if mainFrame.models.you.model then
+		if targetModel:GetModelFileIDAsString() then
 			loadScalingParameters(dataYou, "you", false);
 		else
 			-- If there is no You model, play the read animation for the Me model.
-			playerModel:PlayAnimation(Storyline_API.ANIMATIONS.READING);
+			playerModel:SetCustomIdleAnimationID(Storyline_API.ANIMATIONS.READING);
+			playerModel:PlayIdleAnimation();
 		end
 
 		-- Place the modelIDs in the debug frame
@@ -233,7 +227,7 @@ function Storyline_API.startDialog(targetType, fullText, event, eventInfo)
 	if UnitExists(targetType) and not UnitIsUnit("player", "npc") then
 		targetModel:SetModelUnit(targetType, false);
 	else
-		targetModel:SetModelUnit("none");
+		targetModel:SetModelUnit("none", false);
 	end
 
 	fullText = fullText:gsub(LINE_FEED_CODE .. "+", "\n");
