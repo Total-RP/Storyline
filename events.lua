@@ -743,7 +743,7 @@ function Storyline_API.initEventsStructure()
 
 	Ellyb.GameEvents.registerHandler("UNIT_PORTRAIT_UPDATE", function(unit)
 		if unit == "player" and Storyline_NPCFrame:IsVisible() then
-			playerModel:SetModelUnit("player", false);
+			playerModel:SetModelUnit("player", false):Success(Storyline_API.onModelsLoaded);
 		end
 	end)
 
