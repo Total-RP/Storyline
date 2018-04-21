@@ -36,6 +36,10 @@ local InterfaceOptionsFrame_OpenToCategory = InterfaceOptionsFrame_OpenToCategor
 
 -- UI
 local mainFrame = Storyline_NPCFrame;
+---@type Storyline_PlayerModelMixin
+local targetModel = mainFrame.models.you;
+---@type Storyline_PlayerModelMixin
+local playerModel = mainFrame.models.me;
 
 local scalingLib = LibStub:GetLibrary("TRP-Dialog-Scaling-DB");
 local scalingDB, customHeightDB, customPersonalDB;
@@ -94,7 +98,7 @@ end
 -- @param field typically "me" or "you"
 --
 local function resetStructure()
-	local key, invertedKey = scalingLib:GetModelKeys(mainFrame.models.me.model, mainFrame.models.you.model);
+	local key, invertedKey = scalingLib:GetModelKeys(playerModel:GetModelFileIDAsString(), targetModel:GetModelFileIDAsString());
 
 	-- Reset custom heights
 	for _, value in pairs({key, invertedKey}) do
@@ -105,13 +109,13 @@ local function resetStructure()
 	end
 
 	-- Reset custom attributes
-	if customPersonalDB[mainFrame.models.me.model] then
-		wipe(customPersonalDB[mainFrame.models.me.model]);
-		customPersonalDB[mainFrame.models.me.model] = nil;
+	if customPersonalDB[playerModel:GetModelFileIDAsString()] then
+		wipe(customPersonalDB[playerModel:GetModelFileIDAsString()]);
+		customPersonalDB[playerModel:GetModelFileIDAsString()] = nil;
 	end
-	if customPersonalDB[mainFrame.models.you.model] then
-		wipe(customPersonalDB[mainFrame.models.you.model]);
-		customPersonalDB[mainFrame.models.you.model] = nil;
+	if customPersonalDB[targetModel:GetModelFileIDAsString()] then
+		wipe(customPersonalDB[targetModel:GetModelFileIDAsString()]);
+		customPersonalDB[targetModel:GetModelFileIDAsString()] = nil;
 	end
 end
 
@@ -130,10 +134,6 @@ end
 -- Called when the two models are loaded.
 -- This method initializes all scaling parameters.
 --
----@type Storyline_PlayerModelMixin
-local targetModel = mainFrame.models.you;
----@type Storyline_PlayerModelMixin
-local playerModel = mainFrame.models.me;
 local function modelsLoaded()
 	playerModel:ResetIdleAnimationID();
 	targetModel:ResetIdleAnimationID();
@@ -161,10 +161,11 @@ local function modelsLoaded()
 	end
 
 	mainFrame.debug.recorded:Hide();
-	if scalingLib:IsRecorded(mainFrame.models.me.model, mainFrame.models.you.model) then
+	if scalingLib:IsRecorded(playerModel:GetModelFileIDAsString(), targetModel:GetModelFileIDAsString()) then
 		mainFrame.debug.recorded:Show();
 	end
 end
+Storyline_API.onModelsLoaded = modelsLoaded;
 
 playerModel.ModelLoaded = modelsLoaded;
 targetModel.ModelLoaded = modelsLoaded;
@@ -213,9 +214,6 @@ function Storyline_API.startDialog(targetType, fullText, event, eventInfo)
 		mainFrame.title:SetText("");
 		mainFrame.banner:Hide();
 	end
-
-	mainFrame.models.you.model = "";
-	mainFrame.models.me.model = "";
 
 	-- Load player in the left model
 	local playerModelLoading = playerModel:SetModelUnit("player", false);
@@ -272,7 +270,7 @@ end
 
 local function saveCustomHeight(meYou, scale)
 	-- Getting custom structure or creating it
-	local key, invertedKey = scalingLib:GetModelKeys(mainFrame.models.me.model, mainFrame.models.you.model);
+	local key, invertedKey = scalingLib:GetModelKeys(playerModel:GetModelFileIDAsString(), targetModel:GetModelFileIDAsString());
 
 	if not customHeightDB[key] and customHeightDB[invertedKey] then
 		-- We swap me/you as it is inverted
@@ -287,7 +285,7 @@ local function saveCustomHeight(meYou, scale)
 end
 
 local function saveCustomIndependantScaling(meYou, field, value)
-	local model = meYou == "me" and mainFrame.models.me.model or mainFrame.models.you.model;
+	local model = meYou == "me" and playerModel:GetModelFileIDAsString() or targetModel:GetModelFileIDAsString();
 
 	if not customPersonalDB[model] then
 		customPersonalDB[model] = {};
@@ -335,22 +333,22 @@ local function debugInit()
 	mainFrame.debug.dump.dump:SetScript("OnClick", function()
 		local info =
 [[["%s~%s"] = {
-	["me"] = {
-		["scale"] = %s,
-		["feet"] = %s,
-		["offset"] = %s,
-		["facing"] = %s,
-	},
-	["you"] = {
-		["scale"] = %s,
-		["feet"] = %s,
-		["offset"] = %s,
-		["facing"] = %s,
+  ["me"] = {
+    ["scale"] = %s,
+    ["feet"] = %s,
+    ["offset"] = %s,
+    ["facing"] = %s,
+  },
+  ["you"] = {
+    ["scale"] = %s,
+    ["feet"] = %s,
+    ["offset"] = %s,
+    ["facing"] = %s,
 	}
 },]]
 		local formatted = info:format(
-			mainFrame.models.me.model,
-			mainFrame.models.you.model,
+			playerModel:GetModelFileIDAsString(),
+			targetModel:GetModelFileIDAsString(),
 			mainFrame.models.me.scale, mainFrame.models.me.feet, mainFrame.models.me.offset, mainFrame.models.me.facing,
 			mainFrame.models.you.scale, mainFrame.models.you.feet, mainFrame.models.you.offset, mainFrame.models.you.facing
 		);
