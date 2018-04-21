@@ -123,10 +123,28 @@ end
 -- LOADING & START DIALOG
 --*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
 
+local modelHeightTransitionators = {
+	me = Ellyb.Transitionator(),
+	you = Ellyb.Transitionator()
+};
+local modelFeetTransitionators = {
+	me = Ellyb.Transitionator(),
+	you = Ellyb.Transitionator()
+};
+local modelOffsetTransitionators = {
+	me = Ellyb.Transitionator(),
+	you = Ellyb.Transitionator()
+};
 local function loadScalingParameters(defaultData, meYou, facing)
-	scalingLib:SetModelHeight(defaultData.scale, mainFrame.models[meYou]);
-	scalingLib:SetModelFeet(defaultData.feet, mainFrame.models[meYou]);
-	scalingLib:SetModelOffset(defaultData.offset, mainFrame.models[meYou], facing);
+	modelHeightTransitionators[meYou]:RunValue(mainFrame.models[meYou].scale or scalingLib.DEFAULT_PROPERTIES.scale, defaultData.scale, 0.5, function(value)
+		scalingLib:SetModelHeight(value, mainFrame.models[meYou]);
+	end)
+	modelFeetTransitionators[meYou]:RunValue(mainFrame.models[meYou].feet or scalingLib.DEFAULT_PROPERTIES.feet, defaultData.feet, 0.5, function(value)
+		scalingLib:SetModelFeet(value, mainFrame.models[meYou]);
+	end);
+	modelOffsetTransitionators[meYou]:RunValue(mainFrame.models[meYou].offset or scalingLib.DEFAULT_PROPERTIES.offset, defaultData.offset, 0.5, function(value)
+		scalingLib:SetModelOffset(value, mainFrame.models[meYou], facing);
+	end);
 	scalingLib:SetModelFacing(defaultData.facing, mainFrame.models[meYou], facing);
 end
 
