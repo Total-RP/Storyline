@@ -209,7 +209,7 @@ local REWARD_GETTERS = {
 			local numberOfSpellRewards = GetNumRewardSpells();
 
 			for rewardSpellIndex = 1, numberOfSpellRewards do
-				local texture, name, isTradeskillSpell, isSpellLearned, hideSpellLearnText, isBoostSpell, garrFollowerID, spellID = GetRewardSpell(rewardSpellIndex);
+				local texture, name, isTradeskillSpell, isSpellLearned, hideSpellLearnText, isBoostSpell, garrFollowerID, genericUnlock, spellID = GetRewardSpell(rewardSpellIndex);
 				local knownSpell = IsSpellKnownOrOverridesKnown(spellID);
 
 				-- Filter out already learned spell or garrison followers
@@ -235,7 +235,7 @@ local REWARD_GETTERS = {
 			local numberOfSpellRewards = GetNumRewardSpells();
 
 			for rewardSpellIndex = 1, numberOfSpellRewards do
-				local texture, name, _, _, _, isBoostSpell, garrFollowerID, spellID = GetRewardSpell(rewardSpellIndex);
+				local texture, name, _, _, _, isBoostSpell, garrFollowerID, _, spellID = GetRewardSpell(rewardSpellIndex);
 				local knownSpell = IsSpellKnownOrOverridesKnown(spellID);
 
 				-- Filter out already learned spell or garrison followers

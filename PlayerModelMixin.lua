@@ -125,7 +125,6 @@ function Storyline_PlayerModelMixin:PlayNextAnimation()
 		-- so the animations don't look all chained together
 		self:PlayIdleAnimation();
 		-- After half a second, manually fire OnAnimFinished
-		-- TODO fix risk of racing issue here if the idle animation doesn't exist and OnAnimFinished is executed right away
 		After(1, self.bindedOnAnimFinished);
 
 	else

@@ -4,10 +4,11 @@
 
 ### Modified
 
-- Completely re-implemented the way animations are played on the 3D models. Using new in-game methods for timing animations, we no longer need our own database of animation timings. All models are now timed automatically by the game. **(Note: In this first alpha, some dialogs are not animated, this will be fixed in a future build.)**
+- Completely re-implemented the way animations are played on the 3D models. Using new in-game methods for timing animations, we no longer need our own database of animation timings. All models are now timed automatically by the game.
 
 ### Fixed
 
+- Fixed Lua error when displaying spell rewards.
 - Fixed an issue that prevented dead NPCs to appear as dead in Storyline.
 
 ## [2.0.13](https://github.com/Ellypse/Storyline/compare/2.0.12...2.0.13) - 2018-04-18
