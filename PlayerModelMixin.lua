@@ -6,6 +6,13 @@ local pop = table.remove;
 local GetTime = GetTime;
 local ANIMATIONS = Storyline_API.ANIMATIONS;
 
+local DEFAULT_PROPERTIES = {
+	scale = 1.45,
+	feet = 0.4,
+	offset = 0.215,
+	facing = 0.75
+};
+
 ---@class Storyline_PlayerModelMixin : CinematicModel
 Storyline_PlayerModelMixin = {};
 
@@ -15,6 +22,14 @@ function Storyline_PlayerModelMixin:OnLoad()
 
 	-- Create a callback-able function of the OnAnimFinished method bound to self, so we can call it manually
 	self.bindedOnAnimFinished = Ellyb.Functions.bind(self.OnAnimFinished, self);
+	self.boundSetModelHeight = Ellyb.Functions.bind(self.SetModelHeight, self);
+	self.boundSetModelOffset = Ellyb.Functions.bind(self.SetModelOffset, self);
+	self.boundSetModelFeet = Ellyb.Functions.bind(self.SetModelFeet, self);
+
+	self.modelHeightTransitionator = Ellyb.Transitionator();
+	self.modelFeetTransitionator = Ellyb.Transitionator();
+	self.modelOffsetTransitionator = Ellyb.Transitionator();
+	self.isModelDisplayedOnLeft = true;
 end
 
 function Storyline_PlayerModelMixin:OnModelLoaded()
@@ -193,6 +208,44 @@ function Storyline_PlayerModelMixin:OnAnimFinished()
 			self:PlayIdleAnimation();
 		end
 	end
+end
+
+function Storyline_PlayerModelMixin:SetModelHeight(newHeight)
+	newHeight = newHeight or DEFAULT_PROPERTIES.scale;
+	self.scale = newHeight;
+	self:InitializeCamera(newHeight);
+end
+
+function Storyline_PlayerModelMixin:SetModelFacing(facing)
+	facing = facing or DEFAULT_PROPERTIES.facing;
+	self.facing = facing;
+	self:SetFacing(facing * (self.isModelDisplayedOnLeft and 1 or -1));
+end
+
+function Storyline_PlayerModelMixin:SetModelFeet(feet)
+	feet = feet or DEFAULT_PROPERTIES.feet;
+	self.feet = feet;
+	self:SetHeightFactor(feet);
+end
+
+function Storyline_PlayerModelMixin:SetModelOffset(offset)
+	offset = offset or DEFAULT_PROPERTIES.offset;
+	self.offset = offset;
+	self:SetTargetDistance(offset * (self.isModelDisplayedOnLeft and 1 or -1));
+end
+
+function Storyline_PlayerModelMixin:AnimateScalingValuesIn(height, feet, offset, facing)
+	self.modelHeightTransitionator:RunValue(self.scale or DEFAULT_PROPERTIES.scale, height, 0.8, self.boundSetModelHeight)
+	self.modelFeetTransitionator:RunValue(self.feet or DEFAULT_PROPERTIES.feet, feet, 0.2, self.boundSetModelFeet);
+	self:SetModelOffset(offset);
+	self:SetModelFacing(facing);
+end
+
+function Storyline_PlayerModelMixin:SetScalingValuesIn(height, feet, offset, facing)
+	self:SetModelHeight(height);
+	self:SetModelFeet(feet);
+	self:SetModelOffset(offset);
+	self:SetModelFacing(facing);
 end
 
 --- TODO This will go once we have the superior scaling model, no need for string

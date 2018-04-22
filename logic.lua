@@ -38,6 +38,7 @@ local InterfaceOptionsFrame_OpenToCategory = InterfaceOptionsFrame_OpenToCategor
 local mainFrame = Storyline_NPCFrame;
 ---@type Storyline_PlayerModelMixin
 local targetModel = mainFrame.models.you;
+targetModel.isModelDisplayedOnLeft = false;
 ---@type Storyline_PlayerModelMixin
 local playerModel = mainFrame.models.me;
 
@@ -122,32 +123,6 @@ end
 --*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
 -- LOADING & START DIALOG
 --*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
-
-local modelHeightTransitionators = {
-	me = Ellyb.Transitionator(),
-	you = Ellyb.Transitionator()
-};
-local modelFeetTransitionators = {
-	me = Ellyb.Transitionator(),
-	you = Ellyb.Transitionator()
-};
-local modelOffsetTransitionators = {
-	me = Ellyb.Transitionator(),
-	you = Ellyb.Transitionator()
-};
-local function loadScalingParameters(defaultData, meYou, facing)
-	modelHeightTransitionators[meYou]:RunValue(mainFrame.models[meYou].scale or scalingLib.DEFAULT_PROPERTIES.scale, defaultData.scale, 0.5, function(value)
-		scalingLib:SetModelHeight(value, mainFrame.models[meYou]);
-	end)
-	modelFeetTransitionators[meYou]:RunValue(mainFrame.models[meYou].feet or scalingLib.DEFAULT_PROPERTIES.feet, defaultData.feet, 0.5, function(value)
-		scalingLib:SetModelFeet(value, mainFrame.models[meYou]);
-	end);
-	modelOffsetTransitionators[meYou]:RunValue(mainFrame.models[meYou].offset or scalingLib.DEFAULT_PROPERTIES.offset, defaultData.offset, 0.5, function(value)
-		scalingLib:SetModelOffset(value, mainFrame.models[meYou], facing);
-	end);
-	scalingLib:SetModelFacing(defaultData.facing, mainFrame.models[meYou], facing);
-end
-
 ---
 -- Called when the two models are loaded.
 -- This method initializes all scaling parameters.
@@ -159,11 +134,21 @@ local function modelsLoaded()
 	local dataMe, dataYou = getScalingStuctures(playerModel:GetModelFileIDAsString(), targetModel:GetModelFileIDAsString());
 
 	-- Configuration for model Me.
-	loadScalingParameters(dataMe, "me", true);
+	if playerModel.doNotAnimateScaling then
+		playerModel:SetScalingValuesIn(dataMe.scale, dataMe.feet, dataMe.offset, dataMe.facing);
+		playerModel.doNotAnimateScaling = false;
+	else
+		playerModel:AnimateScalingValuesIn(dataMe.scale, dataMe.feet, dataMe.offset, dataMe.facing);
+	end
 
 	-- Configuration for model You, if available.
 	if targetModel:GetModelFileIDAsString() then
-		loadScalingParameters(dataYou, "you", false);
+		if targetModel.doNotAnimateScaling then
+			targetModel:SetScalingValuesIn(dataYou.scale, dataYou.feet, dataYou.offset, dataYou.facing);
+			targetModel.doNotAnimateScaling = false;
+		else
+			targetModel:AnimateScalingValuesIn(dataYou.scale, dataYou.feet, dataYou.offset, dataYou.facing);
+		end
 	else
 		-- If there is no You model, play the read animation for the Me model.
 		playerModel:SetCustomIdleAnimationID(Storyline_API.ANIMATIONS.READING);
@@ -184,9 +169,22 @@ local function modelsLoaded()
 	end
 end
 Storyline_API.onModelsLoaded = modelsLoaded;
-
 playerModel.ModelLoaded = modelsLoaded;
 targetModel.ModelLoaded = modelsLoaded;
+
+local SLIDE_IN = 0.2;
+local function setModelsAlpha(value)
+	local slideInValue = SLIDE_IN - (SLIDE_IN * value);
+	targetModel:SetAlpha(value);
+	playerModel:SetAlpha(value);
+	playerModel:SetPosition(nil, slideInValue * -1)
+	targetModel:SetPosition(nil, slideInValue);
+end
+
+local alphaTransitionator = Ellyb.Transitionator();
+local function animateInModels()
+	alphaTransitionator:RunValue(0, 1, 0.5, setModelsAlpha)
+end
 ---
 -- Start a dialog with unit ID targetType
 -- @param targetType
@@ -244,7 +242,7 @@ function Storyline_API.startDialog(targetType, fullText, event, eventInfo)
 		targetModelLoading = targetModel:SetModelUnit("none", false);
 	end
 
-	Ellyb.Promises.all({ playerModelLoading, targetModelLoading }):Always(modelsLoaded);
+	local modelsLoading = Ellyb.Promises.all({ playerModelLoading, targetModelLoading }):Always(modelsLoaded);
 
 	fullText = fullText:gsub(LINE_FEED_CODE .. "+", "\n");
 	fullText = fullText:gsub(WEIRD_LINE_BREAK, "\n");
@@ -259,7 +257,13 @@ function Storyline_API.startDialog(targetType, fullText, event, eventInfo)
 	mainFrame.chat.event = event;
 	Storyline_NPCFrameObjectivesContent:Hide();
 	mainFrame.chat.previous:Hide();
-	showStorylineFrame();
+
+	if not mainFrame:IsVisible() then
+		playerModel.doNotAnimateScaling = true;
+		targetModel.doNotAnimateScaling = true;
+		showStorylineFrame();
+		modelsLoading:Always(animateInModels);
+	end
 
 	playNext(mainFrame.models.you);
 end
@@ -286,18 +290,19 @@ end
 -- DEBUG
 --*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
 
-local function saveCustomHeight(meYou, scale)
+local function saveCustomHeight(me, scale)
 	-- Getting custom structure or creating it
 	local key, invertedKey = scalingLib:GetModelKeys(playerModel:GetModelFileIDAsString(), targetModel:GetModelFileIDAsString());
 
+	print(key, invertedKey);
 	if not customHeightDB[key] and customHeightDB[invertedKey] then
 		-- We swap me/you as it is inverted
-		customHeightDB[invertedKey][meYou == "me" and 2 or 1] = scale;
+		customHeightDB[invertedKey][me and 2 or 1] = scale;
 	else
 		if not customHeightDB[key] then
 			customHeightDB[key] = {};
 		end
-		customHeightDB[key][meYou == "me" and 1 or 2] = scale;
+		customHeightDB[key][me and 1 or 2] = scale;
 	end
 
 end
@@ -309,6 +314,19 @@ local function saveCustomIndependantScaling(meYou, field, value)
 		customPersonalDB[model] = {};
 	end
 	customPersonalDB[model][field] = value;
+end
+
+---@param self Storyline_PlayerModelMixin
+local function onFrameScrolled(self, delta)
+	if IsAltKeyDown() then
+		local scale = self.scale - (IsShiftKeyDown() and 0.1 or 0.01) * delta;
+		self:SetModelHeight(scale);
+		saveCustomHeight(self.isModelDisplayedOnLeft, scale);
+	elseif IsControlKeyDown() then
+		local facing = self.facing - (IsShiftKeyDown() and 0.2 or 0.02) * delta;
+		self:SetModelFacing(facing)
+		saveCustomIndependantScaling(self.isModelDisplayedOnLeft, "facing", facing);
+	end
 end
 
 local function debugInit()
@@ -324,15 +342,7 @@ local function debugInit()
 	for _, meYou in pairs({"me", "you"}) do
 		mainFrame.models[meYou].scroll:EnableMouseWheel(true);
 		mainFrame.models[meYou].scroll:SetScript("OnMouseWheel", function(self, delta)
-			if IsAltKeyDown() then
-				local scale = mainFrame.models[meYou].scale - (IsShiftKeyDown() and 0.1 or 0.01) * delta;
-				scalingLib:SetModelHeight(scale, mainFrame.models[meYou]);
-				saveCustomHeight(meYou, scale);
-			elseif IsControlKeyDown() then
-				local facing = mainFrame.models[meYou].facing - (IsShiftKeyDown() and 0.2 or 0.02) * delta;
-				scalingLib:SetModelFacing(facing, mainFrame.models[meYou], meYou == "me");
-				saveCustomIndependantScaling(meYou, "facing", facing);
-			end
+			onFrameScrolled(mainFrame.models[meYou], delta);
 		end);
 		mainFrame.models[meYou].scroll:RegisterForClicks("LeftButtonUp", "RightButtonUp");
 		mainFrame.models[meYou].scroll:SetScript("OnClick", function(self, button)
