@@ -25,8 +25,7 @@ notifications:
 
 # The following part is for automatic building and publishing to Curse and Wowinterface
 # We're not there yet, so I have documented this out
-
-#after_script: curl -s https://raw.githubusercontent.com/BigWigsMods/packager/master/release.sh | bash
+after_script: curl -s https://raw.githubusercontent.com/Ellypse/packager/master/release.sh | bash
 
 #branches:
 #  only:
