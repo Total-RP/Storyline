@@ -6,6 +6,7 @@
 
 - The player model is now refreshed when changes happen to your character (equipment changes, druid forms, etc.).
 - The scaling between the two models is now animated when one of the models changes.
+- The 3D models are now animated into the view.
 
 ### Modified
 
