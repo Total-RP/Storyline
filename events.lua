@@ -234,13 +234,22 @@ local function getQuestData(qTitle)
 	return "";
 end
 
-local function showQuestPortraitFrame()
+local function showQuestPortraitFrame(isOnCompleteStep)
 	if not Storyline_Data.config.hideOriginalFrames then
 		return;
 	end
-	local questPortrait, questPortraitText, questPortraitName, questPortraitMount = GetQuestPortraitGiver();
-	if (questPortrait ~= 0) then
-		QuestFrame_ShowQuestPortrait(Storyline_NPCFrame, questPortrait, questPortraitMount, questPortraitText, questPortraitName, -3, -42);
+
+	local questPortrait, questPortraitText, questPortraitName, questPortraitMount
+
+	if isOnCompleteStep then
+		questPortrait, questPortraitText, questPortraitName, questPortraitMount = GetQuestPortraitTurnIn();
+	else
+		questPortrait, questPortraitText, questPortraitName, questPortraitMount = GetQuestPortraitGiver();
+	end
+
+	if questPortrait and questPortrait ~= 0 then
+		QuestFrame_ShowQuestPortrait(Storyline_NPCFrame, questPortrait, questPortraitMount, questPortraitText, questPortraitName, -16, -48);
+		QuestNPCModel:SetFrameStrata("LOW")
 	else
 		QuestFrame_HideQuestPortrait();
 	end
@@ -417,8 +426,6 @@ eventHandlers["QUEST_COMPLETE"] = function(eventInfo)
 	else
 		Storyline_NPCFrameRewards:Hide();
 	end
-
-	showQuestPortraitFrame();
 end
 
 local currentEvent;
@@ -447,6 +454,8 @@ local function handleEventSpecifics(event, texts, textIndex, eventInfo)
 	DialogsScrollFrame.hide();
 	DialogsButtons.hideAllButtons();
 	RewardsButtons.hideAllButtons();
+
+	showQuestPortraitFrame(event == "QUEST_COMPLETE");
 
 	if textIndex == #texts and eventHandlers[event] then
 		currentEvent = event;
@@ -595,7 +604,6 @@ function Storyline_API.initEventsStructure()
 					setTooltipForSameFrame(Storyline_NPCFrameObjectivesNo, "TOP", 0, 0,loc("SL_DECLINE"));
 					Storyline_NPCFrameObjectivesNo:Show();
 					Storyline_NPCFrameChatNextText:SetText(loc("SL_ACCEPTANCE"));
-					showQuestPortraitFrame();
 				else
 					acceptQuest();
 				end
@@ -616,7 +624,6 @@ function Storyline_API.initEventsStructure()
 						Storyline_NPCFrameChatNextText:SetText(loc("SL_NOT_YET"));
 						playerModel:PlayAnimation(ANIMATIONS.NO);
 					end
-					showQuestPortraitFrame();
 				elseif IsQuestCompletable() then
 					CompleteQuest();
 				else
