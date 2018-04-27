@@ -238,9 +238,9 @@ local function showQuestPortraitFrame()
 	if not Storyline_Data.config.hideOriginalFrames then
 		return;
 	end
-	local questPortrait, questPortraitText, questPortraitName = GetQuestPortraitGiver();
+	local questPortrait, questPortraitText, questPortraitName, questPortraitMount = GetQuestPortraitGiver();
 	if (questPortrait ~= 0) then
-		QuestFrame_ShowQuestPortrait(Storyline_NPCFrame, questPortrait, questPortraitText, questPortraitName, -3, -42);
+		QuestFrame_ShowQuestPortrait(Storyline_NPCFrame, questPortrait, questPortraitMount, questPortraitText, questPortraitName, -3, -42);
 	else
 		QuestFrame_HideQuestPortrait();
 	end
