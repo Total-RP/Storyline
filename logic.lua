@@ -372,13 +372,13 @@ local function debugInit()
     ["feet"] = %s,
     ["offset"] = %s,
     ["facing"] = %s,
-	}
+  }
 },]]
 		local formatted = info:format(
-			playerModel:GetModelFileIDAsString(),
-			targetModel:GetModelFileIDAsString(),
-			mainFrame.models.me.scale, mainFrame.models.me.feet, mainFrame.models.me.offset, mainFrame.models.me.facing,
-			mainFrame.models.you.scale, mainFrame.models.you.feet, mainFrame.models.you.offset, mainFrame.models.you.facing
+			playerModel:GetModelFileIDAsString() or "nil",
+			targetModel:GetModelFileIDAsString() or "nil",
+			mainFrame.models.me.scale or "nil", mainFrame.models.me.feet or "nil", mainFrame.models.me.offset or "nil", mainFrame.models.me.facing or "nil",
+			mainFrame.models.you.scale or "nil", mainFrame.models.you.feet or "nil", mainFrame.models.you.offset or "nil", mainFrame.models.you.facing or "nil"
 		);
 		mainFrame.debug.dump.scroll.text:SetText(formatted);
 	end);
