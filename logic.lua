@@ -27,6 +27,8 @@ local loc, tsize = Storyline_API.locale.getText, Storyline_API.lib.tsize;
 local playNext = Storyline_API.playNext;
 local showStorylineFrame = Storyline_API.layout.showStorylineFrame;
 local hideStorylineFrame = Storyline_API.layout.hideStorylineFrame;
+local strtrim = strtrim;
+local insert = table.insert;
 
 -- WOW API
 local strsplit, pairs, tostring = strsplit, pairs, tostring;
@@ -247,7 +249,14 @@ function Storyline_API.startDialog(targetType, fullText, event, eventInfo)
 	fullText = fullText:gsub(LINE_FEED_CODE .. "+", "\n");
 	fullText = fullText:gsub(WEIRD_LINE_BREAK, "\n");
 
-	local texts = { strsplit("\n", fullText) };
+	local texts = {};
+	-- Don't use lines that just contains spaces (because of Blizzard's interns)
+	for _, text in pairs({ strsplit("\n", fullText) }) do
+		if strtrim(text) ~= "" then
+			insert(texts, text);
+		end
+	end
+
 	if texts[#texts]:len() == 0 then
 		texts[#texts] = nil;
 	end
