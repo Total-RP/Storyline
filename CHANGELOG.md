@@ -13,6 +13,7 @@
 ### Fixed
 
 - Fixed Lua error when displaying spell rewards.
+- Empty lines will now be skipped and no longer be shown in the dialogs.
 - Models with no speaking animation will no longer start playing their idle animation from the beginning when they are being animated.
 - Fixed an issue that prevented dead NPCs to appear as dead in Storyline.
 - Fixed an issue where the player model would not be displayed correctly when Storyline was opened when the player model was not already loaded (typically during login).
