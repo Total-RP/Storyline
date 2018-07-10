@@ -260,10 +260,34 @@ function Storyline_API.startDialog(targetType, fullText, event, eventInfo)
 	if texts[#texts]:len() == 0 then
 		texts[#texts] = nil;
 	end
+
+	-- Support for multi-paragraph emotes
+	local stillEmote = {};
+	for index, text in pairs(texts) do
+		if index == 1 then
+			stillEmote[index] = false;
+		elseif text then
+			local prevEmote = stillEmote[index - 1];
+			local currentEmote = prevEmote;
+
+			local _, openEmoteCount = text:gsub("<", "<");
+			local _, closeEmoteCount = text:gsub(">", ">");
+
+			if prevEmote and openEmoteCount < closeEmoteCount then
+				currentEmote = false;
+			elseif not prevEmote and openEmoteCount > closeEmoteCount then
+				currentEmote = true;
+			end
+
+			stillEmote[index] = currentEmote;
+		end
+	end
+
 	mainFrame.chat.texts = texts;
 	mainFrame.chat.currentIndex = 0;
 	mainFrame.chat.eventInfo = eventInfo;
 	mainFrame.chat.event = event;
+	mainFrame.chat.stillEmote = stillEmote;
 	Storyline_NPCFrameObjectivesContent:Hide();
 	mainFrame.chat.previous:Hide();
 
