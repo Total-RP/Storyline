@@ -262,24 +262,22 @@ function Storyline_API.startDialog(targetType, fullText, event, eventInfo)
 	end
 
 	-- Support for multi-paragraph emotes
-	local stillEmote = {};
+	local stillEmote = { false };
 	for index, text in pairs(texts) do
-		if index == 1 then
-			stillEmote[index] = false;
-		elseif text then
-			local prevEmote = stillEmote[index - 1];
-			local currentEmote = prevEmote;
+		local prevEmote = stillEmote[index];
+		local currentEmote = prevEmote;
+		
+		local _, openEmoteCount = text:gsub("<", "<");
+		local _, closeEmoteCount = text:gsub(">", ">");
 
-			local _, openEmoteCount = text:gsub("<", "<");
-			local _, closeEmoteCount = text:gsub(">", ">");
+		if prevEmote and openEmoteCount < closeEmoteCount then
+			currentEmote = false;
+		elseif not prevEmote and openEmoteCount > closeEmoteCount then
+			currentEmote = true;
+		end
 
-			if prevEmote and openEmoteCount < closeEmoteCount then
-				currentEmote = false;
-			elseif not prevEmote and openEmoteCount > closeEmoteCount then
-				currentEmote = true;
-			end
-
-			stillEmote[index] = currentEmote;
+		if index < #texts then
+			stillEmote[index + 1] = currentEmote;
 		end
 	end
 
