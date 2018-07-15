@@ -503,11 +503,15 @@ function Storyline_API.addon:OnEnable()
 		["97989"]  = true, -- Leafbeard the Storied (Druids order hall)
 		["105998"] = true, -- Winstone Wolfe (Rogues order hall)
 		["97389"]  = true, -- Eye of Odyn
+
+		-- BfA
+		["139522"]  = true, -- Scouting map Alliance
 	}
 
 	ForceGossip = function()
 		-- return if the option is enabled and check if the NPC is not buggy (thanks Blizzard)
-		return Storyline_Data.config.forceGossip and not fuckingNPCIDs[select(6, strsplit("-", UnitGUID("npc") or ""))];
+		local NPCID = select(6, strsplit("-", UnitGUID("npc") or ""));
+		return Storyline_Data.config.forceGossip and not fuckingNPCIDs[NPCID];
 	end
 
 	Storyline_API.locale.init();
