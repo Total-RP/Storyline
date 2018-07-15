@@ -115,6 +115,12 @@ local SEAL_QUESTS = {
 	[53372] = { bgAtlas = "QuestBG-Horde", text = "|cff480404"..QUEST_WARCHIEF_SYLVANAS_WINDRUNNER.."|r", sealAtlas = "Quest-Horde-WaxSeal"},
 	[53370] = { bgAtlas = "QuestBG-Alliance", text = "|cff042c54"..QUEST_KING_ANDUIN_WRYNN.."|r", sealAtlas = "Quest-Alliance-WaxSeal"},
 };
+local EXCEPTION_QUESTS = {
+	[53029] = true,
+	[53026] = true,
+	[51211] = true,
+	[52428] = true,
+};
 --endregion
 
 function Storyline_API.getSpecialQuestInfo(questID)
@@ -569,6 +575,39 @@ function Storyline_API.playNext(targetModel)
 	end
 end
 
+local specialFrameBackgroundTransitionator = Ellyb.Transitionator();
+local function fadeInSpecialFrameBackground(value)
+	frameSpecialAtlas:SetAlpha(value);
+end
+local function displaySpecialDetails()
+	-- Special quest with sealed background
+	local questID = GetQuestID()
+	if SEAL_QUESTS[questID] then
+		local specialQuestDisplayInfo = SEAL_QUESTS[questID];
+		if specialQuestDisplayInfo.bgAtlas then
+			frameSpecialAtlas:SetAtlas(specialQuestDisplayInfo.bgAtlas);
+			specialFrameBackgroundTransitionator:RunValue(0, 0.8, 1.5, fadeInSpecialFrameBackground)
+			frameBackground:SetAlpha(0)
+		end
+
+		if specialQuestDisplayInfo.sealAtlas then
+			Storyline_QuestInfoSealFrame:Show();
+			Storyline_QuestInfoSealFrame.Texture:SetAtlas(specialQuestDisplayInfo.sealAtlas);
+		end
+
+		if specialQuestDisplayInfo.text then
+			Storyline_QuestInfoSealFrame:Show();
+			Storyline_QuestInfoSealFrame.Text:SetText(specialQuestDisplayInfo.text);
+			Storyline_NPCFrameChatName:Hide()
+		end
+		Storyline_QuestInfoSealFrame:Show()
+	elseif C_CampaignInfo.IsCampaignQuest(questID) and not EXCEPTION_QUESTS[questID] then
+		frameSpecialAtlas:SetAtlas( "QuestBG-"..UnitFactionGroup("player"));
+		specialFrameBackgroundTransitionator:RunValue(0, 0.8, 1.5, fadeInSpecialFrameBackground)
+		frameBackground:SetAlpha(0)
+	end
+end
+
 --*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
 -- INIT
 --*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
@@ -760,27 +799,6 @@ function Storyline_API.initEventsStructure()
 					return
 				end
 
-				-- Special quest with sealed background
-				if SEAL_QUESTS[GetQuestID()] then
-					local specialQuestDisplayInfo = SEAL_QUESTS[GetQuestID()];
-					if specialQuestDisplayInfo.bgAtlas then
-						frameSpecialAtlas:SetAtlas(specialQuestDisplayInfo.bgAtlas);
-						frameSpecialAtlas:SetAlpha(0.8);
-						frameBackground:SetAlpha(0)
-					end
-
-					if specialQuestDisplayInfo.sealAtlas then
-						Storyline_QuestInfoSealFrame:Show();
-						Storyline_QuestInfoSealFrame.Texture:SetAtlas(specialQuestDisplayInfo.sealAtlas);
-					end
-
-					if specialQuestDisplayInfo.text then
-						Storyline_QuestInfoSealFrame:Show();
-						Storyline_QuestInfoSealFrame.Text:SetText(specialQuestDisplayInfo.text);
-						Storyline_NPCFrameChatName:Hide()
-					end
-				end
-				Storyline_QuestInfoSealFrame:Show()
 			end
 			if Storyline_Data.config.disableInInstances then
 				if IsInInstance() then
@@ -792,6 +810,10 @@ function Storyline_API.initEventsStructure()
 				if mapID and mapID == 974 then
 					return
 				end
+			end
+
+			if event == "QUEST_DETAIL" or event == "QUEST_COMPLETE" then
+				displaySpecialDetails();
 			end
 
 			-- Thanks to Blizzard for firing GOSSIP_SHOW and then GOSSIP_CLOSED when ForceGossip is false...
