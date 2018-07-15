@@ -26,24 +26,13 @@ local setTooltipForSameFrame, setTooltipAll = Storyline_API.lib.setTooltipForSam
 local refreshTooltipForFrame = Storyline_RefreshTooltipForFrame;
 local Storyline_MainTooltip = Storyline_MainTooltip;
 local log = Storyline_API.lib.log;
-local registerHandler = Storyline_API.lib.registerHandler;
 local getTextureString, colorCodeFloat = Storyline_API.lib.getTextureString, Storyline_API.lib.colorCodeFloat;
 local getId = Storyline_API.lib.generateID;
 local loc = Storyline_API.locale.getText;
 local format = format;
-local playSelfAnim = Storyline_API.playSelfAnim;
 local getQuestIcon, getQuestActiveIcon = Storyline_API.getQuestIcon, Storyline_API.getQuestActiveIcon;
-local getQuestTriviality = Storyline_API.getQuestTriviality;
-local selectMultipleAvailableGreetings = Storyline_API.selectMultipleAvailableGreetings;
-local selectFirstGreetingAvailable = Storyline_API.selectFirstGreetingAvailable;
-local selectMultipleActiveGreetings = Storyline_API.selectMultipleActiveGreetings;
-local selectMultipleActive = Storyline_API.selectMultipleActive;
-local selectFirstActive = Storyline_API.selectFirstActive;
-local selectMultipleAvailable = Storyline_API.selectMultipleAvailable;
-local selectFirstAvailable = Storyline_API.selectFirstAvailable;
 local selectFirstGossip, 	selectMultipleGossip = Storyline_API.selectFirstGossip, Storyline_API.selectMultipleGossip;
 local selectMultipleRewards, selectFirstGreetingActive = Storyline_API.selectMultipleRewards, Storyline_API.selectFirstGreetingActive;
-local getBindingIcon = Storyline_API.getBindingIcon;
 local hideStorylineFrame = Storyline_API.layout.hideStorylineFrame;
 local hideQuestRewardFrameIfNeed = Storyline_API.layout.hideQuestRewardFrameIfNeed;
 local debug = Storyline_API.debug;
@@ -718,7 +707,7 @@ function Storyline_API.initEventsStructure()
 	local storylineFrameShouldOpen = false;
 
 	for event, info in pairs(EVENT_INFO) do
-		registerHandler(event, function(...)
+		Ellyb.GameEvents.registerCallback(event, function(...)
 
 			-- Workaround quests auto accepted from items
 			if event == "QUEST_DETAIL" then
@@ -753,14 +742,14 @@ function Storyline_API.initEventsStructure()
 		end);
 	end
 
-	Ellyb.GameEvents.registerHandler("UNIT_PORTRAIT_UPDATE", function(unit)
+	Ellyb.GameEvents.registerCallback("UNIT_PORTRAIT_UPDATE", function(unit)
 		if unit == "player" and Storyline_NPCFrame:IsVisible() then
 			playerModel:SetModelUnit("player", false):Success(Storyline_API.onModelsLoaded);
 		end
 	end)
 
-	registerHandler("QUEST_ITEM_UPDATE", RewardsButtons.refreshButtons);
-	registerHandler("GOSSIP_CLOSED", function()
+	Ellyb.GameEvents.registerCallback("QUEST_ITEM_UPDATE", RewardsButtons.refreshButtons);
+	Ellyb.GameEvents.registerCallback("GOSSIP_CLOSED", function()
 		storylineFrameShouldOpen = false;
 	end);
 

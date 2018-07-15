@@ -387,13 +387,4 @@
 
 	<Script file="lib.lua"/>
 
-	<Frame parent="UIParent" name="Storyline_EventFrame">
-		<Anchors>
-			<Anchor point="CENTER"/>
-		</Anchors>
-		<Scripts>
-			<OnEvent function="Storyline_EventDispatcher"/>
-		</Scripts>
-	</Frame>
-
 </Ui>

@@ -205,7 +205,7 @@ local hideDefaultFrames = function()
 end
 Storyline_API.layout.hideDefaultFrames = hideDefaultFrames;
 
-Storyline_API.lib.registerHandler("PLAYER_ENTERING_WORLD", function()
+Ellyb.GameEvents.registerCallback("PLAYER_ENTERING_WORLD", function()
 	if Storyline_Data.config.hideOriginalFrames then
 		Storyline_API.layout.hideDefaultFrames();
 		if Storyline_Data.config.disableInInstances then
