@@ -586,7 +586,7 @@ local function displaySpecialDetails()
 		local specialQuestDisplayInfo = SEAL_QUESTS[questID];
 		if specialQuestDisplayInfo.bgAtlas then
 			frameSpecialAtlas:SetAtlas(specialQuestDisplayInfo.bgAtlas);
-			specialFrameBackgroundTransitionator:RunValue(0, 0.8, 1.5, fadeInSpecialFrameBackground)
+			specialFrameBackgroundTransitionator:RunValue(0, 0.8, 0.8, fadeInSpecialFrameBackground)
 			frameBackground:SetAlpha(0)
 		end
 
@@ -603,7 +603,7 @@ local function displaySpecialDetails()
 		Storyline_QuestInfoSealFrame:Show()
 	elseif C_CampaignInfo.IsCampaignQuest(questID) and not EXCEPTION_QUESTS[questID] then
 		frameSpecialAtlas:SetAtlas( "QuestBG-"..UnitFactionGroup("player"));
-		specialFrameBackgroundTransitionator:RunValue(0, 0.8, 1.5, fadeInSpecialFrameBackground)
+		specialFrameBackgroundTransitionator:RunValue(0, 0.8, 0.8, fadeInSpecialFrameBackground)
 		frameBackground:SetAlpha(0)
 	end
 end
