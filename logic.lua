@@ -22,7 +22,6 @@ local Ellyb = Ellyb(...);
 local wipe, tContains = wipe, tContains;
 local UnitGUID = UnitGUID;
 local setTooltipForSameFrame, setTooltipAll = Storyline_API.lib.setTooltipForSameFrame, Storyline_API.lib.setTooltipAll;
-local registerHandler = Storyline_API.lib.registerHandler;
 local loc, tsize = Storyline_API.locale.getText, Storyline_API.lib.tsize;
 local playNext = Storyline_API.playNext;
 local showStorylineFrame = Storyline_API.layout.showStorylineFrame;
@@ -151,9 +150,11 @@ local function modelsLoaded()
 		else
 			targetModel:AnimateScalingValuesIn(dataYou.scale, dataYou.feet, dataYou.offset, dataYou.facing);
 		end
+		Storyline_NPCFrameChat.bubbleTail:Show();
 	else
 		-- If there is no You model, play the read animation for the Me model.
 		playerModel:SetCustomIdleAnimationID(Storyline_API.ANIMATIONS.READING);
+		Storyline_NPCFrameChat.bubbleTail:Hide();
 		playerModel:PlayIdleAnimation();
 	end
 
@@ -257,7 +258,7 @@ function Storyline_API.startDialog(targetType, fullText, event, eventInfo)
 		end
 	end
 
-	if texts[#texts]:len() == 0 then
+	if texts[#texts] and texts[#texts]:len() == 0 then
 		texts[#texts] = nil;
 	end
 
@@ -614,10 +615,10 @@ function Storyline_API.addon:OnEnable()
 	Storyline_API.initEventsStructure();
 
 	-- Closing
-	registerHandler("GOSSIP_CLOSED", function()
+	Ellyb.GameEvents.registerCallback("GOSSIP_CLOSED", function()
 		hideStorylineFrame();
 	end);
-	registerHandler("QUEST_FINISHED", function()
+	Ellyb.GameEvents.registerCallback("QUEST_FINISHED", function()
 		hideStorylineFrame();
 	end);
 

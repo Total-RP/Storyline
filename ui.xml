@@ -222,6 +222,13 @@
 						<Anchor point="BOTTOMRIGHT" x="-20" y="20"/>
 					</Anchors>
 				</Texture>
+				<Texture name="Storyline_NPCFrameSpecialAtlas">
+					<TexCoords top="0.5"/>
+					<Anchors>
+						<Anchor point="TOPLEFT" x="40" y="-40"/>
+						<Anchor point="BOTTOMRIGHT" x="-40" y="40"/>
+					</Anchors>
+				</Texture>
 			</Layer>
 			<Layer level="OVERLAY" textureSubLevel="3">
 				<Texture name="Storyline_NPCFrameBanner" parentKey="banner" atlas="GarrMission_RewardsBanner-Desaturate" useAtlasSize="false">
@@ -239,7 +246,32 @@
 			</Layer>
 		</Layers>
 		<Frames>
-
+			<Frame name="Storyline_QuestInfoSealFrame" frameStrata="HIGH">
+				<Anchors>
+					<Anchor point="BOTTOMRIGHT" />
+					<Anchor point="TOPLEFT" relativePoint="TOP"/>
+				</Anchors>
+				<Layers>
+					<Layer level="ARTWORK">
+						<FontString parentKey="Text" inherits="QuestFont_Huge" mixin="ShrinkUntilTruncateFontStringMixin" justifyH="LEFT">
+							<Size x="160" y="44"/>
+							<Anchors>
+								<Anchor point="LEFT" x="5" y="-12"/>
+							</Anchors>
+						</FontString>
+						<Texture parentKey="Texture" atlas="Quest-Alliance-WaxSeal" useAtlasSize="true">
+							<Anchors>
+								<Anchor point="LEFT" x="160" y="-6"/>
+							</Anchors>
+						</Texture>
+					</Layer>
+				</Layers>
+				<Scripts>
+					<OnLoad>
+						self.Text:SetFontObjectsToTry("QuestFont_Huge", "QuestFont_Large", "Fancy14Font", "Fancy12Font");
+					</OnLoad>
+				</Scripts>
+			</Frame>
 			<Frame name="Storyline_NPCFrameModels" parentKey="models" frameStrata="MEDIUM">
 				<Size x="0" y="0"/>
 				<Anchors>
@@ -328,7 +360,7 @@
 				</Anchors>
 				<Layers>
 					<Layer level="BACKGROUND">
-						<Texture file="Interface\Tooltips\CHATBUBBLE-TAIL">
+						<Texture parentKey="bubbleTail" file="Interface\Tooltips\CHATBUBBLE-TAIL">
 							<Size x="32" y="32"/>
 							<Anchors>
 								<Anchor point="BOTTOMRIGHT" relativePoint="TOPRIGHT" x="-40" y="-3"/>

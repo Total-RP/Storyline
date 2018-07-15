@@ -89,6 +89,37 @@ local BONUS_SKILLPOINTS = BONUS_SKILLPOINTS;
 local ITEM_QUALITY_COLORS = ITEM_QUALITY_COLORS;
 local REQUIRED_MONEY = REQUIRED_MONEY;
 local QUEST_SUGGESTED_GROUP_NUM, QUEST_OBJECTIVES = QUEST_SUGGESTED_GROUP_NUM, QUEST_OBJECTIVES;
+---@type Texture
+local frameBackground = Storyline_NPCFrameBG;
+---@type Texture
+local frameSpecialAtlas = Storyline_NPCFrameSpecialAtlas;
+
+--region Sealed quest info
+local SEAL_QUESTS = {
+	[40519] = { bgAtlas = "QuestBG-Alliance", text = "|cff042c54"..QUEST_KING_VARIAN_WRYNN.."|r", sealAtlas = "Quest-Alliance-WaxSeal"},
+	[43926] = { bgAtlas = "QuestBG-Horde", text = "|cff480404"..QUEST_WARCHIEF_VOLJIN.."|r", sealAtlas = "Quest-Horde-WaxSeal"},
+	[47221] = { bgAtlas = "QuestBG-TheHandofFate", },
+	[47835] = { bgAtlas = "QuestBG-TheHandofFate", },
+	[49929] = { bgAtlas = "QuestBG-Alliance", text = "|cff042c54"..QUEST_KING_ANDUIN_WRYNN.."|r", sealAtlas = "Quest-Alliance-WaxSeal" },
+	[49930] = { bgAtlas = "QuestBG-Horde", text = "|cff480404"..QUEST_WARCHIEF_SYLVANAS_WINDRUNNER.."|r", sealAtlas = "Quest-Horde-WaxSeal" },
+	[50476] = { bgAtlas = "QuestBG-Horde", sealAtlas = "Quest-Horde-WaxSeal" },
+	-- BfA start quests
+	[46727] = { bgAtlas = "QuestBG-Alliance", text = "|cff042c54"..QUEST_KING_ANDUIN_WRYNN.."|r", sealAtlas = "Quest-Alliance-WaxSeal" },
+	[50668] = { bgAtlas = "QuestBG-Horde", text = "|cff480404"..QUEST_WARCHIEF_SYLVANAS_WINDRUNNER.."|r", sealAtlas = "Quest-Horde-WaxSeal"},
+
+	[51795] = { bgAtlas = "QuestBG-Alliance" },
+	[52058] = { bgAtlas = "QuestBG-Alliance", text = "|cff042c54"..QUEST_KING_ANDUIN_WRYNN.."|r", sealAtlas = "Quest-Alliance-WaxSeal"},
+
+	[51796] = { bgAtlas = "QuestBG-Horde" },
+
+	[53372] = { bgAtlas = "QuestBG-Horde", text = "|cff480404"..QUEST_WARCHIEF_SYLVANAS_WINDRUNNER.."|r", sealAtlas = "Quest-Horde-WaxSeal"},
+	[53370] = { bgAtlas = "QuestBG-Alliance", text = "|cff042c54"..QUEST_KING_ANDUIN_WRYNN.."|r", sealAtlas = "Quest-Alliance-WaxSeal"},
+};
+--endregion
+
+function Storyline_API.getSpecialQuestInfo(questID)
+	return SEAL_QUESTS[questID]
+end
 
 --*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
 -- Auto equip part, greatly inspired by AutoTurnIn by Alex Shubert (alex.shubert@gmail.com)
@@ -709,12 +740,43 @@ function Storyline_API.initEventsStructure()
 	for event, info in pairs(EVENT_INFO) do
 		Ellyb.GameEvents.registerCallback(event, function(...)
 
+			-- Reset special frame stuff
+			-- TODO Move that in a nice place later
+			Storyline_QuestInfoSealFrame.Texture:SetTexture(nil);
+			Storyline_QuestInfoSealFrame.Text:SetText("");
+			Storyline_QuestInfoSealFrame:Hide();
+			Storyline_NPCFrameChatName:Show();
+			frameSpecialAtlas:SetAlpha(0);
+			frameBackground:SetAlpha(0.5)
+
 			-- Workaround quests auto accepted from items
 			if event == "QUEST_DETAIL" then
 				local questStartItemID = ...;
 				if(questStartItemID ~= nil and questStartItemID ~= 0) or (QuestGetAutoAccept() and QuestIsFromAreaTrigger()) then
 					return
 				end
+
+				-- Special quest with sealed background
+				if SEAL_QUESTS[GetQuestID()] then
+					local specialQuestDisplayInfo = SEAL_QUESTS[GetQuestID()];
+					if specialQuestDisplayInfo.bgAtlas then
+						frameSpecialAtlas:SetAtlas(specialQuestDisplayInfo.bgAtlas);
+						frameSpecialAtlas:SetAlpha(0.8);
+						frameBackground:SetAlpha(0)
+					end
+
+					if specialQuestDisplayInfo.sealAtlas then
+						Storyline_QuestInfoSealFrame:Show();
+						Storyline_QuestInfoSealFrame.Texture:SetAtlas(specialQuestDisplayInfo.sealAtlas);
+					end
+
+					if specialQuestDisplayInfo.text then
+						Storyline_QuestInfoSealFrame:Show();
+						Storyline_QuestInfoSealFrame.Text:SetText(specialQuestDisplayInfo.text);
+						Storyline_NPCFrameChatName:Hide()
+					end
+				end
+				Storyline_QuestInfoSealFrame:Show()
 			end
 			if Storyline_Data.config.disableInInstances then
 				if IsInInstance() then
