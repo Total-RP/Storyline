@@ -452,6 +452,7 @@ local function handleEventSpecifics(event, texts, textIndex, eventInfo)
 	end
 end
 
+local EMOTE_COLOR = Ellyb.Color(ChatTypeInfo["MONSTER_EMOTE"]):Freeze()
 ---@param targetModel Storyline_PlayerModelMixin
 local function playText(textIndex, targetModel)
 	local animTab = targetModel.animTab;
@@ -465,16 +466,15 @@ local function playText(textIndex, targetModel)
 
 	local stillEmote = Storyline_NPCFrameChat.stillEmote[textIndex];
 	if text:byte() == 60 or not UnitExists("npc") or UnitIsUnit("player", "npc") or UnitIsDead("npc") or stillEmote then -- Emote if begins with <
-		local color = colorCodeFloat(ChatTypeInfo["MONSTER_EMOTE"].r, ChatTypeInfo["MONSTER_EMOTE"].g, ChatTypeInfo["MONSTER_EMOTE"].b);
-
 		-- Blizzard is now coloring part of the text in some cases.
 	    -- We will look for colosing color tags and add an opening color tag for our color right after it
-		local displayedText = text:gsub("|r", "|r" .. color)
-		displayedText = displayedText:gsub("<", color .. "<");
+		local colorCodeStart = EMOTE_COLOR:GetColorCodeStartSequence();
+		local displayedText = text:gsub("|r", "|r" .. colorCodeStart)
+		displayedText = displayedText:gsub("<", colorCodeStart .. "<");
 		displayedText = displayedText:gsub(">", ">|r");
 
 		if stillEmote then
-			displayedText = color .. displayedText;
+			displayedText = EMOTE_COLOR(displayedText);
 		end
 
 		Storyline_NPCFrameChatText:SetText(displayedText);
