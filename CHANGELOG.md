@@ -8,6 +8,7 @@ _Note: The scaling system in this version is **temporary** and will be improved 
 - The scaling between the two models is now animated when one of the models changes.
 - The 3D models are now animated into the view.
 - Added support for quests with special background and wax seals.
+- Added item icon border for Azerite empowered rewards.
 
 ### Modified
 
@@ -23,3 +24,4 @@ _Note: The scaling system in this version is **temporary** and will be improved 
 - Fixed an issue where the player model would not be displayed correctly when Storyline was opened when the player model was not already loaded (typically during login).
 - Fixed an issue that would make the game crash during quests that have an attached 3D portrait.
 - Fixed an issue that would prevent the correct attached 3D portrait from appearing for some quests or display it when it shouldn't be.
+- Remove April fools' joke from UI.
