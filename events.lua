@@ -483,11 +483,15 @@ local function handleEventSpecifics(event, texts, textIndex, eventInfo)
 	end
 end
 
-local EMOTE_COLOR = Ellyb.Color(ChatTypeInfo["MONSTER_EMOTE"]):Freeze()
+local EMOTE_COLOR;
 ---@param targetModel Storyline_PlayerModelMixin
 local function playText(textIndex, targetModel)
 	local animTab = targetModel.animTab;
 	wipe(animTab);
+
+	if not EMOTE_COLOR then
+		EMOTE_COLOR = Ellyb.Color(ChatTypeInfo["MONSTER_EMOTE"]):Freeze()
+	end
 
 	local text = Storyline_NPCFrameChat.texts[textIndex];
 	local delay = GOSSIP_DELAY;
