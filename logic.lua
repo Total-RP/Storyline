@@ -325,8 +325,7 @@ end
 local function saveCustomHeight(me, scale)
 	-- Getting custom structure or creating it
 	local key, invertedKey = scalingLib:GetModelKeys(playerModel:GetModelFileIDAsString(), targetModel:GetModelFileIDAsString());
-
-	print(key, invertedKey);
+	
 	if not customHeightDB[key] and customHeightDB[invertedKey] then
 		-- We swap me/you as it is inverted
 		customHeightDB[invertedKey][me and 2 or 1] = scale;
