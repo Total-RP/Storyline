@@ -33,7 +33,7 @@ Storyline_API.rewards.buttons = {};
 local API = Storyline_API.rewards.buttons;
 local Rewards = Storyline_API.rewards;
 
-local function decorateItemButton(button, index, type, texture, name, numItems, isUsable)
+local function decorateItemButton(button, index, type, texture, name, numItems, isUsable, quality)
 	numItems = numItems or 0;
 	button.index = index;
 	button.type = type;
@@ -41,6 +41,7 @@ local function decorateItemButton(button, index, type, texture, name, numItems, 
 	button.Name:SetText(name or RETRIEVING_DATA);
 	button.Count:SetText(numItems > 1 and numItems or "");
 	button.hasItem = true; -- Has item is checked by CursorOnUpdate to know if it must show a magnifier icon
+	SetItemButtonQuality(button, quality,  GetQuestItemLink(type, index))
 	if not isUsable then
 		button.Icon:SetVertexColor(1, 0, 0);
 	end
@@ -121,7 +122,7 @@ local function decorateRewardButton(button, rewardType, reward)
 	elseif rewardType == Rewards.REWARD_TYPES.SPELL then
 		decorateSpellButton(button, reward.icon, reward.text, reward.rewardSpellIndex);
 	elseif rewardType == Rewards.REWARD_TYPES.ITEMS then
-		decorateItemButton(button, reward.index, reward.rewardType, reward.icon, reward.text, reward.count, reward.isUsable);
+		decorateItemButton(button, reward.index, reward.rewardType, reward.icon, reward.text, reward.count, reward.isUsable, reward.quality);
 	elseif rewardType == Rewards.REWARD_TYPES.FOLLOWER then
 		decorateFollowerButton(button, reward.garrFollowerID);
 	elseif rewardType == Rewards.REWARD_TYPES.SKILL_POINTS then
@@ -185,7 +186,7 @@ local REWARD_BUTTON_SHARED_SCRIPTS = {
 
 local REWARDS_BUTTON_FRAME_NAME = "Storyline_RewardButton";
 local REWARD_BUTTON_FRAME_TEMPLATES = {
-	DEFAULT = "LargeItemButtonTemplate",
+	DEFAULT = "LargeQuestRewardItemButtonTemplate",
 	[Rewards.REWARD_TYPES.SPELL] = "QuestSpellTemplate, QuestInfoRewardSpellCodeTemplate",
 	[Rewards.REWARD_TYPES.SKILL_POINTS] = "Storyline_SkillPointsRewardTemplate",
 	[Rewards.REWARD_TYPES.FOLLOWER] = "Storyline_GarrisonFollowerRewardTemplate",
