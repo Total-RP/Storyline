@@ -21,8 +21,8 @@
 
     <Button name="Storyline_DialogChoiceButton" virtual="true" hidden="true">
         <Anchors>
-            <Anchor point="LEFT" relativePoint="LEFT" relativeKey="$parent" />
-            <Anchor point="RIGHT" relativePoint="RIGHT" relativeKey="$parent" />
+            <Anchor point="LEFT" relativePoint="LEFT" />
+            <Anchor point="RIGHT" relativePoint="RIGHT" />
         </Anchors>
         <Layers>
             <Layer level="BACKGROUND">
@@ -61,13 +61,13 @@
                 <Texture parentKey="icon" file="Interface/GOSSIPFRAME/ChatBubbleGossipIcon">
                     <Size x="16" y="16"/>
                     <Anchors>
-                        <Anchor point="LEFT" relativeKey="$parent" relativePoint="LEFT" x="50"/>
+                        <Anchor point="LEFT" relativePoint="LEFT" x="50"/>
                     </Anchors>
                 </Texture>
                 <FontString parentKey="text" inherits="GameFontNormalMed1" justifyH="LEFT" justifyV="MIDDLE" wordwrap="true">
                     <Anchors>
                         <Anchor point="LEFT" relativePoint="RIGHT" relativeKey="$parent.icon" x="10"/>
-                        <Anchor point="RIGHT" relativePoint="RIGHT" relativeTo="$parent" x="-70"/>
+                        <Anchor point="RIGHT" relativePoint="RIGHT"  x="-70"/>
                     </Anchors>
                 </FontString>
                 <FontString parentKey="binding" inherits="GameFontNormal" justifyH="RIGHT" justifyV="MIDDLE">
@@ -121,8 +121,8 @@
     <ScrollFrame name="Storyline_DialogChoicesScrollFrame" inherits="UIPanelScrollFrameCodeTemplate" frameStrata="HIGH" parent="Storyline_NPCFrame">
         <Size x="450" />
         <Anchors>
-            <Anchor point="CENTER" relativePoint="CENTER" relativeTo="$parent"/>
-            <Anchor point="TOP" relativePoint="TOP" relativeTo="$parent" y="-20"/>
+            <Anchor point="CENTER" relativePoint="CENTER" />
+            <Anchor point="TOP" relativePoint="TOP"  y="-20"/>
             <Anchor point="BOTTOM" relativePoint="TOP" relativeTo="Storyline_NPCFrameChat" y="20"/>
         </Anchors>
         <Frames>
@@ -139,9 +139,9 @@
                     <TexCoords left="0.12" right="0.87" top="0.25" bottom="0" />
                     <Size y="30"/>
                     <Anchors>
-                        <Anchor point="BOTTOM" relativePoint="TOP" relativeTo="$parent" />
-                        <Anchor point="LEFT" relativePoint="LEFT" relativeTo="$parent" />
-                        <Anchor point="RIGHT" relativePoint="RIGHT" relativeTo="$parent" />
+                        <Anchor point="BOTTOM" relativePoint="TOP"  />
+                        <Anchor point="LEFT" relativePoint="LEFT"  />
+                        <Anchor point="RIGHT" relativePoint="RIGHT"  />
                     </Anchors>
                     <Animations>
                         <AnimationGroup parentKey="pulse" looping="REPEAT">
@@ -154,9 +154,9 @@
                     <TexCoords left="0.12" right="0.87" top="0" bottom="0.25" />
                     <Size y="30"/>
                     <Anchors>
-                        <Anchor point="TOP" relativePoint="BOTTOM" relativeTo="$parent" />
-                        <Anchor point="LEFT" relativePoint="LEFT" relativeTo="$parent" />
-                        <Anchor point="RIGHT" relativePoint="RIGHT" relativeTo="$parent" />
+                        <Anchor point="TOP" relativePoint="BOTTOM"  />
+                        <Anchor point="LEFT" relativePoint="LEFT"  />
+                        <Anchor point="RIGHT" relativePoint="RIGHT"  />
                     </Anchors>
                     <Animations>
                         <AnimationGroup parentKey="pulse" looping="REPEAT">
@@ -171,7 +171,7 @@
             <Frame parentKey="container" setAllPoints="true">
                 <Size y="250" />
                 <Anchors>
-                    <Anchor point="CENTER" relativePoint="CENTER" relativeTo="$parent"/>
+                    <Anchor point="CENTER" relativePoint="CENTER" />
                 </Anchors>
             </Frame>
         </ScrollChild>

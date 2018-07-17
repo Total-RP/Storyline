@@ -23,6 +23,8 @@
 
 	<Include file="lib\lib.xml"/>
 
+	<Script file="PlayerModelMixin.lua"/>
+
 	<!-- Art pieces to hide border seams
 	 	(copied from Blizzard, it adds a gradient texture between corners and borders so they blend)
 	 -->
@@ -97,7 +99,7 @@
 					<TexCoords left="0.00000000" right="1.00000000" top="0.34375000" bottom="0.52148438"/>
 				</Texture>
 			</Layer>
-			<Layer level="ARTWORK" textureSubLevel="2">
+			<!-- <Layer level="ARTWORK" textureSubLevel="2">
 				<Texture parentKey="LeftHide" inherits="QuestChoiceLeftHide">
 					<Anchors>
 						<Anchor point="TOPLEFT" relativeKey="$parent.BorderTopLeft" relativePoint="BOTTOMLEFT" x="10"
@@ -134,7 +136,7 @@
 								x="15" y="11"/>
 					</Anchors>
 				</Texture>
-			</Layer>
+			</Layer> -->
 			<Layer level="BACKGROUND">
 				<Texture file="Interface\QuestionFrame\question-background" vertTile="true" horizTile="true">
 					<Anchors>
@@ -220,6 +222,13 @@
 						<Anchor point="BOTTOMRIGHT" x="-20" y="20"/>
 					</Anchors>
 				</Texture>
+				<Texture name="Storyline_NPCFrameSpecialAtlas">
+					<TexCoords top="0.5"/>
+					<Anchors>
+						<Anchor point="TOPLEFT" x="40" y="-40"/>
+						<Anchor point="BOTTOMRIGHT" x="-40" y="40"/>
+					</Anchors>
+				</Texture>
 			</Layer>
 			<Layer level="OVERLAY" textureSubLevel="3">
 				<Texture name="Storyline_NPCFrameBanner" parentKey="banner" atlas="GarrMission_RewardsBanner-Desaturate" useAtlasSize="false">
@@ -237,7 +246,32 @@
 			</Layer>
 		</Layers>
 		<Frames>
-
+			<Frame name="Storyline_QuestInfoSealFrame" frameStrata="HIGH">
+				<Anchors>
+					<Anchor point="BOTTOMRIGHT" />
+					<Anchor point="TOPLEFT" relativePoint="TOP"/>
+				</Anchors>
+				<Layers>
+					<Layer level="ARTWORK">
+						<FontString parentKey="Text" inherits="QuestFont_Huge" mixin="ShrinkUntilTruncateFontStringMixin" justifyH="LEFT">
+							<Size x="160" y="44"/>
+							<Anchors>
+								<Anchor point="LEFT" x="5" y="-12"/>
+							</Anchors>
+						</FontString>
+						<Texture parentKey="Texture" atlas="Quest-Alliance-WaxSeal" useAtlasSize="true">
+							<Anchors>
+								<Anchor point="LEFT" x="160" y="-6"/>
+							</Anchors>
+						</Texture>
+					</Layer>
+				</Layers>
+				<Scripts>
+					<OnLoad>
+						self.Text:SetFontObjectsToTry("QuestFont_Huge", "QuestFont_Large", "Fancy14Font", "Fancy12Font");
+					</OnLoad>
+				</Scripts>
+			</Frame>
 			<Frame name="Storyline_NPCFrameModels" parentKey="models" frameStrata="MEDIUM">
 				<Size x="0" y="0"/>
 				<Anchors>
@@ -253,7 +287,7 @@
 							<Anchor point="CENTER" x="0" y="0"/>
 						</Anchors>
 					</Frame>
-					<CinematicModel name="Storyline_NPCFrameModelsMe" parentKey="me" setAllPoints="true">
+					<CinematicModel name="Storyline_NPCFrameModelsMe" parentKey="me" setAllPoints="true" mixin="Storyline_PlayerModelMixin">
 						<Frames>
 							<Button parentKey="scroll" enableMouse="true">
 								<Anchors>
@@ -264,8 +298,13 @@
 								</Anchors>
 							</Button>
 						</Frames>
+						<Scripts>
+							<OnLoad method="OnLoad"/>
+							<OnModelLoaded method="OnModelLoaded"/>
+							<OnAnimFinished method="OnAnimFinished"/>
+						</Scripts>
 					</CinematicModel>
-					<CinematicModel name="Storyline_NPCFrameModelsYou" parentKey="you" setAllPoints="true">
+					<CinematicModel name="Storyline_NPCFrameModelsYou" parentKey="you" setAllPoints="true" mixin="Storyline_PlayerModelMixin">
 						<Frames>
 							<Button parentKey="scroll" enableMouse="true">
 								<Anchors>
@@ -276,6 +315,11 @@
 								</Anchors>
 							</Button>
 						</Frames>
+						<Scripts>
+							<OnLoad method="OnLoad"/>
+							<OnModelLoaded method="OnModelLoaded"/>
+							<OnAnimFinished method="OnAnimFinished"/>
+						</Scripts>
 					</CinematicModel>
 					<Frame name="Storyline_NPCFrameGossipChoices" inherits="Storyline_HoveredFrame" hidden="true">
 						<Size x="325" y="150"/>
@@ -316,7 +360,7 @@
 				</Anchors>
 				<Layers>
 					<Layer level="BACKGROUND">
-						<Texture file="Interface\Tooltips\CHATBUBBLE-TAIL">
+						<Texture parentKey="bubbleTail" file="Interface\Tooltips\CHATBUBBLE-TAIL">
 							<Size x="32" y="32"/>
 							<Anchors>
 								<Anchor point="BOTTOMRIGHT" relativePoint="TOPRIGHT" x="-40" y="-3"/>
@@ -628,7 +672,6 @@
 	<Include file="rewards\rewards.xml"/>
 	<Include file="reputation-bar\reputation-bar.xml"/>
 
-	<Script file="rewards.lua"/>
 	<Script file="layout.lua"/>
 	<Script file="utils.lua"/>
 	<Script file="events.lua"/>

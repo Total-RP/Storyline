@@ -18,6 +18,7 @@
 ----------------------------------------------------------------------------------
 
 local animationLib = LibStub:GetLibrary("TRP-Dialog-Animation-DB");
+local Ellyb = Ellyb(...);
 
 -- Storyline API
 local configureHoverFrame = Storyline_API.lib.configureHoverFrame;
@@ -25,24 +26,13 @@ local setTooltipForSameFrame, setTooltipAll = Storyline_API.lib.setTooltipForSam
 local refreshTooltipForFrame = Storyline_RefreshTooltipForFrame;
 local Storyline_MainTooltip = Storyline_MainTooltip;
 local log = Storyline_API.lib.log;
-local registerHandler = Storyline_API.lib.registerHandler;
 local getTextureString, colorCodeFloat = Storyline_API.lib.getTextureString, Storyline_API.lib.colorCodeFloat;
 local getId = Storyline_API.lib.generateID;
 local loc = Storyline_API.locale.getText;
 local format = format;
-local playSelfAnim = Storyline_API.playSelfAnim;
 local getQuestIcon, getQuestActiveIcon = Storyline_API.getQuestIcon, Storyline_API.getQuestActiveIcon;
-local getQuestTriviality = Storyline_API.getQuestTriviality;
-local selectMultipleAvailableGreetings = Storyline_API.selectMultipleAvailableGreetings;
-local selectFirstGreetingAvailable = Storyline_API.selectFirstGreetingAvailable;
-local selectMultipleActiveGreetings = Storyline_API.selectMultipleActiveGreetings;
-local selectMultipleActive = Storyline_API.selectMultipleActive;
-local selectFirstActive = Storyline_API.selectFirstActive;
-local selectMultipleAvailable = Storyline_API.selectMultipleAvailable;
-local selectFirstAvailable = Storyline_API.selectFirstAvailable;
 local selectFirstGossip, 	selectMultipleGossip = Storyline_API.selectFirstGossip, Storyline_API.selectMultipleGossip;
 local selectMultipleRewards, selectFirstGreetingActive = Storyline_API.selectMultipleRewards, Storyline_API.selectFirstGreetingActive;
-local getBindingIcon = Storyline_API.getBindingIcon;
 local hideStorylineFrame = Storyline_API.layout.hideStorylineFrame;
 local hideQuestRewardFrameIfNeed = Storyline_API.layout.hideQuestRewardFrameIfNeed;
 local debug = Storyline_API.debug;
@@ -99,6 +89,43 @@ local BONUS_SKILLPOINTS = BONUS_SKILLPOINTS;
 local ITEM_QUALITY_COLORS = ITEM_QUALITY_COLORS;
 local REQUIRED_MONEY = REQUIRED_MONEY;
 local QUEST_SUGGESTED_GROUP_NUM, QUEST_OBJECTIVES = QUEST_SUGGESTED_GROUP_NUM, QUEST_OBJECTIVES;
+---@type Texture
+local frameBackground = Storyline_NPCFrameBG;
+---@type Texture
+local frameSpecialAtlas = Storyline_NPCFrameSpecialAtlas;
+
+--region Sealed quest info
+local SEAL_QUESTS = {
+	[40519] = { bgAtlas = "QuestBG-Alliance", text = "|cff042c54"..QUEST_KING_VARIAN_WRYNN.."|r", sealAtlas = "Quest-Alliance-WaxSeal"},
+	[43926] = { bgAtlas = "QuestBG-Horde", text = "|cff480404"..QUEST_WARCHIEF_VOLJIN.."|r", sealAtlas = "Quest-Horde-WaxSeal"},
+	[47221] = { bgAtlas = "QuestBG-TheHandofFate", },
+	[47835] = { bgAtlas = "QuestBG-TheHandofFate", },
+	[49929] = { bgAtlas = "QuestBG-Alliance", text = "|cff042c54"..QUEST_KING_ANDUIN_WRYNN.."|r", sealAtlas = "Quest-Alliance-WaxSeal" },
+	[49930] = { bgAtlas = "QuestBG-Horde", text = "|cff480404"..QUEST_WARCHIEF_SYLVANAS_WINDRUNNER.."|r", sealAtlas = "Quest-Horde-WaxSeal" },
+	[50476] = { bgAtlas = "QuestBG-Horde", sealAtlas = "Quest-Horde-WaxSeal" },
+	-- BfA start quests
+	[46727] = { bgAtlas = "QuestBG-Alliance", text = "|cff042c54"..QUEST_KING_ANDUIN_WRYNN.."|r", sealAtlas = "Quest-Alliance-WaxSeal" },
+	[50668] = { bgAtlas = "QuestBG-Horde", text = "|cff480404"..QUEST_WARCHIEF_SYLVANAS_WINDRUNNER.."|r", sealAtlas = "Quest-Horde-WaxSeal"},
+
+	[51795] = { bgAtlas = "QuestBG-Alliance" },
+	[52058] = { bgAtlas = "QuestBG-Alliance", text = "|cff042c54"..QUEST_KING_ANDUIN_WRYNN.."|r", sealAtlas = "Quest-Alliance-WaxSeal"},
+
+	[51796] = { bgAtlas = "QuestBG-Horde" },
+
+	[53372] = { bgAtlas = "QuestBG-Horde", text = "|cff480404"..QUEST_WARCHIEF_SYLVANAS_WINDRUNNER.."|r", sealAtlas = "Quest-Horde-WaxSeal"},
+	[53370] = { bgAtlas = "QuestBG-Alliance", text = "|cff042c54"..QUEST_KING_ANDUIN_WRYNN.."|r", sealAtlas = "Quest-Alliance-WaxSeal"},
+};
+local EXCEPTION_QUESTS = {
+	[53029] = true,
+	[53026] = true,
+	[51211] = true,
+	[52428] = true,
+};
+--endregion
+
+function Storyline_API.getSpecialQuestInfo(questID)
+	return SEAL_QUESTS[questID]
+end
 
 --*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
 -- Auto equip part, greatly inspired by AutoTurnIn by Alex Shubert (alex.shubert@gmail.com)
@@ -233,13 +260,22 @@ local function getQuestData(qTitle)
 	return "";
 end
 
-local function showQuestPortraitFrame()
+local function showQuestPortraitFrame(isOnCompleteStep)
 	if not Storyline_Data.config.hideOriginalFrames then
 		return;
 	end
-	local questPortrait, questPortraitText, questPortraitName = GetQuestPortraitGiver();
-	if (questPortrait ~= 0) then
-		QuestFrame_ShowQuestPortrait(Storyline_NPCFrame, questPortrait, questPortraitText, questPortraitName, -3, -42);
+
+	local questPortrait, questPortraitText, questPortraitName, questPortraitMount
+
+	if isOnCompleteStep then
+		questPortrait, questPortraitText, questPortraitName, questPortraitMount = GetQuestPortraitTurnIn();
+	else
+		questPortrait, questPortraitText, questPortraitName, questPortraitMount = GetQuestPortraitGiver();
+	end
+
+	if questPortrait and questPortrait ~= 0 then
+		QuestFrame_ShowQuestPortrait(Storyline_NPCFrame, questPortrait, questPortraitMount, questPortraitText, questPortraitName, -16, -48);
+		QuestNPCModel:SetFrameStrata("LOW")
 	else
 		QuestFrame_HideQuestPortrait();
 	end
@@ -416,8 +452,6 @@ eventHandlers["QUEST_COMPLETE"] = function(eventInfo)
 	else
 		Storyline_NPCFrameRewards:Hide();
 	end
-
-	showQuestPortraitFrame();
 end
 
 local currentEvent;
@@ -447,15 +481,23 @@ local function handleEventSpecifics(event, texts, textIndex, eventInfo)
 	DialogsButtons.hideAllButtons();
 	RewardsButtons.hideAllButtons();
 
+	showQuestPortraitFrame(event == "QUEST_COMPLETE");
+
 	if textIndex == #texts and eventHandlers[event] then
 		currentEvent = event;
 		eventHandlers[event](eventInfo);
 	end
 end
 
+local EMOTE_COLOR;
+---@param targetModel Storyline_PlayerModelMixin
 local function playText(textIndex, targetModel)
 	local animTab = targetModel.animTab;
 	wipe(animTab);
+
+	if not EMOTE_COLOR then
+		EMOTE_COLOR = Ellyb.Color(ChatTypeInfo["MONSTER_EMOTE"]):Freeze()
+	end
 
 	local text = Storyline_NPCFrameChat.texts[textIndex];
 	local delay = GOSSIP_DELAY;
@@ -463,14 +505,18 @@ local function playText(textIndex, targetModel)
 
 	Storyline_NPCFrameChatText:SetTextColor(ChatTypeInfo["MONSTER_SAY"].r, ChatTypeInfo["MONSTER_SAY"].g, ChatTypeInfo["MONSTER_SAY"].b);
 
-	if text:byte() == 60 or not UnitExists("npc") or UnitIsUnit("player", "npc") or UnitIsDead("npc") then -- Emote if begins with <
-		local color = colorCodeFloat(ChatTypeInfo["MONSTER_EMOTE"].r, ChatTypeInfo["MONSTER_EMOTE"].g, ChatTypeInfo["MONSTER_EMOTE"].b);
-
+	local stillEmote = Storyline_NPCFrameChat.stillEmote[textIndex];
+	if text:byte() == 60 or not UnitExists("npc") or UnitIsUnit("player", "npc") or UnitIsDead("npc") or stillEmote then -- Emote if begins with <
 		-- Blizzard is now coloring part of the text in some cases.
 	    -- We will look for colosing color tags and add an opening color tag for our color right after it
-		local displayedText = text:gsub("|r", "|r" .. color)
-		displayedText = displayedText:gsub("<", color .. "<");
+		local colorCodeStart = EMOTE_COLOR:GetColorCodeStartSequence();
+		local displayedText = text:gsub("|r", "|r" .. colorCodeStart)
+		displayedText = displayedText:gsub("<", colorCodeStart .. "<");
 		displayedText = displayedText:gsub(">", ">|r");
+
+		if stillEmote then
+			displayedText = EMOTE_COLOR(displayedText);
+		end
 
 		Storyline_NPCFrameChatText:SetText(displayedText);
 	else
@@ -479,20 +525,17 @@ local function playText(textIndex, targetModel)
 			animTab[#animTab + 1] = animationLib:GetDialogAnimation(targetModel.model, finder:sub(1, 1));
 		end);
 	end
-	animTab[#animTab + 1] = 0;
 
 	if #animTab == 0 then
 		animTab[1] = 0;
 	end
 
 	if UnitIsDead("npc") then
-		wipe(animTab)
-		animTab[1] = 6;
+		targetModel:DisplayDead();
+	else
+		targetModel:PlayAnimSequence(animTab);
 	end
 
-	for _, sequence in pairs(animTab) do
-		delay = animationLib:PlayAnimationDelay(targetModel, sequence, animationLib:GetAnimationDuration(targetModel.model, sequence), delay, textLineToken);
-	end
 
 	Storyline_NPCFrameChat.start = 0;
 
@@ -505,6 +548,7 @@ local function playText(textIndex, targetModel)
 	Storyline_NPCFrameChat:SetHeight(Storyline_NPCFrameChatText:GetHeight() + Storyline_NPCFrameChatName:GetHeight() + Storyline_NPCFrameChatNextText:GetHeight() + 50);
 end
 
+---@param targetModel Storyline_PlayerModelMixin
 function Storyline_API.playNext(targetModel)
 	Storyline_NPCFrameChatNext:Enable();
 	Storyline_NPCFrameChat.currentIndex = Storyline_NPCFrameChat.currentIndex + 1;
@@ -531,19 +575,60 @@ function Storyline_API.playNext(targetModel)
 	end
 end
 
+local specialFrameBackgroundTransitionator = Ellyb.Transitionator();
+local function fadeInSpecialFrameBackground(value)
+	frameSpecialAtlas:SetAlpha(value);
+end
+local function displaySpecialDetails()
+	-- Special quest with sealed background
+	local questID = GetQuestID()
+	if SEAL_QUESTS[questID] then
+		local specialQuestDisplayInfo = SEAL_QUESTS[questID];
+		if specialQuestDisplayInfo.bgAtlas then
+			frameSpecialAtlas:SetAtlas(specialQuestDisplayInfo.bgAtlas);
+			specialFrameBackgroundTransitionator:RunValue(0, 0.8, 0.8, fadeInSpecialFrameBackground)
+			frameBackground:SetAlpha(0)
+		end
+
+		if specialQuestDisplayInfo.sealAtlas then
+			Storyline_QuestInfoSealFrame:Show();
+			Storyline_QuestInfoSealFrame.Texture:SetAtlas(specialQuestDisplayInfo.sealAtlas);
+		end
+
+		if specialQuestDisplayInfo.text then
+			Storyline_QuestInfoSealFrame:Show();
+			Storyline_QuestInfoSealFrame.Text:SetText(specialQuestDisplayInfo.text);
+			Storyline_NPCFrameChatName:Hide()
+		end
+		Storyline_QuestInfoSealFrame:Show()
+	elseif C_CampaignInfo.IsCampaignQuest(questID) and not EXCEPTION_QUESTS[questID] then
+		frameSpecialAtlas:SetAtlas( "QuestBG-"..UnitFactionGroup("player"));
+		specialFrameBackgroundTransitionator:RunValue(0, 0.8, 0.8, fadeInSpecialFrameBackground)
+		frameBackground:SetAlpha(0)
+	end
+end
+
 --*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
 -- INIT
 --*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
+
+---@type Storyline_PlayerModelMixin
+local targetModel = Storyline_NPCFrame.models.you;
+---@type Storyline_PlayerModelMixin
+local playerModel = Storyline_NPCFrame.models.me;
+local ANIMATIONS = Storyline_API.ANIMATIONS;
 
 function Storyline_API.initEventsStructure()
 	local startDialog = Storyline_API.startDialog;
 
 	EVENT_INFO = {
+		--[[
+		TODO REMOVE
 		["SCALING_DEBUG"] = {
 			text = function() return "DEBUG TEXT" end,
 			cancelMethod = function() end,
 			titleGetter = function() return "DEBUG TITLE" end,
-		},
+		},]]
 		["QUEST_GREETING"] = {
 			text = GetGreetingText,
 			finishMethod = function()
@@ -587,7 +672,6 @@ function Storyline_API.initEventsStructure()
 					setTooltipForSameFrame(Storyline_NPCFrameObjectivesNo, "TOP", 0, 0,loc("SL_DECLINE"));
 					Storyline_NPCFrameObjectivesNo:Show();
 					Storyline_NPCFrameChatNextText:SetText(loc("SL_ACCEPTANCE"));
-					showQuestPortraitFrame();
 				else
 					acceptQuest();
 				end
@@ -603,12 +687,11 @@ function Storyline_API.initEventsStructure()
 					if IsQuestCompletable() then
 						Storyline_NPCFrameObjectives.OK:Show();
 						Storyline_NPCFrameChatNextText:SetText(loc("SL_CONTINUE"));
-						playSelfAnim(68);
+						playerModel:PlayAnimation(ANIMATIONS.YES);
 					else
 						Storyline_NPCFrameChatNextText:SetText(loc("SL_NOT_YET"));
-						playSelfAnim(186);
+						playerModel:PlayAnimation(ANIMATIONS.NO);
 					end
-					showQuestPortraitFrame();
 				elseif IsQuestCompletable() then
 					CompleteQuest();
 				else
@@ -681,6 +764,7 @@ function Storyline_API.initEventsStructure()
 			end,
 			cancelMethod = CloseGossip,
 		},
+		--[[ TODO REMOVE
 		["REPLAY"] = {
 			titleGetter = function()
 				local questTitle = GetQuestLogTitle(GetQuestLogSelection());
@@ -690,14 +774,23 @@ function Storyline_API.initEventsStructure()
 				return QUEST_LOG;
 			end,
 			finishText = CLOSE,
-		}
+		}]]
 	};
 	Storyline_API.EVENT_INFO = EVENT_INFO;
 
 	local storylineFrameShouldOpen = false;
 
 	for event, info in pairs(EVENT_INFO) do
-		registerHandler(event, function(...)
+		Ellyb.GameEvents.registerCallback(event, function(...)
+
+			-- Reset special frame stuff
+			-- TODO Move that in a nice place later
+			Storyline_QuestInfoSealFrame.Texture:SetTexture(nil);
+			Storyline_QuestInfoSealFrame.Text:SetText("");
+			Storyline_QuestInfoSealFrame:Hide();
+			Storyline_NPCFrameChatName:Show();
+			frameSpecialAtlas:SetAlpha(0);
+			frameBackground:SetAlpha(0.5)
 
 			-- Workaround quests auto accepted from items
 			if event == "QUEST_DETAIL" then
@@ -705,6 +798,7 @@ function Storyline_API.initEventsStructure()
 				if(questStartItemID ~= nil and questStartItemID ~= 0) or (QuestGetAutoAccept() and QuestIsFromAreaTrigger()) then
 					return
 				end
+
 			end
 			if Storyline_Data.config.disableInInstances then
 				if IsInInstance() then
@@ -716,6 +810,10 @@ function Storyline_API.initEventsStructure()
 				if mapID and mapID == 974 then
 					return
 				end
+			end
+
+			if event == "QUEST_DETAIL" or event == "QUEST_COMPLETE" then
+				displaySpecialDetails();
 			end
 
 			-- Thanks to Blizzard for firing GOSSIP_SHOW and then GOSSIP_CLOSED when ForceGossip is false...
@@ -732,8 +830,14 @@ function Storyline_API.initEventsStructure()
 		end);
 	end
 
-	registerHandler("QUEST_ITEM_UPDATE", RewardsButtons.refreshButtons);
-	registerHandler("GOSSIP_CLOSED", function()
+	Ellyb.GameEvents.registerCallback("UNIT_PORTRAIT_UPDATE", function(unit)
+		if unit == "player" and Storyline_NPCFrame:IsVisible() then
+			playerModel:SetModelUnit("player", false):Success(Storyline_API.onModelsLoaded);
+		end
+	end)
+
+	Ellyb.GameEvents.registerCallback("QUEST_ITEM_UPDATE", RewardsButtons.refreshButtons);
+	Ellyb.GameEvents.registerCallback("GOSSIP_CLOSED", function()
 		storylineFrameShouldOpen = false;
 	end);
 
@@ -752,12 +856,12 @@ function Storyline_API.initEventsStructure()
 	setTooltipForSameFrame(Storyline_NPCFrameObjectivesNo, "TOP", 0, 0, loc("SL_DECLINE"));
 	Storyline_NPCFrameObjectivesYes:SetScript("OnClick", acceptQuest);
 	Storyline_NPCFrameObjectivesYes:SetScript("OnEnter", function(self)
-		playSelfAnim(185);
+		playerModel:PlayAnimation(ANIMATIONS.CHEER);
 		refreshTooltipForFrame(self);
 	end);
 	Storyline_NPCFrameObjectivesNo:SetScript("OnClick", DeclineQuest);
 	Storyline_NPCFrameObjectivesNo:SetScript("OnEnter", function(self)
-		playSelfAnim(186);
+		playerModel:PlayAnimation(ANIMATIONS.NO);
 		refreshTooltipForFrame(self);
 	end);
 

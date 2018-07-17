@@ -162,16 +162,17 @@ local BUTTON_API = {
 	-- When the cursor is over a dialog choice we will play this dialog animation
 	PlayPlayerModelAnimation = function(button)
 		local animation;
-		local playerModel = Storyline_NPCFrameModelsMe.model;
+		---@type Storyline_PlayerModelMixin
+		local playerModel = Storyline_NPCFrame.models.me;
 		-- Try to fetch the animation corresponding to the punctuation marks in the button's text
 		button.text:GetText():gsub("[%.%?%!]+", function(finder)
-			animation = animationLib:GetDialogAnimation(playerModel, finder:sub(1, 1));
+			animation = animationLib:GetDialogAnimation(playerModel:GetModelFileIDAsString(), finder:sub(1, 1));
 		end);
 		-- If we couldn't find any animation or punctuation marks we will use the normal talk animation instead.
 		if not animation then
-			animation = animationLib:GetDialogAnimation(playerModel, ".");
+			animation = animationLib:GetDialogAnimation(playerModel:GetModelFileIDAsString(), ".");
 		end
-		Storyline_API.playSelfAnim(animation);
+		playerModel:PlayAnimation(animation);
 	end,
 	Decorate = function(self, buttonIndex, choiceIndex, data, bucketType, eventType)
 

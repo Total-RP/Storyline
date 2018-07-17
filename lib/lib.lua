@@ -21,7 +21,7 @@
 local PlaySound = PlaySound;
 Storyline_API.PlaySound = PlaySound;
 
-if select(4, GetBuildInfo()) == 70300 then
+if select(4, GetBuildInfo()) >= 70300 then
 	-- 7.3 uses IDs instead of sound strings. This table is mapping the IDs we need to use instead
 	local FILE_IDS_TO_OLD_PATHS = {
 		["QUESTLOGOPEN"] = 844, -- SOUNDKIT.IG_QUEST_LOG_OPEN
@@ -97,55 +97,6 @@ Storyline_API.lib.colorCode = colorCode;
 --- Values must be 0..1 based
 Storyline_API.lib.colorCodeFloat = function(red, green, blue)
 	return colorCode(math.ceil(red*255), math.ceil(green*255), math.ceil(blue*255));
-end
-
---*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
--- EVENT HANDLING
--- Handles WOW events
---*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
-
-local REGISTERED_EVENTS = {};
-local type, tostring, pairs = type, tostring, pairs;
-
-Storyline_API.lib.registerHandler = function(event, callback)
-	assert(event, "Event must be set.");
-	assert(callback and type(callback) == "function", "Callback must be a function");
-	if not REGISTERED_EVENTS[event] then
-		REGISTERED_EVENTS[event] = {};
-		Storyline_EventFrame:RegisterEvent(event);
-	end
-	local handlerID = generateID();
-	while REGISTERED_EVENTS[event][handlerID] do -- Avoiding collision
-		handlerID = generateID();
-	end
-	REGISTERED_EVENTS[event][handlerID] = callback;
-	log(("Registered event %s with id %s"):format(tostring(event), handlerID));
-	return handlerID;
-end
-
-Storyline_API.lib.unregisterHandler = function(handlerID)
-	assert(handlerID, "handlerID must be set.");
-	for event, eventTab in pairs(REGISTERED_EVENTS) do
-		if eventTab[handlerID] then
-			eventTab[handlerID] = nil;
-			if tableSize(eventTab) == 0 then
-				REGISTERED_EVENTS[event] = nil;
-				Storyline_EventFrame:UnregisterEvent(event);
-			end
-			log(("Unregistered event %s with id %s"):format(tostring(event), handlerID));
-			return;
-		end
-	end
-	log(("handlerID not found %s"):format(handlerID));
-end
-
-function Storyline_EventDispatcher(self, event, ...)
-	-- Callbacks
-	if REGISTERED_EVENTS[event] then
-		for _, callback in pairs(REGISTERED_EVENTS[event]) do
-			callback(...);
-		end
-	end
 end
 
 --*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
@@ -509,3 +460,15 @@ end
 function Storyline_API.lib.getFontPath(font)
 	return LSM3:Fetch(LSM3.MediaType.FONT, font);
 end
+
+Storyline_API.ANIMATIONS = {
+	STANDING = 0,
+	READING = 520,
+	YES = 68,
+	NO = 186,
+	CHEER = 185,
+	EXCLAMATION = 64,
+	QUESTION = 65,
+	TALK = 60,
+	DEAD = 6,
+}
