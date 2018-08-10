@@ -1,3 +1,10 @@
+## Changelog for version 3.0.1
+
+### Fixed
+
+- Hotfixed an issue with the library shared between Total RP 3 and Storyline.
+- Updated list of Patreon supporters.
+
 ## Changelog for version 3.0
 
 _Note: The scaling system in this version is **temporary** and will be improved in a future version._
