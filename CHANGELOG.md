@@ -1,3 +1,9 @@
+## Changelog for version 3.0.2
+
+### Fixed
+
+- Fixed an issue that could cause Storyline to be incorrectly reported as the source of other add-ons errors.
+
 ## Changelog for version 3.0.1
 
 ### Fixed
