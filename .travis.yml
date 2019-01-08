@@ -25,7 +25,7 @@ notifications:
 
 # The following part is for automatic building and publishing to Curse and Wowinterface
 # We're not there yet, so I have documented this out
-after_script: curl -s https://raw.githubusercontent.com/Ellypse/packager/master/release.sh | bash -s -- -g 8.0.1
+after_script: curl -s https://raw.githubusercontent.com/Ellypse/packager/master/release.sh | bash -s
 
 #branches:
 #  only:
