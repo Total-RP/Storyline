@@ -487,7 +487,7 @@ function Storyline_API.addon:OnEnable()
 	end
 
 	-- List of IDs for NPCs that are buggy when ForceGossip returns true
-	local fuckingNPCIDs = {
+	local NPC_IDS_WITH_BROKEN_DIALOGS = {
 		["110725"] = true, -- Archon Torias (Priests order hall)
 		["108018"] = true, -- Archivist Melinda (Warlocks order hall)
 		["108050"] = true, -- Survivalist Bahn (Hunters order hall)
@@ -506,12 +506,13 @@ function Storyline_API.addon:OnEnable()
 
 		-- BfA
 		["139522"]  = true, -- Scouting map Alliance
+		["143968"]  = true, -- Island expeditions map Alliance
 	}
 
 	ForceGossip = function()
-		-- return if the option is enabled and check if the NPC is not buggy (thanks Blizzard)
+		-- return if the option is enabled and check if the NPC's dialog is not buggy
 		local NPCID = select(6, strsplit("-", UnitGUID("npc") or ""));
-		return Storyline_Data.config.forceGossip and not fuckingNPCIDs[NPCID];
+		return Storyline_Data.config.forceGossip and not NPC_IDS_WITH_BROKEN_DIALOGS[NPCID];
 	end
 
 	Storyline_API.locale.init();
