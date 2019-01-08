@@ -626,6 +626,15 @@
 					</OnLeave>
 				</Scripts>
 			</CheckButton>
+			<Button name="Storyline_NPCFrameBlacklistButton" inherits="UIPanelCloseButton" frameStrata="HIGH">
+				<Size x="37" y="37" />
+				<NormalTexture file="Interface\Buttons\CancelButton-Up" />
+				<PushedTexture file="Interface\Buttons\CancelButton-Down" />
+				<HighlightTexture file="Interface\Buttons\CancelButton-Highlight" alphaMode="ADD" />
+				<Anchors>
+					<Anchor point="TOPRIGHT" relativeTo="Storyline_NPCFrameLock" relativePoint="TOPLEFT" x="12" y="1"/>
+				</Anchors>
+			</Button>
 
 			<Button name="Storyline_NPCFrameResizeButton" inherits="Storyline_ResizeButton" frameStrata="HIGH" hidden="false">
 				<KeyValues>

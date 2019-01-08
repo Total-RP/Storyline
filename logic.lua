@@ -53,12 +53,6 @@ local WEIRD_LINE_BREAK = LINE_FEED_CODE .. CARRIAGE_RETURN_CODE .. LINE_FEED_COD
 local CHAT_MARGIN = 70;
 
 --*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
--- NPC Blacklisting
---*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
-
-local Storyline_NPC_BLACKLIST = {"94399"} -- Garrison mission table
-
---*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
 -- DATA SAVING & RESTORING
 --*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
 
@@ -198,16 +192,7 @@ end
 function Storyline_API.startDialog(targetType, fullText, event, eventInfo)
 	mainFrame.debug.text:SetText(event);
 
-	-- Get NPC_ID
-	local guid = UnitGUID(targetType);
-	local type, zero, server_id, instance_id, zone_uid, npc_id, spawn_uid = strsplit("-", guid or "");
-	mainFrame.models.you.npc_id = npc_id;
-
-	-- Dirty if to fix the flavor text appearing on naval mission table because Blizzard…
-	if tContains(Storyline_NPC_BLACKLIST, npc_id) or tContains(Storyline_Data.npc_blacklist, npc_id)then
-		SelectGossipOption(1);
-		return;
-	end
+	mainFrame.models.you.npc_id = Storyline_API.getNpcId();
 
 	local targetName = UnitName(targetType);
 
@@ -268,7 +253,7 @@ function Storyline_API.startDialog(targetType, fullText, event, eventInfo)
 		if index < #texts then
 			local prevEmote = stillEmote[index];
 			local currentEmote = prevEmote;
-			
+
 			local _, openEmoteCount = text:gsub("<", "<");
 			local _, closeEmoteCount = text:gsub(">", ">");
 
@@ -277,7 +262,7 @@ function Storyline_API.startDialog(targetType, fullText, event, eventInfo)
 			elseif not prevEmote and openEmoteCount > closeEmoteCount then
 				currentEmote = true;
 			end
-			
+
 			stillEmote[index + 1] = currentEmote;
 		end
 	end
@@ -325,7 +310,7 @@ end
 local function saveCustomHeight(me, scale)
 	-- Getting custom structure or creating it
 	local key, invertedKey = scalingLib:GetModelKeys(playerModel:GetModelFileIDAsString(), targetModel:GetModelFileIDAsString());
-	
+
 	if not customHeightDB[key] and customHeightDB[invertedKey] then
 		-- We swap me/you as it is inverted
 		customHeightDB[invertedKey][me and 2 or 1] = scale;
@@ -447,6 +432,12 @@ end
 
 Storyline_API.addon = LibStub("AceAddon-3.0"):NewAddon("Storyline", "AceConsole-3.0");
 
+---@return string Returns the NPC ID of the current "npc" unit
+function Storyline_API.getNpcId()
+	local npcId = select(6, strsplit("-", UnitGUID("npc") or ""));
+	return npcId;
+end
+
 function Storyline_API.addon:OnEnable()
 
 	if not Storyline_Data then
@@ -488,6 +479,10 @@ function Storyline_API.addon:OnEnable()
 
 	-- List of IDs for NPCs that are buggy when ForceGossip returns true
 	local NPC_IDS_WITH_BROKEN_DIALOGS = {
+		-- WoD
+		["94399"]  = true, -- Garrison mission table
+
+		-- Legion
 		["110725"] = true, -- Archon Torias (Priests order hall)
 		["108018"] = true, -- Archivist Melinda (Warlocks order hall)
 		["108050"] = true, -- Survivalist Bahn (Hunters order hall)
@@ -506,13 +501,13 @@ function Storyline_API.addon:OnEnable()
 
 		-- BfA
 		["139522"]  = true, -- Scouting map Alliance
-		["143968"]  = true, -- Island expeditions map Alliance
+		--["143968"]  = true, -- Island expeditions map Alliance
 	}
 
 	ForceGossip = function()
 		-- return if the option is enabled and check if the NPC's dialog is not buggy
-		local NPCID = select(6, strsplit("-", UnitGUID("npc") or ""));
-		return Storyline_Data.config.forceGossip and not NPC_IDS_WITH_BROKEN_DIALOGS[NPCID];
+		local npcId = Storyline_API.getNpcId();
+		return Storyline_Data.config.forceGossip and not NPC_IDS_WITH_BROKEN_DIALOGS[npcId] and not Storyline_Data.npc_blacklist[npcId];
 	end
 
 	Storyline_API.locale.init();
@@ -543,6 +538,14 @@ function Storyline_API.addon:OnEnable()
 	mainFrame.chat:SetScript("OnUpdate", onUpdateChatText);
 	Storyline_NPCFrameClose:SetScript("OnClick", closeDialog);
 	Storyline_NPCFrameRewardsItem:SetScale(1.5);
+
+	Storyline_NPCFrameBlacklistButton:SetScript("OnClick", function()
+		Storyline_Data.npc_blacklist[Storyline_API.getNpcId()] = true;
+		SelectGossipOption(1);
+	end)
+	Ellyb.Tooltips.getTooltip(Storyline_NPCFrameBlacklistButton)
+		:SetTitle(loc("SL_BYPASS_NPC"))
+		:AddLine(loc("SL_BYPASS_NPC_TT"))
 
 	mainFrame:SetScript("OnKeyDown", function(self, key)
 		if not Storyline_Data.config.useKeyboard then

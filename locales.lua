@@ -28,7 +28,7 @@ Storyline_API.locale.info = {
 	--*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
 	-- LOCALE_EN
 	--*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
-	
+
 	["enUS"] = {
 		localeText = "English",
 		localeContent = {
@@ -95,13 +95,17 @@ The frame cannot be moved when using the default position. This option requires 
 
 %s
 ]],
+			SL_BYPASS_NPC = "Bypass this NPC's gossip dialog",
+			SL_BYPASS_NPC_TT = [[Mark this NPC so that its flavor gossip dialog should always be bypassed to directly access its functionality.
+
+Useful for vendors, flight masters or tables to tend to talk to a lot.]],
 		}
 	},
-	
+
 	--*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
 	-- LOCALE_FR
 	--*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
-	
+
 	["frFR"] = {
 		localeText = "Français",
 		--@localization(locale="frFR", format="lua_table", table-name="localeContent", handle-unlocalized="ignore")@
