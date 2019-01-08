@@ -1,3 +1,10 @@
+## Changelog for version 3.0.3
+
+### Fixed
+
+- Updated version number according to patch 8.1.
+- Removed replay button from the classic quest frame as it would throw a Lua error due to recent changes.
+
 ## Changelog for version 3.0.2
 
 ### Fixed
