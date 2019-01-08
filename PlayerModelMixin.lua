@@ -13,6 +13,12 @@ local DEFAULT_PROPERTIES = {
 	facing = 0.75
 };
 
+-- These models have incorrect animation timings and doesn't render correctly with this system
+local MODELS_WITH_BROKEN_ANIMATIONS = {
+	2173915, -- Male Kul'tirans
+	1721003, -- Male Kul'tirans
+}
+
 ---@class Storyline_PlayerModelMixin : CinematicModel
 Storyline_PlayerModelMixin = {};
 
@@ -88,6 +94,11 @@ end
 --- Non speaking animation will be ignored.
 ---@param animationID number @ An speaking animation ID to check and replace for one that the model can actually play
 function Storyline_PlayerModelMixin:GetValidSpeakingAnimation(animationID)
+
+	if tContains(MODELS_WITH_BROKEN_ANIMATIONS, self:GetModelFileID()) then
+		return ANIMATIONS.STANDING
+	end
+
 	-- If the animation is a question and the model don't support it, fallback to exclamation
 	if animationID == ANIMATIONS.QUESTION and not self:HasAnimation(animationID) then
 		animationID = ANIMATIONS.EXCLAMATION;
