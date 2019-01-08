@@ -1,9 +1,10 @@
-## Interface: 80000
+## Interface: 80100
 ## Title: Storyline
-## Author: Ellypse & Telkostrasz
+## Author: Ellypse and Telkostrasz
 ## Version: @project-version@
 ## Notes: Enhanced quest storytelling
-## URL: http://storyline-addon.com/
+## URL: https://www.curseforge.com/wow/addons/storyline
+## X-Website: https://www.curseforge.com/wow/addons/storyline
 ## DefaultState: Enabled
 ## LoadOnDemand: 0
 ## SavedVariables: Storyline_Data
