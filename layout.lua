@@ -159,6 +159,7 @@ Storyline_API.layout.showStorylineFrame = showStorylineFrame;
 ---
 -- Hide Storyline's frame using the right function according to the settings
 local hideStorylineFrame = function()
+	Storyline_NPCFrameBlacklistButton:Hide()
 	if useUILayoutEngine() then
 		HideUIPanel(Storyline_NPCFrame);
 	else

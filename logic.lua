@@ -438,6 +438,11 @@ function Storyline_API.getNpcId()
 	return npcId;
 end
 
+---@return boolean Returns true if the current dialog NPC has been blacklisted
+function Storyline_API.isCurrentNPCBlacklisted()
+	return Storyline_Data.npc_blacklist[Storyline_API.getNpcId()] ~= nil
+end
+
 function Storyline_API.addon:OnEnable()
 
 	if not Storyline_Data then
@@ -507,7 +512,7 @@ function Storyline_API.addon:OnEnable()
 	ForceGossip = function()
 		-- return if the option is enabled and check if the NPC's dialog is not buggy
 		local npcId = Storyline_API.getNpcId();
-		return Storyline_Data.config.forceGossip and not NPC_IDS_WITH_BROKEN_DIALOGS[npcId] and not Storyline_Data.npc_blacklist[npcId];
+		return Storyline_Data.config.forceGossip and not NPC_IDS_WITH_BROKEN_DIALOGS[npcId] and not Storyline_API.isCurrentNPCBlacklisted();
 	end
 
 	Storyline_API.locale.init();
@@ -546,6 +551,8 @@ function Storyline_API.addon:OnEnable()
 	Ellyb.Tooltips.getTooltip(Storyline_NPCFrameBlacklistButton)
 		:SetTitle(loc("SL_BYPASS_NPC"))
 		:AddLine(loc("SL_BYPASS_NPC_TT"))
+		:SetAnchor(Ellyb.Tooltips.ANCHORS.BOTTOMLEFT)
+		:SetOffset(10, 10)
 
 	mainFrame:SetScript("OnKeyDown", function(self, key)
 		if not Storyline_Data.config.useKeyboard then

@@ -163,21 +163,11 @@ Storyline_API.options.init = function()
 	StorylineOptionsPanel.ForceGossip.tooltip = loc("SL_CONFIG_FORCEGOSSIP_TT");
 	StorylineOptionsPanel.ForceGossip:SetScript("OnClick", function(self)
 		Storyline_Data.config.forceGossip = self:GetChecked() == true;
-		if Storyline_Data.config.forceGossip then
-			Storyline_NPCFrameBlacklistButton:Show();
-		else
-			Storyline_NPCFrameBlacklistButton:Hide();
-		end
 	end);
 	if Storyline_Data.config.forceGossip == nil then
 		Storyline_Data.config.forceGossip = false;
 	end
 	StorylineOptionsPanel.ForceGossip:SetChecked(Storyline_Data.config.forceGossip);
-	if Storyline_Data.config.forceGossip then
-		Storyline_NPCFrameBlacklistButton:Show();
-	else
-		Storyline_NPCFrameBlacklistButton:Hide();
-	end
 
 	-- Hide original frames option
 	StorylineOptionsPanel.HideOriginalFrames.Text:SetText(loc("SL_CONFIG_HIDEORIGINALFRAMES"));
