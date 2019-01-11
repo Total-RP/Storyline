@@ -1,5 +1,9 @@
 ## Changelog for version 3.0.3
 
+### Added
+
+- When the option to force flavor gossip text for NPC dialogs is enabled, a new button is added to the UI, next to the button to close Storyline, that allows you to blacklist specific NPCs that you don't want the flavor gossip text to appear (mission tables, flight masters, etc.). _This will not disable dialogs that are not disabled when the force gossip option is not enabled._
+
 ### Fixed
 
 - Updated version number according to patch 8.1.
