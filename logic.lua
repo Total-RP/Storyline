@@ -506,7 +506,8 @@ function Storyline_API.addon:OnEnable()
 
 		-- BfA
 		["139522"]  = true, -- Scouting map Alliance
-		--["143968"]  = true, -- Island expeditions map Alliance
+		["143968"]  = true, -- Island expeditions map Alliance
+		["143967"]  = true, -- Island expeditions map Port of Zandalar, Zuldazar
 	}
 
 	ForceGossip = function()
