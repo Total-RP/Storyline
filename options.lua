@@ -352,10 +352,4 @@ Storyline_API.options.init = function()
 	end
 	StorylineMiscellaneousOptionsPanel.DebugMode:SetChecked(Storyline_Data.config.debug);
 
-	-- Options main panel
-	StorylineAboutPanel.Title:SetText(loc("SL_ABOUT"));
-	StorylineAboutPanel.SubText:SetText(loc("SL_ABOUT_TEXT"):format(Ellyb:GetPatreonSupporters()));
-	local font, _, flag = StorylineAboutPanel.SubText:GetFont();
-	StorylineAboutPanel.SubText:SetFont(font, 16, flag)
-
 end

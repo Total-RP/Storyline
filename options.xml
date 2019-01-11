@@ -301,10 +301,5 @@
 			</CheckButton>
 		</Frames>
 	</Frame>
-	<Frame name="StorylineAboutPanel" inherits="StorylineOptionFrameChildTemplate">
-		<KeyValues>
-			<KeyValue key="name" value="About" />
-		</KeyValues>
-	</Frame>
 
 </Ui>
