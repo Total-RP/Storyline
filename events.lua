@@ -41,29 +41,7 @@ local tsize = Storyline_API.lib.tsize;
 -- WOW API
 local faction, faction_loc = UnitFactionGroup("player");
 local pairs, CreateFrame, wipe, type, tinsert, after, select, huge = pairs, CreateFrame, wipe, type, tinsert, C_Timer.After, select, math.huge;
-local ChatTypeInfo = ChatTypeInfo;
-local UnitIsUnit, UnitExists, DeclineQuest, AcceptQuest, AcknowledgeAutoAcceptQuest = UnitIsUnit, UnitExists, DeclineQuest, AcceptQuest, AcknowledgeAutoAcceptQuest;
-local IsQuestCompletable, CompleteQuest, CloseQuest, GetQuestLogTitle = IsQuestCompletable, CompleteQuest, CloseQuest, GetQuestLogTitle;
-local GetNumQuestChoices, GetQuestReward, GetQuestLogSelection = GetNumQuestChoices, GetQuestReward, GetQuestLogSelection;
-local GetQuestLogQuestText, GetGossipAvailableQuests, GetGossipActiveQuests = GetQuestLogQuestText, GetGossipAvailableQuests, GetGossipActiveQuests;
-local GetNumGossipOptions, GetNumGossipAvailableQuests, GetNumGossipActiveQuests = GetNumGossipOptions, GetNumGossipAvailableQuests, GetNumGossipActiveQuests;
-local GetQuestItemInfo, GetNumQuestItems, GetGossipOptions = GetQuestItemInfo, GetNumQuestItems, GetGossipOptions;
-local GetObjectiveText, GetCoinTextureString, GetRewardXP = GetObjectiveText, GetCoinTextureString, GetRewardXP;
-local GetQuestItemLink, GetNumQuestRewards, GetRewardMoney, GetNumRewardCurrencies = GetQuestItemLink, GetNumQuestRewards, GetRewardMoney, GetNumRewardCurrencies;
-local GetRewardSkillPoints = GetRewardSkillPoints;
-local GetAvailableQuestInfo, GetNumAvailableQuests, GetNumActiveQuests = GetAvailableQuestInfo, GetNumAvailableQuests, GetNumActiveQuests;
-local GetAvailableTitle, GetActiveTitle, CloseGossip = GetAvailableTitle, GetActiveTitle, CloseGossip;
-local GetProgressText, GetTitleText, GetGreetingText = GetProgressText, GetTitleText, GetGreetingText;
-local GetGossipText, GetRewardText, GetQuestText = GetGossipText, GetRewardText, GetQuestText;
-local GetItemInfo, GetContainerNumSlots, GetContainerItemLink, EquipItemByName = GetItemInfo, GetContainerNumSlots, GetContainerItemLink, EquipItemByName;
-local InCombatLockdown, GetInventorySlotInfo, GetInventoryItemLink = InCombatLockdown, GetInventorySlotInfo, GetInventoryItemLink;
-local GetQuestCurrencyInfo, GetMaxRewardCurrencies, GetRewardTitle = GetQuestCurrencyInfo, GetMaxRewardCurrencies, GetRewardTitle;
-local GetFollowerInfo = C_Garrison.GetFollowerInfo;
-local GetQuestMoneyToGet, GetMoney, GetNumQuestCurrencies = GetQuestMoneyToGet, GetMoney, GetNumQuestCurrencies;
-local GetSuggestedGroupNum = GetSuggestedGroupNum;
-local UnitIsDead = UnitIsDead;
-local QuestIsFromAreaTrigger, QuestGetAutoAccept = QuestIsFromAreaTrigger, QuestGetAutoAccept;
-local BreakUpLargeNumbers = BreakUpLargeNumbers;
+
 -- UI
 local Storyline_NPCFrameObjectives, Storyline_NPCFrameObjectivesNo, Storyline_NPCFrameObjectivesYes = Storyline_NPCFrameObjectives, Storyline_NPCFrameObjectivesNo, Storyline_NPCFrameObjectivesYes;
 local Storyline_NPCFrameObjectivesImage = Storyline_NPCFrameObjectivesImage;
@@ -281,20 +259,6 @@ local function showQuestPortraitFrame(isOnCompleteStep)
 	end
 end
 
-local function acceptQuest()
-	if QuestFlagsPVP() then
-		QuestFrame.dialog = StaticPopup_Show("CONFIRM_ACCEPT_PVP_QUEST");
-	elseif QuestGetAutoAccept() then
-		AcknowledgeAutoAcceptQuest();
-		PlayAutoAcceptQuestSound();
-		Storyline_API.layout.hideStorylineFrame();
-	else
-		AcceptQuest();
-		-- Some quests do not automatically close the UI. Weird. TODO Look where the issue is here
-		Storyline_API.layout.hideStorylineFrame();
-	end
-end
-
 --*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
 -- EVENT PART
 --*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
@@ -360,12 +324,6 @@ eventHandlers["QUEST_DETAIL"] = function()
 		previousText = Storyline_NPCFrameObjectivesContent.Objectives;
 	end
 
-	local groupNum = GetSuggestedGroupNum();
-	if groupNum > 0 then
-		contentHeight = contentHeight +  setObjectiveText(Storyline_NPCFrameObjectivesContent.GroupSuggestion, format(QUEST_SUGGESTED_GROUP_NUM, groupNum), previousText);
-		previousText = Storyline_NPCFrameObjectivesContent.GroupSuggestion;
-	end
-
 	local rewardsBucket = Rewards.getRewards();
 
 	for bucketType, bucket in pairs(rewardsBucket) do
@@ -404,12 +362,6 @@ eventHandlers["QUEST_PROGRESS"] = function()
 		end
 		contentHeight = contentHeight + setObjectiveText(Storyline_NPCFrameObjectivesContent.Objectives, objectives, previousText);
 		previousText = Storyline_NPCFrameObjectivesContent.Objectives;
-	end
-
-	local groupNum = GetSuggestedGroupNum();
-	if groupNum > 0 then
-		contentHeight = contentHeight +  setObjectiveText(Storyline_NPCFrameObjectivesContent.GroupSuggestion, format(QUEST_SUGGESTED_GROUP_NUM, groupNum), previousText);
-		previousText = Storyline_NPCFrameObjectivesContent.GroupSuggestion;
 	end
 
 	local objectivesBucket = Rewards.getObjectiveItems();
@@ -604,10 +556,6 @@ local function displaySpecialDetails()
 			Storyline_NPCFrameChatName:Hide()
 		end
 		Storyline_QuestInfoSealFrame:Show()
-	elseif C_CampaignInfo.IsCampaignQuest(questID) and not EXCEPTION_QUESTS[questID] then
-		frameSpecialAtlas:SetAtlas( "QuestBG-"..UnitFactionGroup("player"));
-		specialFrameBackgroundTransitionator:RunValue(0, 0.8, 0.8, fadeInSpecialFrameBackground)
-		frameBackground:SetAlpha(0)
 	end
 end
 
@@ -676,7 +624,7 @@ function Storyline_API.initEventsStructure()
 					Storyline_NPCFrameObjectivesNo:Show();
 					Storyline_NPCFrameChatNextText:SetText(loc("SL_ACCEPTANCE"));
 				else
-					acceptQuest();
+					AcceptQuest();
 				end
 			end,
 		},
@@ -795,14 +743,6 @@ function Storyline_API.initEventsStructure()
 			frameSpecialAtlas:SetAlpha(0);
 			frameBackground:SetAlpha(0.5)
 
-			-- Workaround quests auto accepted from items
-			if event == "QUEST_DETAIL" then
-				local questStartItemID = ...;
-				if(questStartItemID ~= nil and questStartItemID ~= 0) or (QuestGetAutoAccept() and QuestIsFromAreaTrigger()) then
-					return
-				end
-
-			end
 			if Storyline_Data.config.disableInInstances then
 				if IsInInstance() then
 					return
@@ -848,7 +788,7 @@ function Storyline_API.initEventsStructure()
 	setTooltipAll(Storyline_NPCFrameChatPrevious, "BOTTOM", 0, 0, loc("SL_RESET"), loc("SL_RESET_TT"));
 	setTooltipForSameFrame(Storyline_NPCFrameObjectivesYes, "TOP", 0, 0,  loc("SL_ACCEPTANCE"));
 	setTooltipForSameFrame(Storyline_NPCFrameObjectivesNo, "TOP", 0, 0, loc("SL_DECLINE"));
-	Storyline_NPCFrameObjectivesYes:SetScript("OnClick", acceptQuest);
+	Storyline_NPCFrameObjectivesYes:SetScript("OnClick", AcceptQuest);
 	Storyline_NPCFrameObjectivesYes:SetScript("OnEnter", function(self)
 		playerModel:PlayAnimation(ANIMATIONS.CHEER);
 		refreshTooltipForFrame(self);

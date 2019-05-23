@@ -1,4 +1,4 @@
-## Interface: 80100
+## Interface: 11302
 ## Title: Storyline
 ## Author: Ellypse and Telkostrasz
 ## Version: @project-version@

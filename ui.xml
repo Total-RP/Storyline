@@ -161,7 +161,7 @@
 				Storyline_MainTooltip:Hide();
 			</OnLeave>
 			<PostClick>
-				Storyline_API.PlaySound("igMainMenuOptionCheckBoxOn","SFX");
+				PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON,"SFX");
 			</PostClick>
 		</Scripts>
 		<HighlightTexture file="Interface\QuestFrame\UI-QuestTitleHighlight" alphaMode="ADD"/>
@@ -679,8 +679,6 @@
 	<Include file="debug.xml"/>
 	<Include file="dialogs\dialogs.xml"/>
 	<Include file="rewards\rewards.xml"/>
-	<Include file="reputation-bar\reputation-bar.xml"/>
-
 	<Script file="layout.lua"/>
 	<Script file="utils.lua"/>
 	<Script file="events.lua"/>

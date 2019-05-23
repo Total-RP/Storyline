@@ -20,15 +20,6 @@
 -- limitations under the License.
 ----------------------------------------------------------------------------------
 
-local assert, tinsert, pairs = assert, tinsert, pairs;
-local CreateFrame = CreateFrame;
-local tsize = Storyline_API.lib.tsize;
-local format = format;
-
-local GetQuestReward, HandleModifiedItemClick, GetQuestItemLink, GameTooltip_ShowCompareItem = GetQuestReward, HandleModifiedItemClick, GetQuestItemLink, GameTooltip_ShowCompareItem;
-local getFollowerInfo = C_Garrison.GetFollowerInfo;
-local IsShiftKeyDown, IsModifiedClick = IsShiftKeyDown, IsModifiedClick;
-
 Storyline_API.rewards.buttons = {};
 local API = Storyline_API.rewards.buttons;
 local Rewards = Storyline_API.rewards;
@@ -98,10 +89,15 @@ local function decorateSkillPointButton(button, texture, name, skillPoints)
 	button.Name:SetWidth(81);
 end
 
-local function decorateSpellButton(button, texture, name, rewardSpellIndex)
+local function decorateSpellButton(button, texture, name, rewardSpellIndex, spellID)
 	button.Icon:SetTexture(texture);
 	button.Name:SetText(name);
 	button.rewardSpellIndex = rewardSpellIndex;
+	button:SetScript("OnEnter", function(self)
+		GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
+		GameTooltip:SetSpellByID(spellID)
+		GameTooltip:Show()
+	end);
 end
 
 local function decorateFollowerButton(button, garrFollowerID)
@@ -120,7 +116,7 @@ local function decorateRewardButton(button, rewardType, reward)
 	if rewardType == Rewards.REWARD_TYPES.CURRENCY then
 		decorateCurrencyButton(button, reward.index, Storyline_API.getCurrentEvent() == "QUEST_PROGRESS" and "required" or "reward", reward.icon, reward.text, reward.count);
 	elseif rewardType == Rewards.REWARD_TYPES.SPELL then
-		decorateSpellButton(button, reward.icon, reward.text, reward.rewardSpellIndex);
+		decorateSpellButton(button, reward.icon, reward.text, reward.rewardSpellIndex, reward.spellID);
 	elseif rewardType == Rewards.REWARD_TYPES.ITEMS then
 		decorateItemButton(button, reward.index, reward.rewardType, reward.icon, reward.text, reward.count, reward.isUsable, reward.quality);
 	elseif rewardType == Rewards.REWARD_TYPES.FOLLOWER then
@@ -186,10 +182,7 @@ local REWARD_BUTTON_SHARED_SCRIPTS = {
 
 local REWARDS_BUTTON_FRAME_NAME = "Storyline_RewardButton";
 local REWARD_BUTTON_FRAME_TEMPLATES = {
-	DEFAULT = "LargeQuestRewardItemButtonTemplate",
-	[Rewards.REWARD_TYPES.SPELL] = "QuestSpellTemplate, QuestInfoRewardSpellCodeTemplate",
-	[Rewards.REWARD_TYPES.SKILL_POINTS] = "Storyline_SkillPointsRewardTemplate",
-	[Rewards.REWARD_TYPES.FOLLOWER] = "Storyline_GarrisonFollowerRewardTemplate",
+	DEFAULT = "LargeQuestRewardItemButtonTemplate"
 }
 -- List of large button types, so we know to only place one of them per line instead of two (titles, followers)
 local LARGE_BUTTONS = {
@@ -241,7 +234,7 @@ local REWARDS_HEADER_MARGIN = 5;
 local REWARDS_HEADER_TEXT = {
 	[Rewards.BUCKET_TYPES.RECEIVED] = REWARD_ITEMS_ONLY,
 	[Rewards.BUCKET_TYPES.CHOICE] = REWARD_CHOICES,
-	[Rewards.BUCKET_TYPES.AURA] = REWARD_AURA,
+	[Rewards.BUCKET_TYPES.AURA] = REWARD_SPELL,
 	[Rewards.BUCKET_TYPES.FOLLOWER] = REWARD_FOLLOWER,
 	[Rewards.BUCKET_TYPES.OBJECTIVES] = TURN_IN_ITEMS,
 };

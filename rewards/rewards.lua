@@ -22,10 +22,6 @@
 ---------------------------------------------
 
 local tinsert, pairs = tinsert, pairs;
-local GetQuestItemInfo, GetNumQuestChoices = GetQuestItemInfo, GetNumQuestChoices;
-local IsFollowerCollected, IsCharacterNewlyBoosted, IsSpellKnownOrOverridesKnown, GetRewardSpell, GetNumRewardSpells = C_Garrison.IsFollowerCollected, IsCharacterNewlyBoosted, IsSpellKnownOrOverridesKnown, GetRewardSpell, GetNumRewardSpells;
-local GetCoinTextureString, GetQuestMoneyToGet, GetNumQuestItems, GetQuestCurrencyInfo, GetNumQuestCurrencies, GetMoney = GetCoinTextureString, GetQuestMoneyToGet, GetNumQuestItems, GetQuestCurrencyInfo, GetNumQuestCurrencies, GetMoney;
-local BreakUpLargeNumbers, GetRewardXP, GetNumRewardCurrencies, GetRewardTitle, GetRewardMoney, GetNumQuestRewards, GetRewardSkillPoints = BreakUpLargeNumbers, GetRewardXP, GetNumRewardCurrencies, GetRewardTitle, GetRewardMoney, GetNumQuestRewards, GetRewardSkillPoints;
 
 Storyline_API.rewards = {};
 local API = Storyline_API.rewards;
@@ -51,12 +47,8 @@ end
 local REWARD_TYPES = {
 	XP = 1,
 	MONNEY = 2,
-	PLAYER_TITLE = 3,
-	CURRENCY = 4,
-	SKILL_POINTS = 5,
 	ITEMS = 6,
-	SPELL = 7,
-	FOLLOWER = 8,
+	SPELL = 7
 }
 API.REWARD_TYPES = REWARD_TYPES;
 
@@ -79,7 +71,7 @@ local REWARD_GETTERS = {
 			if xp > 0 then
 				tinsert(rewards, {
 					text         = BreakUpLargeNumbers(xp) .. " " .. XP,
-					icon         = "Interface\\ICONS\\xp_icon",
+					icon         = 134939,
 					tooltipTitle = ERR_QUEST_REWARD_EXP_I:format(xp)
 				});
 			end
@@ -102,51 +94,6 @@ local REWARD_GETTERS = {
 					text = moneyString,
 					icon = icon,
 					tooltipTitle = ERR_QUEST_REWARD_MONEY_S:format(moneyString),
-				});
-			end
-			return rewards;
-		end,
-		[REWARD_TYPES.PLAYER_TITLE] = function()
-			local rewards = {};
-			local playerTitle = GetRewardTitle();
-			if playerTitle then
-				tinsert(rewards, {
-					text = playerTitle,
-					icon = "Interface\\ICONS\\inv_scroll_11",
-					tooltipTitle = playerTitle,
-					tooltipSub = playerTitle
-				});
-			end
-			return rewards;
-		end,
-		[REWARD_TYPES.CURRENCY] = function()
-			local rewards = {};
-			local currencyCount = GetNumRewardCurrencies();
-			for i = 1, currencyCount, 1 do
-				local name, texture, numItems = GetQuestCurrencyInfo("reward", i);
-				if name and texture and numItems then
-					tinsert(rewards, {
-						text  = name,
-						icon  = texture,
-						count = numItems,
-						index = i,
-						type  = "currency"
-					});
-				end
-			end
-			return rewards;
-		end,
-		[REWARD_TYPES.SKILL_POINTS] = function()
-			local rewards = {};
-			local skillName, skillIcon, skillPoints = GetRewardSkillPoints();
-			if skillPoints then
-				skillName = skillName or "?";
-				tinsert(rewards, {
-					text         = BONUS_SKILLPOINTS:format(skillName),
-					icon         = skillIcon,
-					skillPoints  = skillPoints,
-					type         = "skillpoint",
-					tooltipTitle = format(BONUS_SKILLPOINTS_TOOLTIP, skillPoints, skillName),
 				});
 			end
 			return rewards;
@@ -212,47 +159,15 @@ local REWARD_GETTERS = {
 				local texture, name, isTradeskillSpell, isSpellLearned, hideSpellLearnText, isBoostSpell, garrFollowerID, genericUnlock, spellID = GetRewardSpell(rewardSpellIndex);
 				local knownSpell = IsSpellKnownOrOverridesKnown(spellID);
 
-				-- Filter out already learned spell or garrison followers
-				if texture and not knownSpell and (not isBoostSpell or IsCharacterNewlyBoosted()) and (not garrFollowerID or not IsFollowerCollected(garrFollowerID)) then
-					-- Filter out tradeskill spells, boost spells, followers or spell learned, so we only have auras
-					if not isTradeskillSpell and not isBoostSpell and not garrFollowerID and not isSpellLearned then
-						tinsert(auraRewards, {
-							text   			 = name,
-							icon   			 = texture,
-							spellID			 = spellID,
-							rewardSpellIndex = rewardSpellIndex
-						});
-					end
-				end
+				tinsert(auraRewards, {
+					text   			 = name,
+					icon   			 = texture,
+					spellID			 = spellID,
+					rewardSpellIndex = rewardSpellIndex
+				});
 			end
 
 			return auraRewards;
-		end,
-	},
-	[BUCKET_TYPES.FOLLOWER] = {
-		[REWARD_TYPES.FOLLOWER] = function()
-			local followerRewards = {};
-			local numberOfSpellRewards = GetNumRewardSpells();
-
-			for rewardSpellIndex = 1, numberOfSpellRewards do
-				local texture, name, _, _, _, isBoostSpell, garrFollowerID, _, spellID = GetRewardSpell(rewardSpellIndex);
-				local knownSpell = IsSpellKnownOrOverridesKnown(spellID);
-
-				-- Filter out already learned spell or garrison followers
-				if texture and not knownSpell and (not isBoostSpell or IsCharacterNewlyBoosted()) and (not garrFollowerID or not IsFollowerCollected(garrFollowerID)) then
-					-- If we have a follower ID then it is a follower
-					if garrFollowerID then
-						tinsert(followerRewards, {
-							text   			 = name,
-							icon   			 = texture,
-							garrFollowerID   = garrFollowerID,
-							rewardSpellIndex = rewardSpellIndex
-						});
-					end
-				end
-			end
-
-			return followerRewards;
 		end,
 	}
 }
@@ -328,21 +243,6 @@ OBJECTIVES_GETTERS = {
 			});
 		end
 		return itemObjectives;
-	end,
-	[REWARD_TYPES.CURRENCY] = function()
-		local currencies = {};
-		for i = 1, GetNumQuestCurrencies() do
-			local name, texture, numItems = GetQuestCurrencyInfo("required", i);
-			tinsert(currencies, {
-				text = name,
-				icon = texture,
-				count = numItems,
-				index = i,
-				type = "currency",
-				rewardType = "required",
-			});
-		end
-		return currencies;
 	end
 }
 

@@ -39,7 +39,7 @@
 				Storyline_MainTooltip:Hide();
 			</OnLeave>
 			<PostClick>
-				Storyline_API.PlaySound("igMainMenuOptionCheckBoxOn","SFX");
+				PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON,"SFX");
 			</PostClick>
 		</Scripts>
 	</Button>
@@ -55,7 +55,7 @@
 				Storyline_MainTooltip:Hide();
 			</OnLeave>
 			<PostClick>
-				Storyline_API.PlaySound("igMainMenuOptionCheckBoxOn","SFX");
+				PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON,"SFX");
 			</PostClick>
 		</Scripts>
 	</Button>
@@ -74,7 +74,7 @@
 				Storyline_MainTooltip:Hide();
 			</OnLeave>
 			<PostClick>
-				Storyline_API.PlaySound("igMainMenuOptionCheckBoxOn","SFX");
+				PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON,"SFX");
 			</PostClick>
 		</Scripts>
 	</CheckButton>
@@ -119,7 +119,7 @@
 				Storyline_MainTooltip:Hide();
 			</OnLeave>
 			<PostClick>
-				Storyline_API.PlaySound("igMainMenuOptionCheckBoxOn","SFX");
+				PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON,"SFX");
 			</PostClick>
 		</Scripts>
 	</Button>
