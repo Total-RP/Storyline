@@ -1,3 +1,9 @@
+## Changelog for version 3.0.3.1
+
+### Fixed
+
+- Fixed the Lua error related to promises. We must not promise what we ought not.
+
 ## Changelog for version 3.0.3
 
 ### Added
