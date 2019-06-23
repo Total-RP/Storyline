@@ -148,6 +148,7 @@ local function modelsLoaded()
 	else
 		-- If there is no You model, play the read animation for the Me model.
 		playerModel:SetCustomIdleAnimationID(Storyline_API.ANIMATIONS.READING);
+		playerModel:ApplySpellVisualKit(29521, false)
 		Storyline_NPCFrameChat.bubbleTail:Hide();
 		playerModel:PlayIdleAnimation();
 	end
