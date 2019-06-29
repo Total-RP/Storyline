@@ -99,6 +99,7 @@ The frame cannot be moved when using the default position. This option requires 
 			SL_BYPASS_NPC_TT = [[Mark this NPC so that its flavor gossip dialog should always be bypassed to directly access its functionality.
 
 Useful for vendors, flight masters or tables to tend to talk to a lot.]],
+			SL_USE_DYNAMIC_BACKGROUNDS = "Use animated backgrounds based on the current zone when possible",
 		}
 	},
 

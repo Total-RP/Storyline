@@ -611,6 +611,24 @@ local function displaySpecialDetails()
 	end
 end
 
+local function displaySpecialBackgrounds()
+	if not Storyline_Data.config.dynamicBackgrounds then
+		Storyline_API.hideDynamicBackground()
+		Storyline_NPCFrameBG:Show()
+		return
+	end
+	local dynamicBackground = Storyline_API.DynamicBackgroundsManager.getCustomBackgroundForPlayer()
+
+	if dynamicBackground then
+		Storyline_API.DynamicBackgroundsManager.setDynamicBackground(dynamicBackground)
+		Storyline_NPCFrameBG:Hide()
+	else
+		Storyline_API.DynamicBackgroundsManager.hideDynamicBackground()
+		Storyline_NPCFrameBG:Show()
+	end
+end
+Storyline_API.displaySpecialBackgrounds = displaySpecialBackgrounds
+
 --*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
 -- INIT
 --*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
@@ -815,6 +833,7 @@ function Storyline_API.initEventsStructure()
 				end
 			end
 
+			displaySpecialBackgrounds()
 			if event == "QUEST_DETAIL" or event == "QUEST_COMPLETE" then
 				displaySpecialDetails();
 			end

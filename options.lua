@@ -336,6 +336,19 @@ Storyline_API.options.init = function()
 	end
 	StorylineMiscellaneousOptionsPanel.UseKeyboard:SetChecked(Storyline_Data.config.useKeyboard);
 
+	-- Use dynamic backgrounds (on by default)
+	StorylineMiscellaneousOptionsPanel.DynamicBackgrounds.Text:SetText(loc("SL_USE_DYNAMIC_BACKGROUNDS"));
+	StorylineMiscellaneousOptionsPanel.DynamicBackgrounds:SetScript("OnClick", function(self)
+		Storyline_Data.config.dynamicBackgrounds = self:GetChecked() == true;
+		if Storyline_NPCFrame:IsVisible() then
+			Storyline_API.displaySpecialBackgrounds()
+		end
+	end);
+	if Storyline_Data.config.dynamicBackgrounds == nil then
+		Storyline_Data.config.dynamicBackgrounds = true;
+	end
+	StorylineMiscellaneousOptionsPanel.DynamicBackgrounds:SetChecked(Storyline_Data.config.dynamicBackgrounds);
+
 	-- Debug mode option
 	StorylineMiscellaneousOptionsPanel.DebugMode.Text:SetText(loc("SL_CONFIG_DEBUG"));
 	StorylineMiscellaneousOptionsPanel.DebugMode.tooltip = loc("SL_CONFIG_DEBUG_TT");

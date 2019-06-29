@@ -647,6 +647,7 @@ function Storyline_API.addon:OnEnable()
 	mainFrame.chat.text:SetWidth(550);
 	Storyline_NPCFrameResizeButton.onResizeStop = function(width, height)
 		resizeChat();
+		Storyline_API.DynamicBackgroundsManager.resizeDynamicBackground();
 		Storyline_Data.config.width = width;
 		Storyline_Data.config.height = height;
 		Storyline_API.dialogs.scrollFrame.refreshMargins(width, height);
