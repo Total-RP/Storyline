@@ -50,6 +50,15 @@ local DYNAMIC_BACKGROUNDS = {
     ["1195"] = "Voldun",
     ["863"] = "Nazmir",
     ["1194"] = "Nazmir",
+    ["1355"] = "Nazjatar",
+    ["1504"] = "Nazjatar",
+    ["1528"] = "Nazjatar",
+    ["1462"] = "Mechagon",
+    ["1490"] = "Mechagon",
+    ["1491"] = "Mechagon",
+    ["1493"] = "Mechagon",
+    ["1494"] = "Mechagon",
+    ["1497"] = "Mechagon",
 
     --endregion
 
