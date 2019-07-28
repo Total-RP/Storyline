@@ -578,6 +578,12 @@ function Storyline_API.playNext(targetModel)
 	end
 end
 
+local function isQuestCampaignQuest(questId)
+	-- Special quest with sealed background
+	local questID = GetQuestID()
+	return SEAL_QUESTS[questID] ~= nil or (C_CampaignInfo.IsCampaignQuest(questID) and not EXCEPTION_QUESTS[questID])
+end
+
 local specialFrameBackgroundTransitionator = Ellyb.Transitionator();
 local function fadeInSpecialFrameBackground(value)
 	frameSpecialAtlas:SetAlpha(value);
@@ -612,6 +618,9 @@ local function displaySpecialDetails()
 end
 
 local function displaySpecialBackgrounds()
+	-- Do not display zone dynamic backgrounds for campaign quests
+	if isQuestCampaignQuest(GetQuestID()) then return end
+
 	if not Storyline_Data.config.dynamicBackgrounds then
 		Storyline_API.hideDynamicBackground()
 		Storyline_NPCFrameBG:Show()
