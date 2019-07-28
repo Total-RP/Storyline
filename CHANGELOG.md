@@ -1,3 +1,9 @@
+## Changelog for version 3.1.1
+
+### Fixed
+
+- Fixed a display issue with the new dynamic backgrounds for campaign quests. Only the campaign specific background will now be shown, and the background has proper borders fading.
+
 ## Changelog for version 3.1.0
 
 ### Added
