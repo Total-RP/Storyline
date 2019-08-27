@@ -119,14 +119,8 @@ local function getAvailableQuestsChoices()
 
 	for i = 1, numberOfAvailableQuests do
 		local title = GetAvailableTitle(i);
-		local isTrivial, frequency, isRepeatable, isLegendary, isIgnored = GetAvailableQuestInfo(i);
 		availableQuestsChoices[i] = {
-			title        = title,
-			isTrivial    = isTrivial,
-			frequency    = frequency,
-			isRepeatable = isRepeatable,
-			isLegendary  = isLegendary,
-			isIgnored    = isIgnored
+			title        = title
 		};
 	end
 	return availableQuestsChoices;
@@ -142,13 +136,9 @@ local function getActiveQuestsChoices()
 
 	for i = 1, numberOfActiveQuests do
 		local title, isComplete = GetActiveTitle(i);
-		local isTrivial, frequency, isRepeatable, isLegendary = GetAvailableQuestInfo(i);
 		local questData = {
 			title        = title,
-			isTrivial    = isTrivial,
-			isCompleted  = isComplete,
-			isRepeatable = isRepeatable,
-			isIgnored    = isLegendary
+			isCompleted  = isComplete
 		};
 		-- Place the choice in the appropriate bucket
 		if  questData.isCompleted then

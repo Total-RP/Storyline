@@ -65,46 +65,14 @@ local function getIconTextureForGossipType(gossipType)
 	return GOSSIP_ICONS_TEXTURE_PATH:format(gossipType);
 end
 
-local AVAILABLE_QUEST_ICONS_TEXTURE_PATHS = {
-	DEFAULT   = [[Interface\GossipFrame\AvailableQuestIcon]],
-	LEGENDARY = [[Interface\GossipFrame\AvailableLegendaryQuestIcon]],
-	DAILY     = [[Interface\GossipFrame\DailyQuestIcon]]
-}
-
-local function getIconTextureForAvailableQuestType(frequency, isRepeatable, isLegendary)
-	local questIcon = AVAILABLE_QUEST_ICONS_TEXTURE_PATHS.DEFAULT;
-	if isLegendary then
-		questIcon = AVAILABLE_QUEST_ICONS_TEXTURE_PATHS.LEGENDARY;
-	elseif frequency == LE_QUEST_FREQUENCY_DAILY or frequency == LE_QUEST_FREQUENCY_WEEKLY or isRepeatable then
-		questIcon = AVAILABLE_QUEST_ICONS_TEXTURE_PATHS.DAILY;
-	end
-	return questIcon;
-end
-
-local ACTIVE_QUEST_ICONS_TEXTURE_PATHS = {
-	DEFAULT   = [[Interface\GossipFrame\ActiveQuestIcon]],
-	LEGENDARY = [[Interface\GossipFrame\ActiveLegendaryQuestIcon]],
-	DAILY     = [[Interface\GossipFrame\DailyActiveQuestIcon]]
-}
-
-local function getIconTextureForActiveQuestType(frequency, isRepeatable, isLegendary)
-	local questIcon = ACTIVE_QUEST_ICONS_TEXTURE_PATHS.DEFAULT;
-	if isLegendary then
-		questIcon = ACTIVE_QUEST_ICONS_TEXTURE_PATHS.LEGENDARY;
-	elseif frequency == LE_QUEST_FREQUENCY_DAILY or frequency == LE_QUEST_FREQUENCY_WEEKLY or isRepeatable then
-		questIcon = ACTIVE_QUEST_ICONS_TEXTURE_PATHS.DAILY;
-	end
-	return questIcon;
-end
-
 local BUTTON_DECORATORS = {
 	[Dialogs.BUCKET_TYPE.COMPLETED_QUEST] = function(button, data)
 		button:SetText(data.title);
-		button:SetIcon(getIconTextureForActiveQuestType(data.frequency, data.isRepeatable, data.isLegendary));
+		button:SetIcon([[Interface\GossipFrame\ActiveQuestIcon]]);
 	end,
 	[Dialogs.BUCKET_TYPE.AVAILABLE_QUEST] = function(button, data)
 		button:SetText(data.title);
-		button:SetIcon(getIconTextureForAvailableQuestType(data.frequency, data.isRepeatable, data.isLegendary));
+		button:SetIcon([[Interface\GossipFrame\AvailableQuestIcon]]);
 		if data.isTrivial then
 			button:GreyOutIcon();
 		end
