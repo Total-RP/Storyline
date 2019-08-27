@@ -748,12 +748,6 @@ function Storyline_API.initEventsStructure()
 					return
 				end
 			end
-			if Storyline_Data.config.disableInDMF then
-				local _, _, _, mapID = UnitPosition("player");
-				if mapID and mapID == 974 then
-					return
-				end
-			end
 
 			if event == "QUEST_DETAIL" or event == "QUEST_COMPLETE" then
 				displaySpecialDetails();

@@ -171,11 +171,6 @@
 					<Anchor point="LEFT" x="250"/>
 				</Anchors>
 			</CheckButton>
-			<CheckButton parentKey="DisableInDMF" inherits="StorylineOptionsCheckboxWithTooltip">
-				<Anchors>
-					<Anchor point="TOPLEFT" relativeKey="$parent.DisableInInstances" relativePoint="BOTTOMLEFT" y="-10"/>
-				</Anchors>
-			</CheckButton>
 			<Frame name="$parentTextSpeed" parentKey="TextSpeed" inherits="StorylineOptionsTitledFrameTemplate">
 				<Layers>
 					<Layer>

@@ -250,26 +250,6 @@ Storyline_API.options.init = function()
 	end);
 	StorylineOptionsPanel.DisableInInstances:SetChecked(Storyline_Data.config.disableInInstances);
 
-	-- Disable Storyline when inside Darkmoon Faire Island
-	if Storyline_Data.config.disableInDMF == nil then
-		Storyline_Data.config.disableInDMF = false; -- By default, this option is disabled
-	end
-	StorylineOptionsPanel.DisableInDMF.Text:SetText(loc("SL_CONFIG_DISABLE_IN_DMF"));
-	StorylineOptionsPanel.DisableInDMF.tooltip = loc("SL_CONFIG_DISABLE_IN_DMF_TT");
-	StorylineOptionsPanel.DisableInDMF:SetScript("OnClick", function(self)
-		Storyline_Data.config.disableInDMF = self:GetChecked() == true;
-
-		local _, _, _, mapID = UnitPosition("player")
-		if mapID and mapID == 974 then
-			if Storyline_Data.config.disableInDMF then
-				Storyline_API.layout.showDefaultFrames();
-			else
-				Storyline_API.layout.hideDefaultFrames();
-			end
-		end
-	end);
-	StorylineOptionsPanel.DisableInDMF:SetChecked(Storyline_Data.config.disableInDMF);
-
 	-- Text speed slider
 	local textSpeedFactor = Storyline_Data.config.textSpeedFactor or 0.5;
 	local textSpeedTextSampleAnimation = 0;
