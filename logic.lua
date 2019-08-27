@@ -146,8 +146,8 @@ local function modelsLoaded()
 		end
 		Storyline_NPCFrameChat.bubbleTail:Show();
 	else
-		-- If there is no You model, play the read animation for the Me model.
-		playerModel:SetCustomIdleAnimationID(Storyline_API.ANIMATIONS.READING);
+		-- If there is no You model, play the standing animation for the Me model (reading doesn't exist in BfA).
+		playerModel:SetCustomIdleAnimationID(Storyline_API.ANIMATIONS.STANDING);
 		Storyline_NPCFrameChat.bubbleTail:Hide();
 		playerModel:PlayIdleAnimation();
 	end
