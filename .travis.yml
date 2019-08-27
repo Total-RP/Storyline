@@ -19,7 +19,7 @@ script: /home/travis/.luarocks/bin/luacheck . --no-color -qo "011"
 
 deploy:
   provider: script
-  script: curl -s https://raw.githubusercontent.com/Total-RP/packager/master/release.sh | bash -s -- -p 92398 -w 23782 -g 1.13.2 -o
+  script: curl -s https://raw.githubusercontent.com/Total-RP/packager/master/release.sh | bash -s -- -p 92398 -w 24938 -g 1.13.2 -o
   on:
     tags: true
 
