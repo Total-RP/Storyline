@@ -2,31 +2,33 @@
 # http://travis-ci.org
 
 sudo: false
-
-language: c
+language: minimal
 
 addons:
   apt:
     packages:
     - luarocks
-    - pandoc
 
-install:
-  - eval $(luarocks path --bin)
-  - luarocks install --local luacheck
+git:
+  depth: 150
+
+install: luarocks install --local luacheck
 
 # Run luacheck to make sure there is not syntax error left in the add-on
 script: /home/travis/.luarocks/bin/luacheck . --no-color -qo "011"
+
+deploy:
+  provider: script
+  script: curl -s https://raw.githubusercontent.com/Total-RP/packager/master/release.sh | bash -s -- -p 92398 -w 23782 -g 1.13.2 -o
+  on:
+    tags: true
 
 notifications:
   email:
     on_failure: always
     on_success: never
 
-# The following part is for automatic building and publishing to Curse and Wowinterface
-# We're not there yet, so I have documented this out
-after_script: curl -s https://raw.githubusercontent.com/Ellypse/packager/master/release.sh | bash -s
-
-#branches:
-#  only:
-#  - /^\d+\.\d+(\.\d+)?(-\S*)?$/
+after_failure:
+  - wget https://raw.githubusercontent.com/DiscordHooks/travis-ci-discord-webhook/master/send.sh
+  - chmod +x send.sh
+  - ./send.sh failure $WEBHOOK_URL

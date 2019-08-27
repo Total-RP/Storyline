@@ -9,7 +9,4 @@
 ## LoadOnDemand: 0
 ## SavedVariables: Storyline_Data
 
-## X-Curse-Project-ID: 92398
-## X-WoWI-ID: 23782
-
 ui.xml
