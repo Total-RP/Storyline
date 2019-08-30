@@ -23,6 +23,7 @@
 
 	<Include file="lib\lib.xml"/>
 
+	<Script file="Tutorials.lua"/>
 	<Script file="PlayerModelMixin.lua"/>
 
 	<!-- Art pieces to hide border seams
