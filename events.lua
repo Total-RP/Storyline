@@ -369,6 +369,9 @@ eventHandlers["QUEST_DETAIL"] = function()
 	local rewardsBucket = Rewards.getRewards();
 
 	for bucketType, bucket in pairs(rewardsBucket) do
+		if bucketType == Storyline_API.rewards.BUCKET_TYPES.CHOICE then
+			Storyline_API.Tutorials.trigger("RewardChoice");
+		end
 		if tsize(bucket) > 0 then
 			contentHeight = contentHeight + RewardsButtons.displayRewardsOnGrid(bucketType, bucket, Storyline_NPCFrameObjectivesContent, previousText);
 		end

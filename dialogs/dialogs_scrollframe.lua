@@ -49,6 +49,7 @@ local FRAME_PROPORTIONS = {
 
 function API.show(totalButtonHeights)
 	if totalButtonHeights and totalButtonHeights > API.getHeight() then
+		Storyline_API.Tutorials.trigger("ScrollingDialogs");
 		API.showBorderBottom();
 	end
 	scrollFrame:Show();
@@ -138,3 +139,19 @@ scrollFrame:HookScript("OnMousewheel", function(self, delta)
 		API.showBorderTop();
 	end
 end)
+
+--- Tutorials
+
+Storyline_API.Tutorials.register("ScrollingDialogs", {
+	{
+		text = "You can scroll on the list of dialog choices to see more options.",
+		point = 'TOP',
+		relPoint = 'BOTTOM',
+		shineRight = 10,
+		shineLeft = -35,
+		shineTop = 6,
+		shineBottom = 0,
+		anchor = scrollFrame,
+		shine = scrollFrame
+	}
+});
