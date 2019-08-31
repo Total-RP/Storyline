@@ -31,14 +31,3 @@ end
 function Storyline_API.Tutorials.trigger(id, step, ...)
     CustomTutorials.TriggerTutorial("Storyline" .. id, step or 1, ...);
 end
-
---- Tutorials
-
-Storyline_API.Tutorials.register("RewardChoice", {
-    {
-        text = "Select your reward by clicking on it. You can also Ctrl+Click on a reward to see what it looks like in the Dressing Room or Shift+Click a reward to create a chat link for it.",
-        point = 'LEFT',
-        relPoint = 'RIGHT',
-        anchor = Storyline_NPCFrameObjectivesContent,
-    }
-});

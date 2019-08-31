@@ -100,6 +100,12 @@ The frame cannot be moved when using the default position. This option requires 
 
 Useful for vendors, flight masters or tables to tend to talk to a lot.]],
 			SL_USE_DYNAMIC_BACKGROUNDS = "Use animated backgrounds based on the current zone when possible",
+
+			TUTORIAL_DIALOG_SCROLL = "When there are many dialog choices available, the pulsating glowing bottom border indicates that you can scroll on the list to navigate to more dialog choices.",
+			TUTORIAL_REWARD_CHOICES = [[This quest offers you to choose your reward.
+Click on the reward you want to accept.
+
+You can also %s to preview the reward's appearance in the Dressing Room or %s to create a chat link for the item.]]
 		}
 	},
 
