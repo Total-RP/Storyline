@@ -144,13 +144,14 @@ end)
 
 Storyline_API.Tutorials.register("ScrollingDialogs", {
 	{
-		text = "You can scroll on the list of dialog choices to see more options.",
+		text = Storyline_API.locale.getText("TUTORIAL_DIALOG_SCROLL"),
 		point = 'TOP',
 		relPoint = 'BOTTOM',
 		shineRight = 10,
-		shineLeft = -35,
+		shineLeft = -10,
 		shineTop = 6,
-		shineBottom = 0,
+		shineBottom = -15,
+		y = -20,
 		anchor = scrollFrame,
 		shine = scrollFrame
 	}

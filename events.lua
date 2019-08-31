@@ -369,9 +369,6 @@ eventHandlers["QUEST_DETAIL"] = function()
 	local rewardsBucket = Rewards.getRewards();
 
 	for bucketType, bucket in pairs(rewardsBucket) do
-		if bucketType == Storyline_API.rewards.BUCKET_TYPES.CHOICE then
-			Storyline_API.Tutorials.trigger("RewardChoice");
-		end
 		if tsize(bucket) > 0 then
 			contentHeight = contentHeight + RewardsButtons.displayRewardsOnGrid(bucketType, bucket, Storyline_NPCFrameObjectivesContent, previousText);
 		end
@@ -752,6 +749,13 @@ function Storyline_API.initEventsStructure()
 					else
 						Storyline_NPCFrameChatNextText:SetText(loc("SL_CONTINUE"));
 					end
+
+					local rewards = Rewards.getRewards();
+					-- If we have rewards to choose, show tutorial
+					if  tsize(rewards[Rewards.BUCKET_TYPES.CHOICE]) > 0 then
+						Storyline_API.Tutorials.trigger("RewardChoice");
+					end
+
 				elseif GetNumQuestChoices() == 1 then
 					GetQuestReward(1);
 					autoEquip(GetQuestItemLink("choice", 1));
@@ -908,4 +912,19 @@ function Storyline_API.initEventsStructure()
 
 	Storyline_NPCFrameObjectivesContent:SetScript("OnMouseDown", goBackOnRightClick);
 	Storyline_NPCFrameRewards.Content:SetScript("OnMouseDown", goBackOnRightClick);
+
+	--- Tutorials
+
+	Storyline_API.Tutorials.register("RewardChoice", {
+		{
+			text = loc("TUTORIAL_REWARD_CHOICES"):format(
+				Ellyb.System:FormatKeyboardShortcut(Ellyb.System.MODIFIERS.CTRL, Ellyb.System.CLICKS.CLICK),
+				Ellyb.System:FormatKeyboardShortcut(Ellyb.System.MODIFIERS.SHIFT, Ellyb.System.CLICKS.CLICK)
+			),
+			point = 'LEFT',
+			relPoint = 'RIGHT',
+			anchor = Storyline_NPCFrameRewards.Content,
+			x = 15
+		}
+	});
 end
