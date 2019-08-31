@@ -449,19 +449,6 @@ function Storyline_API.addon:OnEnable()
 		Storyline_Data = {};
 	end
 
-	-- Cleanup
-	local usedFields = {
-		"customscale",
-		"config",
-		"npc_blacklist",
-	};
-	for key, _ in pairs(Storyline_Data) do
-		if not tContains(usedFields, key) then
-			wipe(Storyline_Data[key]);
-			Storyline_Data[key] = nil;
-		end
-	end
-
 	if not Storyline_Data.customscale then
 		Storyline_Data.customscale = {};
 	end
