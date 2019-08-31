@@ -91,6 +91,11 @@ The frame cannot be moved when using the default position. This option requires 
 	SL_BYPASS_NPC_TT = [[Mark this NPC so that its flavor gossip dialog should always be bypassed to directly access its functionality.
 
 Useful for vendors, flight masters or tables to tend to talk to a lot.]],
+            TUTORIAL_DIALOG_SCROLL = "When there are many dialog choices available, the pulsating glowing bottom border indicates that you can scroll on the list to navigate to more dialog choices.",
+            TUTORIAL_REWARD_CHOICES = [[This quest offers you to choose your reward.
+Click on the reward you want to accept.
+
+You can also %s to preview the reward's appearance in the Dressing Room or %s to create a chat link for the item.]]
 };
 
 Storyline_API.locale.info = {}
