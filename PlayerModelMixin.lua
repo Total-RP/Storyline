@@ -6,6 +6,8 @@ local pop = table.remove;
 local GetTime = GetTime;
 local ANIMATIONS = Storyline_API.ANIMATIONS;
 
+local TRPDialogAnimationDB = LibStub:GetLibrary("TRP-Dialog-Animation-DB");
+
 local DEFAULT_PROPERTIES = {
 	scale = 1.45,
 	feet = 0.4,
@@ -17,6 +19,11 @@ local DEFAULT_PROPERTIES = {
 local MODELS_WITH_BROKEN_ANIMATIONS = {
 	2173915, -- Male Kul'tirans
 	1721003, -- Male Kul'tirans
+}
+
+local MANUALLY_ANIMATED_MODELS = {
+	120791, -- Classic night elf male
+	120590, -- Classic night elf female
 }
 
 ---@class Storyline_PlayerModelMixin : CinematicModel
@@ -81,6 +88,10 @@ function Storyline_PlayerModelMixin:SetModelUnit(unit, animateIntoPosition)
 	end
 
 	return self.modelLoadedPromise;
+end
+
+function Storyline_PlayerModelMixin:RequiresManualAnimationTiming()
+	return tContains(MANUALLY_ANIMATED_MODELS, self:GetModelFileID())
 end
 
 function Storyline_PlayerModelMixin:DisplayDead()
@@ -186,6 +197,11 @@ function Storyline_PlayerModelMixin:SetAnimationWithFailSafe(animationID)
 	else
 		self.animationStartedTime = GetTime();
 		self:SetAnimation(animationID);
+		if self:RequiresManualAnimationTiming() then
+			C_Timer.After(TRPDialogAnimationDB:GetAnimationDuration(self:GetModelFileIDAsString(), animationID), function()
+				self:OnAnimFinished(true)
+			end)
+		end
 	end
 end
 
@@ -193,7 +209,14 @@ function Storyline_PlayerModelMixin:ReplayAnimation()
 	self:SetAnimationWithFailSafe(self.currentAnimation);
 end
 
-function Storyline_PlayerModelMixin:OnAnimFinished()
+function Storyline_PlayerModelMixin:OnAnimFinished(manually)
+
+	if self:RequiresManualAnimationTiming() and not manually then
+		-- In case of manual animations, if we did not came here manually it means the game sent the invalid OnAnimFinished script (as sadly expected)
+		-- We ignore it, this function will be called again manually after the timing is over
+		return
+	end
+
 	-- Do not do anything if we are not currently playing a animation sequence
 	if not self.isPlayingAnimationSequence then
 		return
