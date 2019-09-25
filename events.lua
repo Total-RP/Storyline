@@ -779,7 +779,7 @@ function Storyline_API.initEventsStructure()
 				local firstChoice, bucketType, index = Dialogs.getFirstChoice(Dialogs.EVENT_TYPES.GOSSIP_SHOW);
 
 				if firstChoice and Dialogs.getDialogChoiceSelectorForEventType(Dialogs.EVENT_TYPES.GOSSIP_SHOW, bucketType) then
-					debug(("GOSSIP_SHOW – Finish method : Using selector method found for bucket type %s at index %s."):format(bucketType, index));
+					debug(("GOSSIP_SHOW – Finish method : Using selector method found for bucket type %s at index %s."):format(tostring(bucketType), tostring(index)));
 					Dialogs.getDialogChoiceSelectorForEventType(Dialogs.EVENT_TYPES.GOSSIP_SHOW, bucketType)(index);
 				else
 					debug("GOSSIP_SHOW – Finish method : No valid options found, fallback to closing dialog.");
