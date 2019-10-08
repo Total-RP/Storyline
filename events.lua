@@ -275,7 +275,7 @@ local function showQuestPortraitFrame(isOnCompleteStep)
 
 	if questPortrait and questPortrait ~= 0 then
 		QuestFrame_ShowQuestPortrait(Storyline_NPCFrame, questPortrait, questPortraitMount, questPortraitText, questPortraitName, -16, -48);
-		QuestNPCModel:SetFrameStrata("LOW")
+		QuestModelScene:SetFrameStrata("LOW")
 	else
 		QuestFrame_HideQuestPortrait();
 	end
