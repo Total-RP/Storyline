@@ -59,7 +59,7 @@ local function getGossipChoices()
 	return gossipChoices;
 end
 
-local NUMBER_OF_PARAMETERS_FOR_AVAILABLE_QUESTS = 7;
+local NUMBER_OF_PARAMETERS_FOR_AVAILABLE_QUESTS = 8;
 local function getGossipAvailableQuestsChoices()
 	local numberOfAvailableQuests = GetNumGossipAvailableQuests();
 
@@ -81,7 +81,7 @@ local function getGossipAvailableQuestsChoices()
 	return availableQuestsChoices;
 end
 
-local NUMBER_OF_PARAMETERS_FOR_ACTIVE_QUESTS = 6;
+local NUMBER_OF_PARAMETERS_FOR_ACTIVE_QUESTS = 7;
 local function getGossipActiveQuestsChoices()
 	local numberOfActiveQuests = GetNumGossipActiveQuests();
 
@@ -209,7 +209,7 @@ local DIALOG_CHOICES_SELECTORS = {
 }
 
 function API.getDialogChoiceSelectorForEventType(eventType, bucketType)
-	assert(DIALOG_CHOICES_SELECTORS[eventType], ("No dialog choice selector for event type %s!"):format(eventType));
-	assert(DIALOG_CHOICES_SELECTORS[eventType][bucketType], ("No dialog choice selector for bucket type %s in event type %s!"):format(bucketType, eventType));
+	assert(DIALOG_CHOICES_SELECTORS[eventType], ("No dialog choice selector for event type %s!"):format(tostring(eventType)));
+	assert(DIALOG_CHOICES_SELECTORS[eventType][bucketType], ("No dialog choice selector for bucket type %s in event type %s!"):format(tostring(bucketType), tostring(eventType)));
 	return DIALOG_CHOICES_SELECTORS[eventType][bucketType];
 end

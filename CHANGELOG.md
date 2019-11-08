@@ -1,3 +1,13 @@
+## Changelog for version 3.1.2
+
+### Fixed
+
+- Updated the add-on to be fully compatible with patch 8.2.5, including fixing a change causing dialogs with multiple quests available to have the wrong text for the quest titles or to cause Lua errors.
+
+### Added
+
+- Added popup tutorial frames that will appear once to explain to new users some of the hard to discover behavior of Storyline. For now this includes scrolling on the list of dialog options when there are more available, and clicking on a reward to choose it.
+
 ## Changelog for version 3.1.1
 
 ### Fixed

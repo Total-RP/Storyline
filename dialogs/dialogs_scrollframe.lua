@@ -49,6 +49,7 @@ local FRAME_PROPORTIONS = {
 
 function API.show(totalButtonHeights)
 	if totalButtonHeights and totalButtonHeights > API.getHeight() then
+		Storyline_API.Tutorials.trigger("ScrollingDialogs");
 		API.showBorderBottom();
 	end
 	scrollFrame:Show();

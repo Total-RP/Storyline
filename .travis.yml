@@ -20,7 +20,7 @@ script: /home/travis/.luarocks/bin/luacheck . --no-color -qo "011"
 
 deploy:
   provider: script
-  script: curl -s https://raw.githubusercontent.com/BigWigsMods/packager/master/release.sh | bash -s -- -g 8.2.0 -o
+  script: curl -s https://raw.githubusercontent.com/BigWigsMods/packager/master/release.sh | bash -s -- -g 8.2.5 -o
   on:
     tags: true
 

@@ -4,3 +4,6 @@
 [submodule "lib/Ellyb"]
 	path = lib/Ellyb
 	url = https://github.com/Ellypse/Ellyb
+[submodule "lib/CustomTutorials-2.1"]
+	path = lib/CustomTutorials-2.1
+	url = https://github.com/Jaliborc/CustomTutorials-2.1.git
