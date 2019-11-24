@@ -16,9 +16,6 @@
 --- limitations under the License.
 ----------------------------------------------------------------------------------
 
-local DynamicBackgroundsManager = {}
-Storyline_API.DynamicBackgroundsManager = DynamicBackgroundsManager
-
 local DYNAMIC_BACKGROUNDS = {
 
     --region Battle for Azeroth
@@ -176,35 +173,121 @@ local function getBestKnownMapId()
     return C_Map.GetFallbackWorldMapID();
 end
 
-local dynamicBackgroundFrame = Storyline_NPCFrame.dynamicBackground
-local garrisonBackgroundRatio = 1024 / 287
-
-do
-    local region = dynamicBackgroundFrame:CreateTexture(nil, "ARTWORK")
-    dynamicBackgroundFrame.backgroundLayer = region
-    region:SetPoint("TOP", 0, 0)
-    region:SetPoint("BOTTOM", 0, 0)
-    region:SetAlpha(0.5)
-
-    region = dynamicBackgroundFrame:CreateTexture(nil, "ARTWORK", nil, 1)
-    dynamicBackgroundFrame.middlegroundLayer = region
-    region:SetPoint("TOP", 0, 0)
-    region:SetPoint("BOTTOM", 0, 0)
-    region:SetAlpha(0.5)
-
-    region = dynamicBackgroundFrame:CreateTexture(nil, "ARTWORK", nil, 2)
-    dynamicBackgroundFrame.foregroundLayer = region
-    region:SetPoint("TOP", 0, 0)
-    region:SetPoint("BOTTOM", 0, 20)
-    region:SetAlpha(0.5)
+local function getCustomBackgroundForPlayer()
+    return DYNAMIC_BACKGROUNDS[tostring(getBestKnownMapId())]
 end
 
-local function applyGarrisonBackgroundAtlas(self, texture, textureCoordRangeKey, atlas)
+---@class StorylineBackgroundTexture: Texture
+StorylineBackgroundTexture = {}
+
+local DEFAULT_BACKGROUND_TEXTURE = [[Interface\DRESSUPFRAME\DressUpBackground-NightElf1]]
+
+-- This part is copied from Blizzard's QuestInfo.lua, as it is not exposed via a proper API
+local SEAL_QUESTS = {
+    [40519] = { bgAtlas = "QuestBG-Alliance", text = "|cff042c54"..QUEST_KING_VARIAN_WRYNN.."|r", sealAtlas = "Quest-Alliance-WaxSeal"},
+    [43926] = { bgAtlas = "QuestBG-Horde", text = "|cff480404"..QUEST_WARCHIEF_VOLJIN.."|r", sealAtlas = "Quest-Horde-WaxSeal"},
+    [47221] = { bgAtlas = "QuestBG-TheHandofFate", },
+    [47835] = { bgAtlas = "QuestBG-TheHandofFate", },
+    [49929] = { bgAtlas = "QuestBG-Alliance", text = "|cff042c54"..QUEST_KING_ANDUIN_WRYNN.."|r", sealAtlas = "Quest-Alliance-WaxSeal" },
+    [49930] = { bgAtlas = "QuestBG-Horde", text = "|cff480404"..QUEST_WARCHIEF_SYLVANAS_WINDRUNNER.."|r", sealAtlas = "Quest-Horde-WaxSeal" },
+    [50476] = { bgAtlas = "QuestBG-Horde", sealAtlas = "Quest-Horde-WaxSeal" },
+    -- BfA start quests
+    [46727] = { bgAtlas = "QuestBG-Alliance", text = "|cff042c54"..QUEST_KING_ANDUIN_WRYNN.."|r", sealAtlas = "Quest-Alliance-WaxSeal" },
+    [50668] = { bgAtlas = "QuestBG-Horde", text = "|cff480404"..QUEST_WARCHIEF_SYLVANAS_WINDRUNNER.."|r", sealAtlas = "Quest-Horde-WaxSeal"},
+
+    [51795] = { bgAtlas = "QuestBG-Alliance" },
+    [52058] = { bgAtlas = "QuestBG-Alliance", text = "|cff042c54"..QUEST_KING_ANDUIN_WRYNN.."|r", sealAtlas = "Quest-Alliance-WaxSeal"},
+
+    [51796] = { bgAtlas = "QuestBG-Horde" },
+
+    [53372] = { bgAtlas = "QuestBG-Horde", text = "|cff480404"..QUEST_WARCHIEF_SYLVANAS_WINDRUNNER.."|r", sealAtlas = "Quest-Horde-WaxSeal"},
+    [53370] = { bgAtlas = "QuestBG-Alliance", text = "|cff042c54"..QUEST_KING_ANDUIN_WRYNN.."|r", sealAtlas = "Quest-Alliance-WaxSeal"},
+};
+
+function Storyline_API.isASealedQuest(questId)
+    return SEAL_QUESTS[questId] ~= nil
+end
+local EXCEPTION_QUESTS = {
+    [53029] = true,
+    [53026] = true,
+    [51211] = true,
+    [52428] = true,
+};
+
+function StorylineBackgroundTexture:OnLoad()
+    self.dimmingLayer:SetVertexColor(0.7, 0.7, 0.7, 1)
+    self.SealText:SetFontObjectsToTry("QuestFont_Huge", "QuestFont_Large", "Fancy14Font", "Fancy12Font");
+end
+
+function StorylineBackgroundTexture:RefreshBackground()
+
+    self.SealTexture:Hide()
+    self.SealText:Hide()
+
+    local questId = GetQuestID()
+
+    -- Special waxed seal quests
+    if SEAL_QUESTS[questId] ~= nil then
+        local specialQuestDisplayInfo = SEAL_QUESTS[questId];
+        self.backgroundLayer:SetAtlas(specialQuestDisplayInfo.bgAtlas);
+        self.backgroundLayer:SetTexCoord(0.2, 0.99, 0.5, 0.95)
+        self.dimmingLayer:SetAlpha(0.5)
+        self.backgroundLayer:Show()
+        self.middlegroundLayer:Hide()
+        self.foregroundLayer:Hide()
+
+        if specialQuestDisplayInfo.sealAtlas then
+            self.SealTexture:Show();
+            self.SealTexture:SetAtlas(specialQuestDisplayInfo.sealAtlas);
+        end
+
+        if specialQuestDisplayInfo.text then
+            self.SealText:Show();
+            self.SealText:SetText(specialQuestDisplayInfo.text);
+        end
+
+        -- War campaign quests, with a faction themed background
+    elseif C_CampaignInfo.IsCampaignQuest(questId) and not EXCEPTION_QUESTS[questId] then
+        self.backgroundLayer:SetAtlas( "QuestBG-" .. UnitFactionGroup("player"));
+        self.backgroundLayer:SetTexCoord(0.2, 0.99, 0.5, 0.95)
+        self.dimmingLayer:SetAlpha(0.5)
+        self.backgroundLayer:Show()
+        self.middlegroundLayer:Hide()
+        self.foregroundLayer:Hide()
+
+        -- Dynamic backgrounds
+    elseif Storyline_Data.config.dynamicBackgrounds and getCustomBackgroundForPlayer() then
+        local dynamicBackground = getCustomBackgroundForPlayer()
+
+        self:ApplyGarrisonBackgroundAtlas(self.backgroundLayer, "locBackTexCoordRange", "_GarrMissionLocation-" .. dynamicBackground .. "-Back")
+        self:ApplyGarrisonBackgroundAtlas(self.middlegroundLayer, "locMidTexCoordRange", "_GarrMissionLocation-" .. dynamicBackground .. "-Mid")
+        self:ApplyGarrisonBackgroundAtlas(self.foregroundLayer, "locForeTexCoordRange", "_GarrMissionLocation-" .. dynamicBackground .. "-Fore")
+
+        self.dimmingLayer:SetAlpha(0.7)
+
+        -- Regular class themed backgrounds
+    else
+        local classFilename = select(2, UnitClass("player"))
+        if classFilename then
+            self.backgroundLayer:SetAtlas("dressingroom-background-" .. classFilename)
+            self.backgroundLayer:SetTexCoord(0, 1, 0.25, 0.75)
+        else
+            self.backgroundLayer:SetTexture(DEFAULT_BACKGROUND_TEXTURE)
+        end
+        self.dimmingLayer:SetAlpha(0.7)
+        self.backgroundLayer:Show()
+        self.middlegroundLayer:Hide()
+        self.foregroundLayer:Hide()
+    end
+
+end
+
+function StorylineBackgroundTexture:ApplyGarrisonBackgroundAtlas(texture, textureCoordRangeKey, atlas)
     if atlas then
         local info = C_Texture.GetAtlasInfo(atlas);
         if info and info.width and info.width ~= 0 then
             texture:SetAtlas(atlas, true);
-            self[textureCoordRangeKey] = texture:GetWidth() / info.width;
+            texture:SetTexCoord(0.25, 0.75, 0, 1)
             texture:Show();
         else
             texture:Hide();
@@ -212,32 +295,4 @@ local function applyGarrisonBackgroundAtlas(self, texture, textureCoordRangeKey,
     else
         texture:Hide();
     end
-end
-
-function Storyline_API.DynamicBackgroundsManager.getCustomBackgroundForPlayer()
-    return DYNAMIC_BACKGROUNDS[tostring(getBestKnownMapId())]
-end
-
-function Storyline_API.DynamicBackgroundsManager.setDynamicBackground(atlasName)
-    dynamicBackgroundFrame.backgroundLayer:Show()
-    dynamicBackgroundFrame.middlegroundLayer:Show()
-    dynamicBackgroundFrame.foregroundLayer:Show()
-
-    applyGarrisonBackgroundAtlas(dynamicBackgroundFrame, dynamicBackgroundFrame.backgroundLayer, "locBackTexCoordRange", "_GarrMissionLocation-" .. atlasName .. "-Back")
-    applyGarrisonBackgroundAtlas(dynamicBackgroundFrame, dynamicBackgroundFrame.middlegroundLayer, "locMidTexCoordRange", "_GarrMissionLocation-" .. atlasName .. "-Mid")
-    applyGarrisonBackgroundAtlas(dynamicBackgroundFrame, dynamicBackgroundFrame.foregroundLayer, "locForeTexCoordRange", "_GarrMissionLocation-" .. atlasName .. "-Fore")
-
-    Storyline_API.DynamicBackgroundsManager.resizeDynamicBackground()
-end
-
-function Storyline_API.DynamicBackgroundsManager.hideDynamicBackground()
-    dynamicBackgroundFrame.backgroundLayer:Hide()
-    dynamicBackgroundFrame.middlegroundLayer:Hide()
-    dynamicBackgroundFrame.foregroundLayer:Hide()
-end
-
-function Storyline_API.DynamicBackgroundsManager.resizeDynamicBackground()
-    dynamicBackgroundFrame.backgroundLayer:SetWidth(dynamicBackgroundFrame.backgroundLayer:GetHeight() * garrisonBackgroundRatio)
-    dynamicBackgroundFrame.middlegroundLayer:SetWidth(dynamicBackgroundFrame.middlegroundLayer:GetHeight() * garrisonBackgroundRatio)
-    dynamicBackgroundFrame.foregroundLayer:SetWidth(dynamicBackgroundFrame.foregroundLayer:GetHeight() * garrisonBackgroundRatio)
 end

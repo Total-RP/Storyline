@@ -89,10 +89,6 @@ local BONUS_SKILLPOINTS = BONUS_SKILLPOINTS;
 local ITEM_QUALITY_COLORS = ITEM_QUALITY_COLORS;
 local REQUIRED_MONEY = REQUIRED_MONEY;
 local QUEST_SUGGESTED_GROUP_NUM, QUEST_OBJECTIVES = QUEST_SUGGESTED_GROUP_NUM, QUEST_OBJECTIVES;
----@type Texture
-local frameBackground = Storyline_NPCFrameBG;
----@type Texture
-local frameSpecialAtlas = Storyline_NPCFrameSpecialAtlas;
 
 --region Sealed quest info
 local SEAL_QUESTS = {
@@ -578,66 +574,6 @@ function Storyline_API.playNext(targetModel)
 	end
 end
 
-local function isQuestCampaignQuest(questId)
-	-- Special quest with sealed background
-	local questID = GetQuestID()
-	return SEAL_QUESTS[questID] ~= nil or (C_CampaignInfo.IsCampaignQuest(questID) and not EXCEPTION_QUESTS[questID])
-end
-
-local specialFrameBackgroundTransitionator = Ellyb.Transitionator();
-local function fadeInSpecialFrameBackground(value)
-	frameSpecialAtlas:SetAlpha(value);
-end
-local function displaySpecialDetails()
-	-- Special quest with sealed background
-	local questID = GetQuestID()
-	if SEAL_QUESTS[questID] then
-		local specialQuestDisplayInfo = SEAL_QUESTS[questID];
-		if specialQuestDisplayInfo.bgAtlas then
-			frameSpecialAtlas:SetAtlas(specialQuestDisplayInfo.bgAtlas);
-			specialFrameBackgroundTransitionator:RunValue(0, 0.8, 0.8, fadeInSpecialFrameBackground)
-			frameBackground:SetAlpha(0)
-		end
-
-		if specialQuestDisplayInfo.sealAtlas then
-			Storyline_QuestInfoSealFrame:Show();
-			Storyline_QuestInfoSealFrame.Texture:SetAtlas(specialQuestDisplayInfo.sealAtlas);
-		end
-
-		if specialQuestDisplayInfo.text then
-			Storyline_QuestInfoSealFrame:Show();
-			Storyline_QuestInfoSealFrame.Text:SetText(specialQuestDisplayInfo.text);
-			Storyline_NPCFrameChatName:Hide()
-		end
-		Storyline_QuestInfoSealFrame:Show()
-	elseif C_CampaignInfo.IsCampaignQuest(questID) and not EXCEPTION_QUESTS[questID] then
-		frameSpecialAtlas:SetAtlas( "QuestBG-"..UnitFactionGroup("player"));
-		specialFrameBackgroundTransitionator:RunValue(0, 0.8, 0.8, fadeInSpecialFrameBackground)
-		frameBackground:SetAlpha(0)
-	end
-end
-
-local function displaySpecialBackgrounds()
-	-- Do not display zone dynamic backgrounds for campaign quests
-	if isQuestCampaignQuest(GetQuestID()) then return end
-
-	if not Storyline_Data.config.dynamicBackgrounds then
-		Storyline_API.hideDynamicBackground()
-		Storyline_NPCFrameBG:Show()
-		return
-	end
-	local dynamicBackground = Storyline_API.DynamicBackgroundsManager.getCustomBackgroundForPlayer()
-
-	if dynamicBackground then
-		Storyline_API.DynamicBackgroundsManager.setDynamicBackground(dynamicBackground)
-		Storyline_NPCFrameBG:Hide()
-	else
-		Storyline_API.DynamicBackgroundsManager.hideDynamicBackground()
-		Storyline_NPCFrameBG:Show()
-	end
-end
-Storyline_API.displaySpecialBackgrounds = displaySpecialBackgrounds
-
 --*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
 -- INIT
 --*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
@@ -820,15 +756,6 @@ function Storyline_API.initEventsStructure()
 	for event, info in pairs(EVENT_INFO) do
 		Ellyb.GameEvents.registerCallback(event, function(...)
 
-			-- Reset special frame stuff
-			-- TODO Move that in a nice place later
-			Storyline_QuestInfoSealFrame.Texture:SetTexture(nil);
-			Storyline_QuestInfoSealFrame.Text:SetText("");
-			Storyline_QuestInfoSealFrame:Hide();
-			Storyline_NPCFrameChatName:Show();
-			frameSpecialAtlas:SetAlpha(0);
-			frameBackground:SetAlpha(0.5)
-
 			-- Workaround quests auto accepted from items
 			if event == "QUEST_DETAIL" then
 				local questStartItemID = ...;
@@ -847,11 +774,6 @@ function Storyline_API.initEventsStructure()
 				if mapID and mapID == 974 then
 					return
 				end
-			end
-
-			displaySpecialBackgrounds()
-			if event == "QUEST_DETAIL" or event == "QUEST_COMPLETE" then
-				displaySpecialDetails();
 			end
 
 			-- Thanks to Blizzard for firing GOSSIP_SHOW and then GOSSIP_CLOSED when ForceGossip is false...
@@ -943,3 +865,4 @@ function Storyline_API.initEventsStructure()
 		}
 	});
 end
+

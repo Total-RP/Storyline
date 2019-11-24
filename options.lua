@@ -303,7 +303,7 @@ Storyline_API.options.init = function()
 	StorylineTextOptionsPanel.Title:SetText(loc("SL_CONFIG_STYLING_OPTIONS"));
 	StorylineTextOptionsPanel.SubText:SetText(loc("SL_CONFIG_STYLING_OPTIONS_SUBTEXT"));
 
-	decorateTextOptions(loc("SL_CONFIG_QUEST_TITLE"), "QuestTitle", Storyline_NPCFrameTitle);
+	decorateTextOptions(loc("SL_CONFIG_QUEST_TITLE"), "QuestTitle", Storyline_NPCFrame.Banner.Title);
 	decorateTextOptions(loc("SL_CONFIG_DIALOG_TEXT"), "DialogText", Storyline_NPCFrameChatText);
 	decorateTextOptions(loc("SL_CONFIG_NPC_NAME"), "NPCName", Storyline_NPCFrameChatName);
 	decorateTextOptions(loc("SL_CONFIG_NEXT_ACTION"), "NextAction", Storyline_NPCFrameChatNextText);

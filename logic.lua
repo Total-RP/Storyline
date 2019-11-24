@@ -183,6 +183,9 @@ local alphaTransitionator = Ellyb.Transitionator();
 local function animateInModels()
 	alphaTransitionator:RunValue(0, 1, 0.5, setModelsAlpha)
 end
+
+---@type StorylineBackgroundTexture
+local background = mainFrame.Background
 ---
 -- Start a dialog with unit ID targetType
 -- @param targetType
@@ -191,33 +194,50 @@ end
 -- @param eventInfo
 --
 function Storyline_API.startDialog(targetType, fullText, event, eventInfo)
+
+	local questId = GetQuestID()
+	background:RefreshBackground()
+
 	mainFrame.debug.text:SetText(event);
 
 	mainFrame.models.you.npc_id = Storyline_API.getNpcId();
 
-	local targetName = UnitName(targetType);
-
-	if targetName and targetName:len() > 0 and targetName ~= UNKNOWN then
-		mainFrame.chat.name:SetText(targetName);
+	if Storyline_API.isASealedQuest(questId) then
+		mainFrame.chat.name:Hide()
 	else
-		if eventInfo.nameGetter and eventInfo.nameGetter() then
-			mainFrame.chat.name:SetText(eventInfo.nameGetter());
-		else
-			mainFrame.chat.name:SetText("");
+		local targetName = UnitName(targetType) or ""
+		if (not targetName or targetName:len() > 0 or targetName ~= UNKNOWN) and eventInfo.nameGetter and eventInfo.nameGetter() then
+			targetName = eventInfo.nameGetter()
 		end
+		mainFrame.chat.name:SetText(targetName)
+		mainFrame.chat.name:Show()
 	end
 
+
 	if eventInfo.titleGetter and eventInfo.titleGetter() and eventInfo.titleGetter():len() > 0 then
-		mainFrame.banner:Show();
-		mainFrame.title:SetText(eventInfo.titleGetter());
-		if eventInfo.getTitleColor and eventInfo.getTitleColor() then
-			mainFrame.title:SetTextColor(eventInfo.getTitleColor());
+		mainFrame.Banner:Show();
+
+		if C_CampaignInfo.IsCampaignQuest(questId) then
+			local faction = UnitFactionGroup("player");
+			if faction == "Horde" then
+				mainFrame.Banner.FactionIcon:SetAtlas("bfa-landingbutton-horde-up")
+			else
+				mainFrame.Banner.FactionIcon:SetAtlas("bfa-landingbutton-alliance-up")
+			end
+			mainFrame.Banner.FactionIcon:Show()
 		else
-			mainFrame.title:SetTextColor(0.95, 0.95, 0.95);
+			mainFrame.Banner.FactionIcon:Hide()
+		end
+
+		mainFrame.Banner.Title:SetText(eventInfo.titleGetter());
+		if eventInfo.getTitleColor and eventInfo.getTitleColor() then
+			mainFrame.Banner.Title:SetTextColor(eventInfo.getTitleColor());
+		else
+			mainFrame.Banner.Title:SetTextColor(0.95, 0.95, 0.95);
 		end
 	else
-		mainFrame.title:SetText("");
-		mainFrame.banner:Hide();
+		mainFrame.Banner.FactionIcon:Hide()
+		mainFrame.Banner:Hide();
 	end
 
 	-- Load player in the left model
@@ -506,7 +526,6 @@ function Storyline_API.addon:OnEnable()
 
 	Storyline_API.locale.init();
 
-	Storyline_NPCFrameBG:SetDesaturated(true);
 	mainFrame.chat.next:RegisterForClicks("LeftButtonUp", "RightButtonUp", "MiddleButtonUp");
 	mainFrame.chat.next:SetScript("OnClick", function(self, button)
 		if button == "RightButton" then
@@ -634,7 +653,6 @@ function Storyline_API.addon:OnEnable()
 	mainFrame.chat.text:SetWidth(550);
 	Storyline_NPCFrameResizeButton.onResizeStop = function(width, height)
 		resizeChat();
-		Storyline_API.DynamicBackgroundsManager.resizeDynamicBackground();
 		Storyline_Data.config.width = width;
 		Storyline_Data.config.height = height;
 		Storyline_API.dialogs.scrollFrame.refreshMargins(width, height);
@@ -671,4 +689,9 @@ function Storyline_API.addon:OnEnable()
 	end);
 
 	Storyline_API.options.init();
+
+	Storyline_NPCFrame.Background.SealTexture:ClearAllPoints()
+	Storyline_NPCFrame.Background.SealTexture:SetPoint("BOTTOMRIGHT", Storyline_NPCFrameChatName, "TOPRIGHT", 0, 20)
+	Storyline_NPCFrame.Background.SealText:ClearAllPoints()
+	Storyline_NPCFrame.Background.SealText:SetPoint("BOTTOMRIGHT", Storyline_NPCFrame.Background.SealTexture, "BOTTOMLEFT", -10, 0)
 end
