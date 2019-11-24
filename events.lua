@@ -832,7 +832,7 @@ function Storyline_API.initEventsStructure()
 			-- Workaround quests auto accepted from items
 			if event == "QUEST_DETAIL" then
 				local questStartItemID = ...;
-				if(questStartItemID ~= nil and questStartItemID ~= 0) or (QuestGetAutoAccept() and QuestIsFromAreaTrigger()) then
+				if (questStartItemID ~= nil and questStartItemID ~= 0) or (QuestGetAutoAccept() and QuestIsFromAreaTrigger()) or GetQuestID() == 0 then
 					return
 				end
 
