@@ -123,14 +123,18 @@ local REWARD_GETTERS = {
 			local rewards = {};
 			local currencyCount = GetNumRewardCurrencies();
 			for i = 1, currencyCount, 1 do
-				local name, texture, numItems = GetQuestCurrencyInfo("reward", i);
+				local name, texture, numItems, quality = GetQuestCurrencyInfo("reward", i);
 				if name and texture and numItems then
+					local currencyID = GetQuestCurrencyID("reward", i);
+					name, texture, _, quality = CurrencyContainerUtil.GetCurrencyContainerInfo(currencyID, numItems, name, texture, quality);
 					tinsert(rewards, {
 						text  = name,
 						icon  = texture,
 						count = numItems,
 						index = i,
-						type  = "currency"
+						type  = "currency",
+						quality = quality,
+						currencyID = currencyID
 					});
 				end
 			end
