@@ -24,6 +24,7 @@ local MODELS_WITH_BROKEN_ANIMATIONS = {
 local MANUALLY_ANIMATED_MODELS = {
 	120791, -- Classic night elf male
 	120590, -- Classic night elf female
+	921844, -- Retail night elf female
 }
 
 ---@class Storyline_PlayerModelMixin : CinematicModel
