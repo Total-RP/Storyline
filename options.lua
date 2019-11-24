@@ -70,7 +70,7 @@ local function decorateTextOptions(title, optionKey, affectedText)
 		affectedText:SetFont(font, scale, outline);
 		StorylineTextOptionsPanel[optionKey].TextSample:SetFont(font, scale, outline);
 		Storyline_Data.config[optionKey].Size = scale;
-		Storyline_NPCFrameChat:SetHeight(Storyline_NPCFrameChatText:GetHeight() + Storyline_NPCFrameChatName:GetHeight() + Storyline_NPCFrameChatNextText:GetHeight() + 50);
+		--Storyline_NPCFrameChat:SetHeight(Storyline_NPCFrameChatText:GetHeight() + Storyline_NPCFrameChatName:GetHeight() + Storyline_NPCFrameChatNextText:GetHeight() + 50);
 	end);
 	StorylineTextOptionsPanel[optionKey].SizeSlider:SetValue(Storyline_Data.config[optionKey].Size or select(2, affectedText:GetFont()));
 
@@ -304,9 +304,9 @@ Storyline_API.options.init = function()
 	StorylineTextOptionsPanel.SubText:SetText(loc("SL_CONFIG_STYLING_OPTIONS_SUBTEXT"));
 
 	decorateTextOptions(loc("SL_CONFIG_QUEST_TITLE"), "QuestTitle", Storyline_NPCFrame.Banner.Title);
-	decorateTextOptions(loc("SL_CONFIG_DIALOG_TEXT"), "DialogText", Storyline_NPCFrameChatText);
-	decorateTextOptions(loc("SL_CONFIG_NPC_NAME"), "NPCName", Storyline_NPCFrameChatName);
-	decorateTextOptions(loc("SL_CONFIG_NEXT_ACTION"), "NextAction", Storyline_NPCFrameChatNextText);
+	--decorateTextOptions(loc("SL_CONFIG_DIALOG_TEXT"), "DialogText", Storyline_NPCFrameChatText);
+	--decorateTextOptions(loc("SL_CONFIG_NPC_NAME"), "NPCName", Storyline_NPCFrameChatName);
+	--decorateTextOptions(loc("SL_CONFIG_NEXT_ACTION"), "NextAction", Storyline_NPCFrameChatNextText);
 	decorateTextTemplateOptions(loc("SL_CONFIG_DIALOG_CHOICES"), "DialogOptions", Storyline_API.dialogs.buttons.getDefaultFontStyle(), Storyline_API.dialogs.buttons.setFontStyle);
 
 	-- Miscellaneous options panel

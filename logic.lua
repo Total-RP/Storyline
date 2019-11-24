@@ -11,12 +11,17 @@
 -- http://www.apache.org/licenses/LICENSE-2.0
 --
 -- Unless required by applicable law or agreed to in writing, software
--- distributed under the License is distributed on an "AS IS" BASIS,
+-- distributed under the license is distributed on an "as is" basis,
 -- WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 -- See the License for the specific language governing permissions and
 -- limitations under the License.
 ----------------------------------------------------------------------------------
 local Ellyb = Ellyb(...);
+
+---@type Storyline
+local _, Storyline = ...
+
+local Rx = Storyline.Rx
 
 -- Storyline API
 local wipe, tContains = wipe, tContains;
@@ -144,14 +149,13 @@ local function modelsLoaded()
 		else
 			targetModel:AnimateScalingValuesIn(dataYou.scale, dataYou.feet, dataYou.offset, dataYou.facing);
 		end
-		Storyline_NPCFrameChat.bubbleTail:Show();
 	else
 		-- If there is no You model, play the read animation for the Me model.
 		playerModel:SetCustomIdleAnimationID(Storyline_API.ANIMATIONS.READING);
-		playerModel:ApplySpellVisualKit(29521, false)
-		Storyline_NPCFrameChat.bubbleTail:Hide();
+		playerModel:ApplySpellVisualKit(92244, false)
 		playerModel:PlayIdleAnimation();
 	end
+	playerModel:ApplySpellVisualKit(60358, false)
 
 	-- Place the modelIDs in the debug frame
 	if targetModel:GetModelFileIDAsString() then
@@ -184,8 +188,248 @@ local function animateInModels()
 	alphaTransitionator:RunValue(0, 1, 0.5, setModelsAlpha)
 end
 
+---@alias VISIBILITY "HIDDEN"|"VISIBLE"
+local VISIBILITY = {
+	HIDDEN = "HIDDEN",
+	VISIBLE = "VISIBLE"
+}
+
+--- Will add Rx bindings to a game UI widget
+---@generic T
+---@param widget T
+---@return T|{rx: RxBindings}
+local function RxWrapped(widget)
+	local rxBindings = {
+		text = function(...) widget:SetText(...) end,
+		visibility = function(visibility)
+			if visibility == VISIBILITY.VISIBLE then
+				widget:Show()
+			else
+				widget:Hide()
+			end
+		end,
+		atlas = function(...) widget:SetAtlas(...) end,
+		modelUnit = function(...) widget:SetModelUnit(...) end,
+		script = function(scriptName)
+			local publisher = Rx.Subject.create()
+			widget:HookScript(scriptName, function(...)
+				publisher:onNext(...)
+			end)
+			return publisher
+		end,
+		hook = function(methodName)
+			local publisher = Rx.Subject.create()
+			hooksecurefunc(widget, methodName, function(...)
+				publisher:onNext(...)
+			end)
+			return publisher
+		end
+	}
+	widget.rx = rxBindings
+	return widget
+end
+
+--- Create a Subject for the given game event
+--- @param gameEventName string A valid game event
+--- @return Subject A Subject that will receive values every time the event is fired
+local function rxGameEvent(gameEventName)
+	local subject = Rx.Subject.create()
+	Ellyb.GameEvents.registerCallback(gameEventName, function(...) subject:onNext(...) end)
+	return subject
+end
+
+local function toVisibility(boolean)
+	return boolean and VISIBILITY.VISIBLE or VISIBILITY.HIDDEN
+end
+
+local function nilToHidden(value)
+	return toVisibility(value and value.len and value:len() > 0)
+end
+
+local function allTrue(...)
+	for _, v in pairs({...}) do
+		if v == false then
+			return false
+		end
+	end
+	return true
+end
+
+function Storyline_API.getLinesFromText(fullText)
+	fullText = fullText:gsub(LINE_FEED_CODE .. "+", "\n");
+	fullText = fullText:gsub(WEIRD_LINE_BREAK, "\n");
+
+	local texts = {};
+	-- Don't use lines that just contains spaces (because of Blizzard's interns)
+	for _, text in pairs({ strsplit("\n", fullText) }) do
+		if strtrim(tostring(text)) ~= "" then
+			insert(texts, text);
+		end
+	end
+
+	return texts
+end
+
+local eventType = Rx.BehaviorSubject.create()
+local isWarCampaign = Rx.BehaviorSubject.create()
+local questTitle = Rx.BehaviorSubject.create()
+local npcUnit = Rx.BehaviorSubject.create()
+local dialogText = Rx.BehaviorSubject.create()
+local dialogSteps = dialogText:map(Storyline_API.getLinesFromText)
+local dialogStepIndex = Rx.BehaviorSubject.create()
+local currentDialogText = Rx.Observable.combineLatest(dialogSteps, dialogStepIndex)
+	:map(function(texts, index) return texts[index] end)
+local hasReachTheEndOfDialog = Rx.Observable.combineLatest(
+	dialogSteps:map(function(dialogTexts) return #dialogTexts end),
+	dialogStepIndex
+)
+	:map(function(dialogs, dialogStepIndex) return dialogs == dialogStepIndex end)
+local questObjectives = Rx.BehaviorSubject.create()
+local questObjectiveText = Rx.BehaviorSubject.create()
+
 ---@type StorylineBackgroundTexture
 local background = mainFrame.Background
+
+local Banner = RxWrapped(mainFrame.Banner)
+local BannerTitle = RxWrapped(mainFrame.Banner.Title)
+local FactionIcon = RxWrapped(mainFrame.Banner.FactionIcon)
+local TargetModel = RxWrapped(targetModel)
+local PlayerModel = RxWrapped(playerModel)
+
+local Reward = RxWrapped(Storyline_NPCFrameRewards)
+local Objectives = RxWrapped(Storyline_NPCFrameObjectives)
+local ObjectivesText = RxWrapped(Storyline_NPCFrameObjectivesContent.Objectives)
+local ObjectivesList= RxWrapped(Storyline_NPCFrameObjectivesContent.ObjectivesDetails)
+
+eventType
+	:map(function(eventType) return eventType == "QUEST_COMPLETE" end)
+	:map(toVisibility)
+	:subscribe(Reward.rx.visibility)
+
+Rx.Observable.combineLatest(
+hasReachTheEndOfDialog,
+	eventType:map(function(eventType) return eventType == "QUEST_DETAIL" or eventType == "STORYLINE_REPLAY" end)
+)
+	:map(allTrue)
+	:map(toVisibility)
+	:subscribe(Objectives.rx.visibility)
+
+questObjectiveText
+	:subscribe(ObjectivesText.rx.text)
+
+local accomplishedObjectiveCheckMark = Ellyb.Texture.CreateFromAtlas("Tracker-Check")
+questObjectives
+	:filter(function(objectives) return objectives ~= nil end)
+	:map(function(objectives)
+	local texts = {}
+	for _, objective in pairs(objectives) do
+		local objectiveText = objective:GetText()
+		if objective:IsAccomplished() then
+			objectiveText = accomplishedObjectiveCheckMark:GenerateString(12) ..  Ellyb.ColorManager.GREY:WrapTextInColorCode(objectiveText)
+		else
+			objectiveText = " - " .. objectiveText
+		end
+		table.insert(texts, objectiveText)
+	end
+	return table.concat(texts, "\n")
+end)
+	:subscribe(ObjectivesList.rx.text)
+
+---@param eventHandler StorylineEventHandler
+function Storyline_API.newStartDialog(eventHandler)
+
+	background:RefreshBackground(eventHandler:GetQuestID())
+	eventType:onNext(eventHandler:GetEventType())
+	questTitle:onNext(eventHandler:GetDialogTitle())
+	isWarCampaign:onNext(eventHandler:IsCampaignQuest())
+	npcUnit:onNext(eventHandler:GetUnit())
+	questObjectiveText:onNext(eventHandler:GetQuestObjectiveText())
+	questObjectives:onNext(eventHandler:GetQuestObjectives())
+
+	if not mainFrame:IsVisible() then
+		showStorylineFrame();
+	end
+end
+
+Storyline.State.questTitle
+	:subscribe(BannerTitle.rx.text)
+
+-- Bind war campaign quest flag to banner faction icon
+isWarCampaign
+	:map(toVisibility)
+	:subscribe(FactionIcon.rx.visibility)
+
+-- Observe UNIT_FACTION event to retrieve the player faction
+rxGameEvent("UNIT_FACTION")
+	:filter(function(unit) return unit == "player" end)
+	:map(function()
+		local faction = UnitFactionGroup("player");
+		if faction == "Horde" then
+			return "bfa-landingbutton-horde-up"
+		else
+			return "bfa-landingbutton-alliance-up"
+		end
+	end)
+	:subscribe(FactionIcon.rx.atlas)
+
+-- Bind target model visibility to NPC unit
+npcUnit
+	:map(function(targetType)
+		return UnitExists(targetType) and not UnitIsUnit("player", "npc")
+	end)
+	:map(toVisibility)
+	:subscribe(TargetModel.rx.visibility)
+
+-- Bind model to NPC unit
+npcUnit
+	:filter(function(targetType)
+		return UnitExists(targetType) and not UnitIsUnit("player", "npc") and targetType
+	end)
+	:subscribe(function(unit)
+		TargetModel:SetModelUnit(unit, false)
+	end)
+
+local targetModelLoaded = TargetModel.rx.script("OnModelLoaded")
+local playerModelLoaded = PlayerModel.rx.script("OnModelLoaded")
+
+-- Bind model reset on no unit
+npcUnit
+	:filter(function(targetType)
+		return not UnitExists(targetType) or not UnitIsUnit("player", "npc")
+	end)
+	:subscribe(function()
+		TargetModel:SetModelUnit("none", true)
+		targetModelLoaded:onNext()
+	end)
+
+-- Bind player model
+rxGameEvent("UNIT_PORTRAIT_UPDATE")
+	:filter(function(unit) return unit == "player" end)
+	:subscribe(PlayerModel.rx.modelUnit)
+
+-- Bind proper loading of both models
+Rx.Observable.combineLatest(targetModelLoaded, playerModelLoaded):subscribe(modelsLoaded)
+
+local animationLib = LibStub:GetLibrary("TRP-Dialog-Animation-DB");
+
+currentDialogText
+	:map(function(text)
+		local punctuations = {}
+		text:gsub("[%.%?%!]+", function(finder)
+			table.insert(punctuations, finder:sub(1, 1))
+		end);
+		return punctuations
+	end)
+	:map(function(punctuations)
+		local animations = {}
+		for _, punctuation in pairs(punctuations) do
+			table.insert(animations, animationLib:GetDialogAnimation(_, punctuation))
+		end
+		return animations
+	end)
+	:subscribe(function(animations)
+		targetModel:PlayAnimSequence(animations)
+	end)
 ---
 -- Start a dialog with unit ID targetType
 -- @param targetType
@@ -196,97 +440,51 @@ local background = mainFrame.Background
 function Storyline_API.startDialog(targetType, fullText, event, eventInfo)
 
 	local questId = GetQuestID()
-	background:RefreshBackground()
+	background:RefreshBackground(questId)
 
 	mainFrame.debug.text:SetText(event);
 
 	mainFrame.models.you.npc_id = Storyline_API.getNpcId();
 
-	if Storyline_API.isASealedQuest(questId) then
-		mainFrame.chat.name:Hide()
-	else
-		local targetName = UnitName(targetType) or ""
-		if (not targetName or targetName:len() > 0 or targetName ~= UNKNOWN) and eventInfo.nameGetter and eventInfo.nameGetter() then
-			targetName = eventInfo.nameGetter()
-		end
-		mainFrame.chat.name:SetText(targetName)
-		mainFrame.chat.name:Show()
-	end
+	eventType:onNext(event)
+	npcUnit:onNext(targetType)
+	questTitle:onNext(eventInfo.titleGetter and eventInfo.titleGetter())
+	isWarCampaign:onNext(C_CampaignInfo.IsCampaignQuest(questId))
 
-
-	if eventInfo.titleGetter and eventInfo.titleGetter() and eventInfo.titleGetter():len() > 0 then
-		mainFrame.Banner:Show();
-
-		if C_CampaignInfo.IsCampaignQuest(questId) then
-			local faction = UnitFactionGroup("player");
-			if faction == "Horde" then
-				mainFrame.Banner.FactionIcon:SetAtlas("bfa-landingbutton-horde-up")
-			else
-				mainFrame.Banner.FactionIcon:SetAtlas("bfa-landingbutton-alliance-up")
-			end
-			mainFrame.Banner.FactionIcon:Show()
-		else
-			mainFrame.Banner.FactionIcon:Hide()
-		end
-
-		mainFrame.Banner.Title:SetText(eventInfo.titleGetter());
-		if eventInfo.getTitleColor and eventInfo.getTitleColor() then
-			mainFrame.Banner.Title:SetTextColor(eventInfo.getTitleColor());
-		else
-			mainFrame.Banner.Title:SetTextColor(0.95, 0.95, 0.95);
-		end
-	else
-		mainFrame.Banner.FactionIcon:Hide()
-		mainFrame.Banner:Hide();
-	end
-
-	-- Load player in the left model
-	local playerModelLoading = playerModel:SetModelUnit("player", false);
-
-	-- Load unit in the right model
-	local targetModelLoading;
-	if UnitExists(targetType) and not UnitIsUnit("player", "npc") then
-		targetModelLoading = targetModel:SetModelUnit(targetType, false);
-	else
-		targetModelLoading = targetModel:SetModelUnit("none", false);
-	end
-
-	local modelsLoading = Ellyb.Promises.all({ playerModelLoading, targetModelLoading }):Always(modelsLoaded);
-
-	fullText = fullText:gsub(LINE_FEED_CODE .. "+", "\n");
-	fullText = fullText:gsub(WEIRD_LINE_BREAK, "\n");
-
-	local texts = {};
-	-- Don't use lines that just contains spaces (because of Blizzard's interns)
-	for _, text in pairs({ strsplit("\n", fullText) }) do
-		if strtrim(text) ~= "" then
-			insert(texts, text);
-		end
-	end
-
-	if texts[#texts] and texts[#texts]:len() == 0 then
-		texts[#texts] = nil;
-	end
-
-	-- Support for multi-paragraph emotes
-	local stillEmote = { false };
-	for index, text in pairs(texts) do
-		if index < #texts then
-			local prevEmote = stillEmote[index];
-			local currentEmote = prevEmote;
-
-			local _, openEmoteCount = text:gsub("<", "<");
-			local _, closeEmoteCount = text:gsub(">", ">");
-
-			if prevEmote and openEmoteCount < closeEmoteCount then
-				currentEmote = false;
-			elseif not prevEmote and openEmoteCount > closeEmoteCount then
-				currentEmote = true;
-			end
-
-			stillEmote[index + 1] = currentEmote;
-		end
-	end
+	--fullText = fullText:gsub(LINE_FEED_CODE .. "+", "\n");
+	--fullText = fullText:gsub(WEIRD_LINE_BREAK, "\n");
+	--
+	--local texts = {};
+	---- Don't use lines that just contains spaces (because of Blizzard's interns)
+	--for _, text in pairs({ strsplit("\n", fullText) }) do
+	--	if strtrim(text) ~= "" then
+	--		insert(texts, text);
+	--	end
+	--end
+	--
+	--if texts[#texts] and texts[#texts]:len() == 0 then
+	--	texts[#texts] = nil;
+	--end
+	--
+	---- Support for multi-paragraph emotes
+	--local stillEmote = { false };
+	--for index, text in pairs(texts) do
+	--	if index < #texts then
+	--		local prevEmote = stillEmote[index];
+	--		local currentEmote = prevEmote;
+	--
+	--		local _, openEmoteCount = text:gsub("<", "<");
+	--		local _, closeEmoteCount = text:gsub(">", ">");
+	--
+	--		if prevEmote and openEmoteCount < closeEmoteCount then
+	--			currentEmote = false;
+	--		elseif not prevEmote and openEmoteCount > closeEmoteCount then
+	--			currentEmote = true;
+	--		end
+	--
+	--		stillEmote[index + 1] = currentEmote;
+	--	end
+	--end
 
 	mainFrame.chat.texts = texts;
 	mainFrame.chat.currentIndex = 0;
@@ -300,7 +498,6 @@ function Storyline_API.startDialog(targetType, fullText, event, eventInfo)
 		playerModel.doNotAnimateScaling = true;
 		targetModel.doNotAnimateScaling = true;
 		showStorylineFrame();
-		modelsLoading:Always(animateInModels);
 	end
 
 	playNext(mainFrame.models.you);
@@ -543,7 +740,32 @@ function Storyline_API.addon:OnEnable()
 			if mainFrame.chat.start and mainFrame.chat.start < mainFrame.chat.text:GetText():len() then
 				mainFrame.chat.start = mainFrame.chat.text:GetText():len();
 			else
-				playNext(mainFrame.models.you);
+				if Storyline.State.dialogStep:getValue() < Storyline.State.amountOfSteps:getValue() then
+					Storyline.State.dialogStep:onNext(Storyline.State.dialogStep:getValue() + 1)
+				else
+					-- TODO Improve this
+					local eventName = Storyline.State.eventName:getValue()
+					if eventName == "GOSSIP_SHOW" then
+						local firstChoice, bucketType, index = Storyline_API.dialogs.getFirstChoice(Storyline_API.dialogs.EVENT_TYPES.GOSSIP_SHOW);
+						if firstChoice and Storyline_API.dialogs.getDialogChoiceSelectorForEventType(Storyline_API.dialogs.EVENT_TYPES.GOSSIP_SHOW, bucketType) then
+							Storyline_API.dialogs.getDialogChoiceSelectorForEventType(Storyline_API.dialogs.EVENT_TYPES.GOSSIP_SHOW, bucketType)(index);
+						else
+							CloseGossip();
+						end
+					elseif eventName == "QUEST_DETAIL" then
+						if not Storyline_NPCFrameObjectivesContent:IsVisible() then
+							Storyline_API.lib.configureHoverFrame(Storyline_NPCFrameObjectivesContent, Storyline_NPCFrameObjectives, "TOP");
+							setTooltipForSameFrame(Storyline_NPCFrameObjectives, "TOP", 0, 0, nil, nil);
+							Storyline_MainTooltip:Hide();
+							Storyline_NPCFrameObjectivesYes:Show();
+							setTooltipForSameFrame(Storyline_NPCFrameObjectivesNo, "TOP", 0, 0,loc("SL_DECLINE"));
+							Storyline_NPCFrameObjectivesNo:Show();
+							Storyline.State.nextAction:onNext(loc("SL_ACCEPTANCE"))
+						else
+							Storyline_API.acceptQuest();
+						end
+					end
+				end
 			end
 		end
 	end);
@@ -646,11 +868,8 @@ function Storyline_API.addon:OnEnable()
 
 	-- Resizing
 	local resizeChat = function()
-		mainFrame.chat.text:SetWidth(mainFrame:GetWidth() - 150);
-		mainFrame.chat:SetHeight(mainFrame.chat.text:GetHeight() + CHAT_MARGIN + 5);
 		Storyline_NPCFrameGossipChoices:SetWidth(mainFrame:GetWidth() - 400);
 	end
-	mainFrame.chat.text:SetWidth(550);
 	Storyline_NPCFrameResizeButton.onResizeStop = function(width, height)
 		resizeChat();
 		Storyline_Data.config.width = width;
@@ -691,7 +910,7 @@ function Storyline_API.addon:OnEnable()
 	Storyline_API.options.init();
 
 	Storyline_NPCFrame.Background.SealTexture:ClearAllPoints()
-	Storyline_NPCFrame.Background.SealTexture:SetPoint("BOTTOMRIGHT", Storyline_NPCFrameChatName, "TOPRIGHT", 0, 20)
+	Storyline_NPCFrame.Background.SealTexture:SetPoint("BOTTOMRIGHT", Storyline_NPCFrameChat, "TOPRIGHT", 0, 10)
 	Storyline_NPCFrame.Background.SealText:ClearAllPoints()
 	Storyline_NPCFrame.Background.SealText:SetPoint("BOTTOMRIGHT", Storyline_NPCFrame.Background.SealTexture, "BOTTOMLEFT", -10, 0)
 end

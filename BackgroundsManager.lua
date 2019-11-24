@@ -219,12 +219,10 @@ function StorylineBackgroundTexture:OnLoad()
     self.SealText:SetFontObjectsToTry("QuestFont_Huge", "QuestFont_Large", "Fancy14Font", "Fancy12Font");
 end
 
-function StorylineBackgroundTexture:RefreshBackground()
+function StorylineBackgroundTexture:RefreshBackground(questId)
 
     self.SealTexture:Hide()
     self.SealText:Hide()
-
-    local questId = GetQuestID()
 
     -- Special waxed seal quests
     if SEAL_QUESTS[questId] ~= nil then

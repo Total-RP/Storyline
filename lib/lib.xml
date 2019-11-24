@@ -27,6 +27,7 @@
 	<Include file="LibSharedMedia-3.0\lib.xml"/>
 	<Include file="Ellyb\Ellyb.xml" />
 	<Include file="TRP-Anim-DB\TRP-Anim-DB.xml" />
+	<Script file="Rx.lua"/>
 
 	<GameTooltip name="Storyline_MainTooltip" frameStrata="TOOLTIP" hidden="false" parent="UIParent" inherits="GameTooltipTemplate"/>
 

@@ -24,6 +24,8 @@
 	<Include file="lib\lib.xml"/>
 
 	<Script file="Tutorials.lua"/>
+	<Script file="Main.lua"/>
+	<Script file="State.lua"/>
 	<Script file="PlayerModelMixin.lua"/>
 	<Script file="BackgroundsManager.lua"/>
 
@@ -266,7 +268,7 @@
 				</Layers>
 			</Frame>
 
-			<Frame parentKey="Banner" frameStrata="HIGH">
+			<Frame parentKey="Banner" frameStrata="HIGH" hidden="true">
 				<Size x="384" y="96"/>
 				<Anchors>
 					<Anchor point="TOP" x="0" y="0"/>
@@ -279,6 +281,7 @@
 							<Anchors>
 								<Anchor point="CENTER" x="0" y="8" relativePoint="CENTER"/>
 							</Anchors>
+							<Color color="WHITE_FONT_COLOR" />
 						</FontString>
 					</Layer>
 					<Layer level="OVERLAY" textureSubLevel="4">
@@ -293,7 +296,7 @@
 			</Frame>
 
 			<Frame name="Storyline_NPCFrameChat" parentKey="chat" frameStrata="HIGH">
-				<Backdrop bgFile="Interface\DialogFrame\UI-DialogBox-Background" edgeFile="Interface\GLUES\COMMON\TextPanel-Border" tile="true">
+				<Backdrop bgFile="Interface\Tooltips/CHATBUBBLE-BACKGROUND" edgeFile="Interface\Tooltips/CHATBUBBLE-BACKDROP" tile="true">
 					<EdgeSize>
 						<AbsValue val="16"/>
 					</EdgeSize>
@@ -301,8 +304,9 @@
 						<AbsValue val="16"/>
 					</TileSize>
 					<BackgroundInsets>
-						<AbsInset left="3" right="3" top="3" bottom="3"/>
+						<AbsInset left="16" right="16" top="16" bottom="16"/>
 					</BackgroundInsets>
+					<BorderColor r="0.75" g="0.75" b="0.75" />
 				</Backdrop>
 				<Size x="0" y="150"/>
 				<Anchors>
@@ -310,40 +314,6 @@
 					<Anchor point="LEFT" x="30" y="0"/>
 					<Anchor point="RIGHT" x="-30" y="0"/>
 				</Anchors>
-				<Layers>
-					<Layer level="BACKGROUND">
-						<Texture parentKey="bubbleTail" file="Interface\Tooltips\CHATBUBBLE-TAIL">
-							<Size x="32" y="32"/>
-							<Anchors>
-								<Anchor point="BOTTOMRIGHT" relativePoint="TOPRIGHT" x="-40" y="-3"/>
-							</Anchors>
-							<TexCoords left="1" right="0" top="1" bottom="0"/>
-						</Texture>
-					</Layer>
-					<Layer level="OVERLAY">
-						<FontString name="Storyline_NPCFrameChatName" parentKey="name" text="[TEXT]" inherits="GameFontNormalLarge" justifyH="RIGHT" justifyV="TOP">
-							<Anchors>
-								<Anchor point="TOPLEFT" x="50" y="-12"/>
-								<Anchor point="TOPRIGHT" x="-50" y="-12"/>
-							</Anchors>
-							<Color r="1" g="0.75" b="0.0"/>
-						</FontString>
-						<FontString name="Storyline_NPCFrameChatText" parentKey="text" text="[NAME]" inherits="GameFontNormalLarge" justifyH="LEFT" justifyV="TOP">
-							<Anchors>
-								<Anchor point="TOPLEFT" relativeTo="Storyline_NPCFrameChatName" relativePoint="BOTTOMLEFT" x="0" y="-10"/>
-							</Anchors>
-							<Color r="1" g="1" b="0.4"/>
-						</FontString>
-						<FontString name="Storyline_NPCFrameChatNextText" text="[POUIC]" inherits="GameFontNormalSmall" justifyH="CENTER" justifyV="BOTTOM" wordwrap="false">
-							<Anchors>
-								<Anchor point="BOTTOM" x="0" y="17"/>
-								<Anchor point="LEFT" x="60" />
-								<Anchor point="RIGHT"  x="-60" />
-							</Anchors>
-							<Color r="1" g="1" b="0.4"/>
-						</FontString>
-					</Layer>
-				</Layers>
 				<Frames>
 					<Frame name="Storyline_NPCFrameChatHighlight" inherits="GlowBorderTemplate" hidden="true">
 						<Anchors>
@@ -455,6 +425,7 @@
 									<Anchors>
 										<Anchor point="LEFT" x="10" y="0"/>
 										<Anchor point="RIGHT" x="-10" y="0"/>
+										<Anchor point="TOP" y="-10" />
 									</Anchors>
 								</FontString>
 								<FontString parentKey="Objectives" inherits="GameFontNormal" justifyH="LEFT" justifyV="TOP">
@@ -464,11 +435,21 @@
 									</Anchors>
 									<Color r="0.95" g="0.95" b="0.95"/>
 								</FontString>
+								<FontString parentKey="ObjectivesDetails" inherits="GameFontNormal" justifyH="LEFT" justifyV="TOP">
+									<Size x="310" y="0"/>
+									<Anchors>
+										<Anchor point="RIGHT" x="0" y="0"/>
+										<Anchor point="RIGHT" x="-10" y="0"/>
+										<Anchor point="TOP" relativePoint="BOTTOM" relativeKey="$parent.Objectives" x="0" y="-5"/>
+									</Anchors>
+									<Color r="0.95" g="0.95" b="0.95"/>
+								</FontString>
 								<FontString parentKey="GroupSuggestion" inherits="GameFontNormal" justifyH="LEFT" justifyV="TOP">
 									<Size x="0" y="0"/>
 									<Anchors>
 										<Anchor point="LEFT" x="10" y="0"/>
 										<Anchor point="RIGHT" x="-10" y="0"/>
+										<Anchor point="TOP" relativePoint="BOTTOM" relativeKey="$parent.ObjectivesDetails" x="0" y="-5"/>
 									</Anchors>
 									<Color r="0.95" g="0.65" b="0"/>
 								</FontString>
@@ -477,6 +458,8 @@
 									<Anchors>
 										<Anchor point="LEFT" x="10" y="0"/>
 										<Anchor point="RIGHT" x="-10" y="0"/>
+
+										<Anchor point="TOP" relativePoint="BOTTOM" relativeKey="$parent.GroupSuggestion" x="0" y="-5"/>
 									</Anchors>
 									<Color r="0.95" g="0.65" b="0"/>
 								</FontString>
@@ -632,6 +615,8 @@
 	<Include file="dialogs\dialogs.xml"/>
 	<Include file="rewards\rewards.xml"/>
 	<Include file="reputation-bar\reputation-bar.xml"/>
+	<Script file="UI\TitleBanner.lua"/>
+	<Script file="UI\DialogText.lua"/>
 
 	<Script file="layout.lua"/>
 	<Script file="utils.lua"/>

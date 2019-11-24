@@ -17,6 +17,9 @@
 --	limitations under the License.
 ----------------------------------------------------------------------------------
 
+---@type Storyline
+local _, Storyline = ...
+
 local animationLib = LibStub:GetLibrary("TRP-Dialog-Animation-DB");
 local Ellyb = Ellyb(...);
 
@@ -68,7 +71,7 @@ local BreakUpLargeNumbers = BreakUpLargeNumbers;
 local Storyline_NPCFrameObjectives, Storyline_NPCFrameObjectivesNo, Storyline_NPCFrameObjectivesYes = Storyline_NPCFrameObjectives, Storyline_NPCFrameObjectivesNo, Storyline_NPCFrameObjectivesYes;
 local Storyline_NPCFrameObjectivesImage = Storyline_NPCFrameObjectivesImage;
 local Storyline_NPCFrameRewardsItemIcon, Storyline_NPCFrameRewardsItem, Storyline_NPCFrameRewards = Storyline_NPCFrameRewardsItemIcon, Storyline_NPCFrameRewardsItem, Storyline_NPCFrameRewards;
-local Storyline_NPCFrame, Storyline_NPCFrameChatNextText = Storyline_NPCFrame, Storyline_NPCFrameChatNextText;
+local Storyline_NPCFrame = Storyline_NPCFrame;
 local Storyline_NPCFrameChat, Storyline_NPCFrameChatText = Storyline_NPCFrameChat, Storyline_NPCFrameChatText;
 local Storyline_NPCFrameChatNext, Storyline_NPCFrameChatPrevious = Storyline_NPCFrameChatNext, Storyline_NPCFrameChatPrevious;
 local Storyline_NPCFrameConfigButton, Storyline_NPCFrameObjectivesContent = Storyline_NPCFrameConfigButton, Storyline_NPCFrameObjectivesContent;
@@ -78,6 +81,9 @@ local DialogsButtons = Storyline_API.dialogs.buttons;
 local DialogsScrollFrame = Storyline_API.dialogs.scrollFrame;
 local Rewards = Storyline_API.rewards;
 local RewardsButtons = Storyline_API.rewards.buttons;
+
+
+local eventHandlers_new = {}
 
 -- Constants
 local OPTIONS_MARGIN, OPTIONS_TOP = 175, -175;
@@ -552,25 +558,13 @@ function Storyline_API.playNext(targetModel)
 	Storyline_NPCFrameChatNext:Enable();
 	Storyline_NPCFrameChat.currentIndex = Storyline_NPCFrameChat.currentIndex + 1;
 
-	Storyline_NPCFrameChatNextText:SetText(loc("SL_NEXT"));
-	if Storyline_NPCFrameChat.currentIndex >= #Storyline_NPCFrameChat.texts then
+	if Storyline_NPCFrameChat.texts and Storyline_NPCFrameChat.currentIndex >= #Storyline_NPCFrameChat.texts then
 		if Storyline_NPCFrameChat.eventInfo.finishText and (type(Storyline_NPCFrameChat.eventInfo.finishText) ~= "function" or Storyline_NPCFrameChat.eventInfo.finishText()) then
-			if type(Storyline_NPCFrameChat.eventInfo.finishText) == "function" then
-				Storyline_NPCFrameChatNextText:SetText(Storyline_NPCFrameChat.eventInfo.finishText());
-			else
-				Storyline_NPCFrameChatNextText:SetText(Storyline_NPCFrameChat.eventInfo.finishText);
-			end
 		end
 	end
 
-	if Storyline_NPCFrameChat.currentIndex <= #Storyline_NPCFrameChat.texts then
+	if Storyline_NPCFrameChat.texts and Storyline_NPCFrameChat.currentIndex <= #Storyline_NPCFrameChat.texts then
 		playText(Storyline_NPCFrameChat.currentIndex, targetModel);
-	else
-		if Storyline_NPCFrameChat.eventInfo.finishMethod then
-			Storyline_NPCFrameChat.eventInfo.finishMethod();
-		else
-			hideStorylineFrame();
-		end
 	end
 end
 
@@ -637,7 +631,7 @@ function Storyline_API.initEventsStructure()
 					Storyline_NPCFrameObjectivesYes:Show();
 					setTooltipForSameFrame(Storyline_NPCFrameObjectivesNo, "TOP", 0, 0,loc("SL_DECLINE"));
 					Storyline_NPCFrameObjectivesNo:Show();
-					Storyline_NPCFrameChatNextText:SetText(loc("SL_ACCEPTANCE"));
+					--Storyline_NPCFrameChatNextText:SetText(loc("SL_ACCEPTANCE"));
 				else
 					acceptQuest();
 				end
@@ -652,10 +646,10 @@ function Storyline_API.initEventsStructure()
 					Storyline_MainTooltip:Hide();
 					if IsQuestCompletable() then
 						Storyline_NPCFrameObjectives.OK:Show();
-						Storyline_NPCFrameChatNextText:SetText(loc("SL_CONTINUE"));
+						--Storyline_NPCFrameChatNextText:SetText(loc("SL_CONTINUE"));
 						playerModel:PlayAnimation(ANIMATIONS.YES);
 					else
-						Storyline_NPCFrameChatNextText:SetText(loc("SL_NOT_YET"));
+						--Storyline_NPCFrameChatNextText:SetText(loc("SL_NOT_YET"));
 						playerModel:PlayAnimation(ANIMATIONS.NO);
 					end
 				elseif IsQuestCompletable() then
@@ -680,10 +674,10 @@ function Storyline_API.initEventsStructure()
 					setTooltipForSameFrame(Storyline_NPCFrameRewardsItem, "TOP", 0, 0);
 					Storyline_MainTooltip:Hide();
 					if GetNumQuestChoices() > 1 then
-						Storyline_NPCFrameChatNextText:SetText(loc("SL_SELECT_REWARD"));
+						--Storyline_NPCFrameChatNextText:SetText(loc("SL_SELECT_REWARD"));
 						Storyline_NPCFrameChatNext:Disable();
 					else
-						Storyline_NPCFrameChatNextText:SetText(loc("SL_CONTINUE"));
+						--Storyline_NPCFrameChatNextText:SetText(loc("SL_CONTINUE"));
 					end
 
 					local rewards = Rewards.getRewards();
@@ -704,7 +698,7 @@ function Storyline_API.initEventsStructure()
 			finishText = function()
 				local rewardsBucket, bestIcon, totalNumberOfRewards = Rewards.getRewards();
 
-				return totalNumberOfRewards > 0 and loc("SL_GET_REWARD") or Storyline_NPCFrameChatNextText:SetText(loc("SL_CONTINUE"));
+				return totalNumberOfRewards > 0 and loc("SL_GET_REWARD") or loc("SL_CONTINUE")
 			end,
 			cancelMethod = CloseQuest,
 			titleGetter = GetTitleText,
@@ -835,6 +829,15 @@ function Storyline_API.initEventsStructure()
 	Storyline_NPCFrameObjectivesContent:SetScript("OnMouseDown", goBackOnRightClick);
 	Storyline_NPCFrameRewards.Content:SetScript("OnMouseDown", goBackOnRightClick);
 
+	hooksecurefunc("QuestMapFrame_OpenToQuestDetails", function(...)
+		local eventHandler = eventHandlers_new["STORYLINE_REPLAY"]
+		if eventHandler then
+			local eventHandlerInstance = eventHandler(...)
+			eventHandlerInstance:Prepare()
+			Storyline_API.newStartDialog(eventHandlerInstance)
+		end
+	end)
+
 	--- Tutorials
 
 	Storyline_API.Tutorials.register("RewardChoice", {
@@ -866,3 +869,129 @@ function Storyline_API.initEventsStructure()
 	});
 end
 
+---@class QuestObjective: MiddleClass_Class
+local QuestObjective = Ellyb.Class("QuestObjective")
+
+function QuestObjective:initialize(text, type, finished)
+	self.text = text
+	self.type = type
+	self.finished = finished
+end
+
+function QuestObjective:GetText()
+	return self.text
+end
+
+function QuestObjective:IsAccomplished()
+	return self.finished
+end
+
+local unimplemented = function()
+	error("Unimplemented", 3)
+end
+
+---@class StorylineEventHandler: MiddleClass_Class
+local StorylineEventHandler = Ellyb.Class("StorylineEventHandler")
+
+function StorylineEventHandler:initialize(...)
+	self.eventParameters = { ... }
+end
+
+--- Anything required before showing the Storyline frame can be done here (Optional)
+function StorylineEventHandler:Prepare() end
+
+--- @return number|nil Returns a quest ID in case of a valid quest event
+function StorylineEventHandler:GetQuestID()
+	unimplemented()
+end
+
+--- @return string|nil Returns a quest ID in case of a valid quest event
+function StorylineEventHandler:GetEventType()
+	unimplemented()
+end
+
+--- Should return the dialog title, mainly for quests
+--- @return string|nil Title of the quest
+function StorylineEventHandler:GetDialogTitle()
+	unimplemented()
+end
+
+--- Should return the name of the NPC
+--- @return string|nil Name of the NPC, if there is one
+function StorylineEventHandler:GetNPCName()
+	unimplemented()
+end
+
+--- Should return the name of the NPC
+--- @return string|nil Name of the NPC, if there is one
+function StorylineEventHandler:GetDialogText()
+	unimplemented()
+end
+
+function StorylineEventHandler:GetUnit()
+	unimplemented()
+end
+
+---@return QuestObjective[]
+function StorylineEventHandler:GetQuestObjectives()
+
+end
+
+function StorylineEventHandler:GetQuestObjectiveText()
+
+end
+
+--- @return boolean
+function StorylineEventHandler:IsCampaignQuest()
+	return C_CampaignInfo.IsCampaignQuest(self:GetQuestID())
+end
+
+---@class QuestReplayEventHandler: StorylineEventHandler
+local QuestReplayEventHandler = Ellyb.Class("QuestReplayEventHandler", StorylineEventHandler)
+eventHandlers_new["STORYLINE_REPLAY"] = QuestReplayEventHandler
+
+function QuestReplayEventHandler:Prepare()
+	WorldMapFrame:Hide()
+end
+
+function QuestReplayEventHandler:GetEventType()
+	return "STORYLINE_REPLAY"
+end
+
+function QuestReplayEventHandler:GetQuestID()
+	local _, _, _, _, _, _, _, questID, _, _, _, _, _, _, _ = GetQuestLogTitle(GetQuestLogSelection())
+	return questID
+end
+
+function QuestReplayEventHandler:GetDialogTitle()
+	return GetQuestLogTitle(GetQuestLogSelection())
+end
+
+function QuestReplayEventHandler:GetNPCName()
+	return nil -- TODO Save NPC names
+end
+
+function QuestReplayEventHandler:GetUnit()
+	return nil
+end
+
+function QuestReplayEventHandler:GetDialogText()
+	local dialogText, _ = GetQuestLogQuestText()
+	return dialogText
+end
+
+---@return QuestObjective[]
+function QuestReplayEventHandler:GetQuestObjectives()
+	local numObjectives = GetNumQuestLeaderBoards()
+	local objectives = {}
+	for i = 1, numObjectives do
+		local objective = QuestObjective(GetQuestLogLeaderBoard(i));
+		table.insert(objectives, objective)
+	end
+	return objectives
+end
+
+function QuestReplayEventHandler:GetQuestObjectiveText()
+	local _, objectiveText = GetQuestLogQuestText()
+	return objectiveText
+end
