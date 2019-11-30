@@ -1,3 +1,17 @@
+## Changelog for version 3.1.4
+
+### Added
+
+- Added proper support for Azerite rewards. Storyline will show the item name and quality instead of a generic icon for all Azerite rewards.
+- Added support for feature unlocks (like World Quests) and ability learned rewards.
+- Added a faction themed emblem to quest titles when the quest is part of the War Campaign.
+
+### Fixed
+
+- Fixed issues with quests that auto pops up. Storyline will now only open after you click on the quest offer in the objectives tracker.
+- Improved backgrounds logic, fixing some cases where the background would end up empty.
+- Manual animation timing for female Night Elf models, as the built in game animation timing is buggy with their models.
+
 ## Changelog for version 3.1.3
 
 ### Fixed
