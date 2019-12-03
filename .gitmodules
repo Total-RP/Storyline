@@ -7,3 +7,9 @@
 [submodule "lib/CustomTutorials-2.1"]
 	path = lib/CustomTutorials-2.1
 	url = https://github.com/Jaliborc/CustomTutorials-2.1.git
+[submodule "lua-amalg"]
+	path = lua-amalg
+	url = https://github.com/Ellypse/lua-amalg
+[submodule "Src/Libraries/Ellyb"]
+	path = Src/Libraries/Ellyb
+	url = https://github.com/Ellypse/Ellyb
