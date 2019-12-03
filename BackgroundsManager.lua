@@ -202,6 +202,10 @@ local SEAL_QUESTS = {
 
     [53372] = { bgAtlas = "QuestBG-Horde", text = "|cff480404"..QUEST_WARCHIEF_SYLVANAS_WINDRUNNER.."|r", sealAtlas = "Quest-Horde-WaxSeal"},
     [53370] = { bgAtlas = "QuestBG-Alliance", text = "|cff042c54"..QUEST_KING_ANDUIN_WRYNN.."|r", sealAtlas = "Quest-Alliance-WaxSeal"},
+
+    -- BfA 8.3
+    [58582] = { bgAtlas = "QuestBG-Horde", sealAtlas = "Quest-Horde-WaxSeal" },
+    [58496] = { bgAtlas = "QuestBG-Alliance", sealAtlas = "Quest-Alliance-WaxSeal"},
 };
 
 function Storyline_API.isASealedQuest(questId)
