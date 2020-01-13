@@ -4,6 +4,9 @@
 
 - Added support for 8.3 specific campaign quests.
 - Added support for displaying War Mode bonus for quest rewards (added in the default UI with patch 8.3).
+- Added support for displaying bonus Salvaged Cache of Goods rewarded from quests replayed via the Party Sync feature.
+
+![](https://www.dropbox.com/s/oak7nnzd9zu81ps/WowT_l1ixICbyP9%20copie.png?raw=1)
 
 ## Changelog for version 3.1.3
 
