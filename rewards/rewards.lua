@@ -189,12 +189,14 @@ local REWARD_GETTERS = {
 			return rewards;
 		end,
 		[REWARD_TYPES.BONUS] = function()
+			local rewards = {}
 			local questID = GetQuestID()
 			if C_QuestLog.QuestHasWarModeBonus(questID) and C_PvP.IsWarModeDesired() then
-				return { {
+				tinsert(rewards, {
 					bonus = C_PvP.GetWarModeRewardBonus()
-				} }
+				})
 			end
+			return rewards
 		end,
 	},
 	[BUCKET_TYPES.CHOICE] = {
