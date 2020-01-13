@@ -41,6 +41,7 @@ local BUCKET_TYPES = {
 	FOLLOWER = 4,
 	UNLOCK = 5,
 	LEARN = 6,
+	BONUS = 7,
 	OBJECTIVES = 9,
 };
 API.BUCKET_TYPES = BUCKET_TYPES;
@@ -73,6 +74,25 @@ local MONEY_ICONS = {
 	SILVER = "Interface\\ICONS\\inv_misc_coin_03",
 	GOLD   = "Interface\\ICONS\\inv_misc_coin_01"
 }
+
+local QUEST_SESSION_BONUS_REWARD_ITEM_ID = 171305
+local item = Item:CreateFromItemID(QUEST_SESSION_BONUS_REWARD_ITEM_ID)
+local SALVAGED_CACHE_OF_GOODS = {}
+if item then
+	item:ContinueOnItemLoad(function()
+		SALVAGED_CACHE_OF_GOODS = {
+			text       = item:GetItemName(),
+			icon       = item:GetItemIcon(),
+			count      = 1,
+			index      = 1,
+			quality    = item:GetItemQuality(),
+			rewardType = "reward",
+			objectType = "questSessionBonusReward",
+			isUsable   = true,
+			itemId = QUEST_SESSION_BONUS_REWARD_ITEM_ID
+		}
+	end)
+end
 
 local REWARD_GETTERS = {
 	[BUCKET_TYPES.RECEIVED] = {
@@ -317,6 +337,19 @@ local REWARD_GETTERS = {
 
 			return auraRewards;
 		end,
+	},
+	[BUCKET_TYPES.BONUS] = {
+		[REWARD_TYPES.ITEMS] = function()
+			local rewards = {}
+
+			local questID = GetQuestID()
+			local hasChanceForQuestSessionBonusReward = C_QuestLog.QuestHasQuestSessionBonus(questID)
+			if hasChanceForQuestSessionBonusReward then
+				tinsert(rewards, SALVAGED_CACHE_OF_GOODS)
+			end
+
+			return rewards
+		end
 	}
 }
 
