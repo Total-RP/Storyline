@@ -103,6 +103,11 @@ local function decorateSkillPointButton(button, texture, name, skillPoints)
 	button.Name:SetWidth(81);
 end
 
+---@param button Button This will be a LargeItemButtonTemplate, WarModeBonusFrameTemplate
+local function decorateBonusButton(button, bonusAmount)
+	button.Count:SetFormattedText(PLUS_PERCENT_FORMAT, bonusAmount)
+end
+
 local function decorateSpellButton(button, texture, name, rewardSpellIndex)
 	button.Icon:SetTexture(texture);
 	button.Name:SetText(name);
@@ -132,6 +137,8 @@ local function decorateRewardButton(button, rewardType, reward)
 		decorateFollowerButton(button, reward.garrFollowerID);
 	elseif rewardType == Rewards.REWARD_TYPES.SKILL_POINTS then
 		decorateSkillPointButton(button, reward.icon, reward.text, reward.skillPoints);
+	elseif rewardType == Rewards.REWARD_TYPES.BONUS then
+		decorateBonusButton(button, reward.bonus)
 	else
 		decorateStandardButton(button, reward.icon, reward.text, reward.tooltipTitle, reward.tooltipSub);
 	end
@@ -195,6 +202,7 @@ local REWARD_BUTTON_FRAME_TEMPLATES = {
 	[Rewards.REWARD_TYPES.SPELL] = "QuestSpellTemplate, QuestInfoRewardSpellCodeTemplate",
 	[Rewards.REWARD_TYPES.SKILL_POINTS] = "Storyline_SkillPointsRewardTemplate",
 	[Rewards.REWARD_TYPES.FOLLOWER] = "Storyline_GarrisonFollowerRewardTemplate",
+	[Rewards.REWARD_TYPES.BONUS] = "LargeItemButtonTemplate, WarModeBonusFrameTemplate",
 }
 -- List of large button types, so we know to only place one of them per line instead of two (titles, followers)
 local LARGE_BUTTONS = {
@@ -229,7 +237,6 @@ local function getRewardButton(parentFrame, rewardType)
 	end
 	button.hasItem = false;
 	button:SetParent(parentFrame);
-	-- TODO Do not show the button immediately for animations ? Remplace IsShown() up there by .available
 	button:Show();
 	return button;
 end

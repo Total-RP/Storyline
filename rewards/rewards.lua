@@ -59,6 +59,7 @@ local REWARD_TYPES = {
 	ITEMS = 6,
 	SPELL = 7,
 	FOLLOWER = 8,
+	BONUS = 9,
 }
 API.REWARD_TYPES = REWARD_TYPES;
 
@@ -186,7 +187,15 @@ local REWARD_GETTERS = {
 				});
 			end
 			return rewards;
-		end
+		end,
+		[REWARD_TYPES.BONUS] = function()
+			local questID = GetQuestID()
+			if C_QuestLog.QuestHasWarModeBonus(questID) and C_PvP.IsWarModeDesired() then
+				return { {
+					bonus = C_PvP.GetWarModeRewardBonus()
+				} }
+			end
+		end,
 	},
 	[BUCKET_TYPES.CHOICE] = {
 		[REWARD_TYPES.ITEMS] = function()
