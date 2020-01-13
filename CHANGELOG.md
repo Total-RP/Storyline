@@ -1,3 +1,10 @@
+## Changelog for version 3.1.4
+
+### Added
+
+- Added support for 8.3 specific campaign quests.
+- Added support for displaying War Mode bonus for quest rewards (added in the default UI with patch 8.3).
+
 ## Changelog for version 3.1.3
 
 ### Fixed
