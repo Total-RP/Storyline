@@ -213,11 +213,11 @@ local REWARD_GETTERS = {
 
 			if C_QuestLog and C_QuestLog.QuestHasWarModeBonus and C_PvP and C_PvP.IsWarModeDesired then
 				local questID = GetQuestID()
-					if C_QuestLog.QuestHasWarModeBonus(questID) and C_PvP.IsWarModeDesired() then
-						tinsert(rewards, {
-							bonus = C_PvP.GetWarModeRewardBonus()
-						})
-					end
+				if C_QuestLog.QuestHasWarModeBonus(questID) and C_PvP.IsWarModeDesired() then
+					tinsert(rewards, {
+						bonus = C_PvP.GetWarModeRewardBonus()
+					})
+				end
 			end
 
 			return rewards
