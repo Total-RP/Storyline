@@ -35,7 +35,7 @@ Storyline_API.rewards.buttons = {};
 local API = Storyline_API.rewards.buttons;
 local Rewards = Storyline_API.rewards;
 
-local function decorateItemButton(button, index, type, texture, name, numItems, isUsable, quality)
+local function decorateItemButton(button, index, type, texture, name, numItems, isUsable, quality, itemId)
 	numItems = numItems or 0;
 	button.index = index;
 	button.type = type;
@@ -49,7 +49,11 @@ local function decorateItemButton(button, index, type, texture, name, numItems, 
 	end
 	button:SetScript("OnEnter", function(self)
 		GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
-		GameTooltip:SetQuestItem(self.type, self.index);
+		if itemId then
+			GameTooltip:SetItemByID(itemId)
+		else
+			GameTooltip:SetQuestItem(self.type, self.index);
+		end
 		GameTooltip_ShowCompareItem(GameTooltip);
 	end);
 	button:SetScript("OnClick", function(self)
@@ -103,6 +107,11 @@ local function decorateSkillPointButton(button, texture, name, skillPoints)
 	button.Name:SetWidth(81);
 end
 
+---@param button Button This will be a LargeItemButtonTemplate, WarModeBonusFrameTemplate
+local function decorateBonusButton(button, bonusAmount)
+	button.Count:SetFormattedText(PLUS_PERCENT_FORMAT, bonusAmount)
+end
+
 local function decorateSpellButton(button, texture, name, rewardSpellIndex)
 	button.Icon:SetTexture(texture);
 	button.Name:SetText(name);
@@ -127,11 +136,13 @@ local function decorateRewardButton(button, rewardType, reward)
 	elseif rewardType == Rewards.REWARD_TYPES.SPELL then
 		decorateSpellButton(button, reward.icon, reward.text, reward.rewardSpellIndex);
 	elseif rewardType == Rewards.REWARD_TYPES.ITEMS then
-		decorateItemButton(button, reward.index, reward.rewardType, reward.icon, reward.text, reward.count, reward.isUsable, reward.quality);
+		decorateItemButton(button, reward.index, reward.rewardType, reward.icon, reward.text, reward.count, reward.isUsable, reward.quality, reward.itemId);
 	elseif rewardType == Rewards.REWARD_TYPES.FOLLOWER then
 		decorateFollowerButton(button, reward.garrFollowerID);
 	elseif rewardType == Rewards.REWARD_TYPES.SKILL_POINTS then
 		decorateSkillPointButton(button, reward.icon, reward.text, reward.skillPoints);
+	elseif rewardType == Rewards.REWARD_TYPES.BONUS then
+		decorateBonusButton(button, reward.bonus)
 	else
 		decorateStandardButton(button, reward.icon, reward.text, reward.tooltipTitle, reward.tooltipSub);
 	end
@@ -195,6 +206,7 @@ local REWARD_BUTTON_FRAME_TEMPLATES = {
 	[Rewards.REWARD_TYPES.SPELL] = "QuestSpellTemplate, QuestInfoRewardSpellCodeTemplate",
 	[Rewards.REWARD_TYPES.SKILL_POINTS] = "Storyline_SkillPointsRewardTemplate",
 	[Rewards.REWARD_TYPES.FOLLOWER] = "Storyline_GarrisonFollowerRewardTemplate",
+	[Rewards.REWARD_TYPES.BONUS] = "LargeItemButtonTemplate, WarModeBonusFrameTemplate",
 }
 -- List of large button types, so we know to only place one of them per line instead of two (titles, followers)
 local LARGE_BUTTONS = {
@@ -229,7 +241,6 @@ local function getRewardButton(parentFrame, rewardType)
 	end
 	button.hasItem = false;
 	button:SetParent(parentFrame);
-	-- TODO Do not show the button immediately for animations ? Remplace IsShown() up there by .available
 	button:Show();
 	return button;
 end
@@ -250,6 +261,7 @@ local REWARDS_HEADER_TEXT = {
 	[Rewards.BUCKET_TYPES.FOLLOWER] = REWARD_FOLLOWER,
 	[Rewards.BUCKET_TYPES.UNLOCK] = REWARD_UNLOCK,
 	[Rewards.BUCKET_TYPES.LEARN] = REWARD_ABILITY,
+	[Rewards.BUCKET_TYPES.BONUS] = QUEST_SESSION_BONUS_LOOT_REWARD_FRAME_TITLE,
 	[Rewards.BUCKET_TYPES.OBJECTIVES] = TURN_IN_ITEMS,
 };
 
@@ -282,6 +294,7 @@ local function getRewardsHeader(parent, previousText)
 	-- Anchor the header either on the previous grid button on the left if there's one, or on the previous text
 	-- given to the function (objective text, rewards title, etc.)
 	header:SetPoint("TOPLEFT", API.getPreviousElementOnTheLeft() or previousText, "BOTTOMLEFT", 0, -1 * REWARDS_HEADER_MARGIN);
+	header:SetPoint("RIGHT", parent, "RIGHT", -5, 0);
 
 	return header;
 end
@@ -290,6 +303,7 @@ function API.displayRewardsOnGrid(rewardBucketType, rewardsBucket, parent, previ
 	assert(REWARDS_HEADER_TEXT[rewardBucketType], ("No header text defined for reward bucket type %s!"):format(rewardBucketType or "NO_BUCKET_TYPE"));
 
 	-- Get a header and use the apprioriate text for this reward bucket type (rewards, choices, spells, etc.)
+	---@type FontString
 	local header = getRewardsHeader(parent, previousText);
 	header:SetText(REWARDS_HEADER_TEXT[rewardBucketType]);
 	header:Show();
@@ -323,7 +337,7 @@ function API.displayRewardsOnGrid(rewardBucketType, rewardsBucket, parent, previ
 		end
 	end
 
-	return gridHeight + header:GetHeight() + REWARDS_HEADER_MARGIN;
+	return gridHeight + header:GetStringHeight() + REWARDS_HEADER_MARGIN;
 end
 
 function API.refreshButtons()
