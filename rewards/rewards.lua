@@ -210,12 +210,16 @@ local REWARD_GETTERS = {
 		end,
 		[REWARD_TYPES.BONUS] = function()
 			local rewards = {}
-			local questID = GetQuestID()
-			if C_QuestLog.QuestHasWarModeBonus(questID) and C_PvP.IsWarModeDesired() then
-				tinsert(rewards, {
-					bonus = C_PvP.GetWarModeRewardBonus()
-				})
+
+			if C_QuestLog and C_QuestLog.QuestHasWarModeBonus and C_PvP and C_PvP.IsWarModeDesired then
+				local questID = GetQuestID()
+					if C_QuestLog.QuestHasWarModeBonus(questID) and C_PvP.IsWarModeDesired() then
+						tinsert(rewards, {
+							bonus = C_PvP.GetWarModeRewardBonus()
+						})
+					end
 			end
+
 			return rewards
 		end,
 	},
@@ -342,10 +346,12 @@ local REWARD_GETTERS = {
 		[REWARD_TYPES.ITEMS] = function()
 			local rewards = {}
 
-			local questID = GetQuestID()
-			local hasChanceForQuestSessionBonusReward = C_QuestLog.QuestHasQuestSessionBonus(questID)
-			if hasChanceForQuestSessionBonusReward then
-				tinsert(rewards, SALVAGED_CACHE_OF_GOODS)
+			if C_QuestLog and C_QuestLog.QuestHasQuestSessionBonus then
+				local questID = GetQuestID()
+				local hasChanceForQuestSessionBonusReward = C_QuestLog.QuestHasQuestSessionBonus(questID)
+				if hasChanceForQuestSessionBonusReward then
+					tinsert(rewards, SALVAGED_CACHE_OF_GOODS)
+				end
 			end
 
 			return rewards
