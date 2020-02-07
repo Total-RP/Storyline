@@ -270,6 +270,8 @@ local function showQuestPortraitFrame(isOnCompleteStep)
 	end
 
 	if questPortrait and questPortrait ~= 0 then
+		-- HACK: add fix error, when questPortraitMount is nil
+		if (questPortraitMount == nil) then questPortraitMount = 0 end
 		QuestFrame_ShowQuestPortrait(Storyline_NPCFrame, questPortrait, questPortraitMount, questPortraitText, questPortraitName, -16, -48);
 		QuestModelScene:SetFrameStrata("LOW")
 	else
