@@ -1,3 +1,9 @@
+## Changelog for version 3.1.6
+
+### Fixed
+
+- Fixed an issue with some quests that have a side 3D model panel, related to mount IDs (thanks hu71e for providing the fix).
+
 ## Changelog for version 3.1.5
 
 ### Added
