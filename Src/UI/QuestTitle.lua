@@ -5,7 +5,7 @@ local Colors = require "Libraries.Ellyb.Src.Enums.Colors"
 ---@class QuestTitle: Ellyb_Frame
 local QuestTitle = Class("QuestTitle", Frame)
 
----@param state Observable
+---@param questState Observable
 function QuestTitle:initialize(questState)
     self.super.initialize(self)
 
@@ -23,12 +23,21 @@ function QuestTitle:initialize(questState)
     text:SetText("Quest Title")
 
     questState
+        :filter(function(state) return state ~= nil end)
         :map(function(state)
             return state.title
         end)
         :subscribe(function(questText)
             text:SetText(questText)
         end)
+
+    questState:subscribe(function(state)
+        if state and state.title then
+            self:Show()
+        else
+            self:Hide()
+        end
+    end)
 end
 
 return QuestTitle

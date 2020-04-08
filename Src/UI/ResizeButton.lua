@@ -1,5 +1,6 @@
 local Button = require "Libraries.Ellyb.Src.UI.Widgets.Button"
 local Class = require "Libraries.Ellyb.Src.Libraries.middleclass"
+local Rx = require "Libraries.Ellyb.Src.Libraries.RxLua.rx"
 
 ---@class ResizeButton: Ellyb_Button
 local ResizeButton = Class("ResizeButton", Button)
@@ -21,18 +22,29 @@ function ResizeButton:initialize(resizeableFrame)
     resizeableFrame:SetResizable(true)
     resizeableFrame:SetClampedToScreen(true)
 
+    self.rx.OnResize = Rx.Subject.create()
+
     self.rx.OnEnter
         :map(function() return "UI_MOVE_CURSOR" end)
         :subscribe(SetCursor)
 
     self.rx.OnLeave:subscribe(ResetCursor)
 
+    local isResizing = false
     self.rx.OnDragStart:subscribe(function()
         resizeableFrame:StartSizing()
+        isResizing = true
+    end)
+
+    self.rx.OnUpdate:subscribe(function()
+        if isResizing then
+            self.rx.OnResize()
+        end
     end)
 
     self.rx.OnDragStop:subscribe(function()
         resizeableFrame:StopMovingOrSizing()
+        isResizing = false
     end)
 end
 
