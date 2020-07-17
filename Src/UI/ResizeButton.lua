@@ -46,6 +46,16 @@ function ResizeButton:initialize(resizeableFrame)
         resizeableFrame:StopMovingOrSizing()
         isResizing = false
     end)
+
+    self.rx.OnEnter:subscribe(function()
+        GameTooltip:SetOwner(self, "ANCHOR_RIGHT", 5, 0)
+        GameTooltip:SetText("Resize")
+        GameTooltip:Show()
+    end)
+
+    self.rx.OnLeave:subscribe(function()
+        GameTooltip:Hide()
+    end)
 end
 
 return ResizeButton

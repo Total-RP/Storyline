@@ -2,12 +2,15 @@ local Frame = require "Libraries.Ellyb.Src.UI.Widgets.Frame"
 local Class = require "Libraries.Ellyb.Src.Libraries.middleclass"
 local Animator = require "Libraries.Ellyb.Src.Tools.Animator"
 local WoWScheduler = require "Libraries.Ellyb.Src.Internals.Rx.WoWScheduler"
+local U = require "Utils.Utils"
+local F = require "Libraries.Ellyb.Src.Tools.Functions"
+local private = require "Libraries.Ellyb.Src.Internals.PrivateStorage"
 
 ---@class SpeechBubble: Ellyb_Frame
 local SpeechBubble = Class("SpeechBubble", Frame)
 
----@param questState Observable
-function SpeechBubble:initialize(questState)
+---@param state Storyline_State
+function SpeechBubble:initialize(state)
     self.super.initialize(self)
 
     self:SetBackdrop({
@@ -22,94 +25,113 @@ function SpeechBubble:initialize(questState)
 
     self:SetBackdropBorderColor(0.75, 0.75, 0.75, 1)
 
-    local bubbleTail = self:CreateTexture(nil, "OVERLAY")
-    bubbleTail:SetTexture([[Interface\Tooltips\CHATBUBBLE-TAIL]])
-    bubbleTail:SetTexCoord(1, 0, 1, 0)
-    bubbleTail:SetSize(30, 28)
-    bubbleTail:SetPoint("BOTTOMRIGHT", self, "TOPRIGHT", -20, -3)
-    bubbleTail:SetAlpha(0.85)
+    self.bubbleTail = self:CreateTexture(nil, "OVERLAY")
+    self.bubbleTail:SetTexture([[Interface\Tooltips\CHATBUBBLE-TAIL]])
+    self.bubbleTail:SetTexCoord(1, 0, 1, 0)
+    self.bubbleTail:SetSize(30, 28)
+    self.bubbleTail:SetPoint("BOTTOMRIGHT", self, "TOPRIGHT", -20, -3)
+    self.bubbleTail:SetAlpha(0.85)
 
-    local NPCNameBackground = self:CreateTexture(nil, "ARTWORK")
-    NPCNameBackground:SetAtlas("Objective-Header")
-    NPCNameBackground:SetTexCoord(1, 0, 0, 1)
-    NPCNameBackground:SetPoint("TOP", self, "TOP", 0, 13)
-    NPCNameBackground:SetPoint("RIGHT", self, "RIGHT", 8, 0)
-    NPCNameBackground:SetSize(250, 95)
+    self.NPCNameBackground = self:CreateTexture(nil, "ARTWORK")
+    self.NPCNameBackground:SetAtlas("Objective-Header")
+    self.NPCNameBackground:SetTexCoord(1, 0, 0.2, 1)
+    self.NPCNameBackground:SetPoint("TOP", self, "TOP", 0, -8)
+    self.NPCNameBackground:SetPoint("RIGHT", self, "RIGHT", 8, 0)
+    self.NPCNameBackground:SetSize(250, 85)
 
-    local NPCName = self:CreateFontString(nil, "ARTWORK", "GameFontNormalLarge")
-    NPCName:SetPoint("TOP", self, "TOP", 0, -10)
-    NPCName:SetPoint("RIGHT", self, "RIGHT", -30, 0)
-    NPCName:SetTextColor(1, 0.75, 0)
+    self.NPCName = self:CreateFontString(nil, "ARTWORK", "GameFontNormalLarge")
+    self.NPCName:SetPoint("TOP", self, "TOP", 0, -10)
+    self.NPCName:SetPoint("RIGHT", self, "RIGHT", -30, 0)
+    self.NPCName:SetTextColor(1, 0.75, 0)
 
 
-    local DialogText = self:CreateFontString(nil, "ARTWORK", "GameFontNormalLarge")
-    DialogText:SetJustifyV("TOP")
-    DialogText:SetJustifyH("LEFT")
-    DialogText:SetSpacing(3)
-    DialogText:SetPoint("TOP", NPCName, "TOP", 0, -35)
-    DialogText:SetPoint("LEFT", self, "LEFT", 30, 0)
-    DialogText:SetPoint("RIGHT", self, "RIGHT", -30, 0)
+    self.DialogText = self:CreateFontString(nil, "ARTWORK", "GameFontNormalLarge")
+    self.DialogText:SetJustifyV("TOP")
+    self.DialogText:SetJustifyH("LEFT")
+    self.DialogText:SetSpacing(3)
+    self.DialogText:SetPoint("TOP", self.NPCName, "TOP", 0, -35)
+    self.DialogText:SetPoint("LEFT", self, "LEFT", 30, 0)
+    self.DialogText:SetPoint("RIGHT", self, "RIGHT", -30, 0)
 
-    questState =  questState:debounce(0.1, WoWScheduler)
+    state.targetUnit
+        :filter(U.Not(U.IsNil))
+        :map(UnitName)
+        :subscribe(F.bind(self.SetUnitName, self))
 
-    local heightAnimator = Animator()
-    local textAlphaAnimator = Animator()
-    function SpeechBubble:UpdateHeight(animated)
-        local height = NPCName:GetHeight() + 35 + DialogText:GetStringHeight() + 15
-        if height == self:GetHeight() then
-            return
-        end
-        if animated then
-            heightAnimator:RunValue(self:GetHeight(), height, 0.1, function(height)
-                self:SetHeight(height)
-            end)
-            DialogText:SetAlpha(0)
-            textAlphaAnimator:RunValue(0, 1, 0.2, function(alpha)
-                DialogText:SetAlpha(alpha)
-            end)
+    state.targetUnit
+        :startWith(nil)
+        :filter(U.IsNil)
+        :subscribe(F.bind(self.HideUnitName, self))
+
+    state.dialogText
+        :filter(U.Not(U.IsNil))
+        :subscribe(F.bind(self.SetDialogText, self))
+
+    state.dialogText
+        :startWith(nil)
+        :filter(U.IsNil)
+        :subscribe(F.bind(self.HideDialogText, self))
+
+    state.dialogText
+    :withPrevious(nil)
+    :debounce(0.01, WoWScheduler)
+    :filter(function()
+        return self:GetHeight() ~= self:GetDesiredHeight()
+    end)
+    :subscribe(function(previousValue)
+        if previousValue then
+            self:AnimatedHeightRefresh()
         else
-            self:SetHeight(height)
+            self:RefreshHeight()
         end
+    end)
+end
+
+function SpeechBubble:SetUnitName(unitName)
+    self.NPCName:SetText(unitName)
+    self.NPCNameBackground:Show()
+    self.bubbleTail:Show()
+end
+
+function SpeechBubble:HideUnitName()
+    self.NPCName:SetText("")
+    self.NPCNameBackground:Hide()
+    self.bubbleTail:Hide()
+end
+
+function SpeechBubble:SetDialogText(dialogText)
+    self.DialogText:SetText(dialogText)
+    self:Show()
+end
+
+function SpeechBubble:HideDialogText()
+    self.DialogText:SetText("")
+    self:Hide()
+end
+
+function SpeechBubble:GetDesiredHeight()
+    return self.NPCName:GetHeight() + 35 + self.DialogText:GetStringHeight() + 15
+end
+
+local heightAnimator = Animator()
+local textAlphaAnimator = Animator()
+function SpeechBubble:AnimatedHeightRefresh()
+    local desiredHeight = self:GetDesiredHeight()
+    if self:GetHeight() == desiredHeight then
+        return
     end
 
-    questState
-        :subscribe(function(state)
-        if state and state.npcName and state.npcName:len() > 0 then
-            NPCName:SetText(state.npcName)
-            NPCNameBackground:Show()
-            bubbleTail:Show()
-            DialogText:SetText(state.text)
-        else
-            NPCName:SetText("")
-            NPCNameBackground:Hide()
-            bubbleTail:Hide()
-            DialogText:SetText("")
-        end
-        self:UpdateHeight(true)
+    heightAnimator:RunValue(self:GetHeight(), desiredHeight, 0.1, function(height)
+        self:SetHeight(height)
     end)
-
-    local alphaAnimator = Animator()
-
-    questState
-        :map(function(state) return state ~= nil end)
-        :distinct()
-        :subscribe(function(hasQuest)
-        if hasQuest then
-            self:Show()
-            self:SetAlpha(0)
-            alphaAnimator:RunValue(0, 1, 0.3, function(alpha)
-                self:SetAlpha(alpha)
-            end)
-        else
-            alphaAnimator:RunValue(0, 1, 0.3, function(alpha)
-                alpha = 1 - alpha
-                self:SetAlpha(alpha)
-                if alpha == 0 then
-                    self:Hide()
-                end
-            end)
-        end
+    self.DialogText:SetAlpha(0)
+    textAlphaAnimator:RunValue(0, 1, 0.3, function(alpha)
+        self.DialogText:SetAlpha(alpha)
     end)
+end
+
+function SpeechBubble:RefreshHeight()
+    self:SetHeight(self:GetDesiredHeight())
 end
 
 return SpeechBubble
