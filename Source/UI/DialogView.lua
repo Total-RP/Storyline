@@ -36,14 +36,17 @@ function DialogView:new(state, actions)
 
     self.nextActionButton = NextActionButton(state, actions)
     self.nextActionButton.button:SetParent(self.container)
-    self.nextActionButton.button:SetPoint("BOTTOMRIGHT", -3, 3)
+    self.nextActionButton.button:SetFrameLevel(5)
+    self.nextActionButton.button:SetPoint("BOTTOM", 0, 3)
 
     self.nextStepButton = NextStepButton(state, actions)
     self.nextStepButton.button:SetParent(self.container)
-    self.nextStepButton.button:SetPoint("BOTTOMRIGHT", self.nextActionButton.button, "BOTTOMLEFT", -5, 0)
+    self.nextStepButton.button:SetFrameLevel(5)
+    self.nextStepButton.button:SetPoint("BOTTOMRIGHT", -3, 3)
 
     self.previousStepButton = PreviousStepButton(state, actions)
     self.previousStepButton.button:SetParent(self.container)
+    self.previousStepButton.button:SetFrameLevel(5)
     self.previousStepButton.button:SetPoint("BOTTOMLEFT", 3, 3)
 
     self.stepsLabel = StepsLabel(state)
@@ -89,11 +92,28 @@ function DialogView:new(state, actions)
             actions.GO_TO_NEXT_STEP()
         end
     end)
+
+    self.clickInterceptor = U.CreateButton()
+    self.clickInterceptor:SetParent(self.container)
+    self.clickInterceptor:SetFrameLevel(5)
+    self.clickInterceptor:SetAllPoints(self.container)
+    Rx.Script(self.clickInterceptor, "OnClick")
+            :subscribe(function()
+                if state.dialogStep:getValue() < table.getn(state.dialogTexts:getValue()) then
+                    actions.GO_TO_NEXT_STEP()
+                else
+                    actions.NEXT_AUTO_ACTION()
+                end
+            end)
 end
 
 ---@param dialogText string
 function DialogView:SetDialogText(dialogText)
+    local emoteColor = CreateColor(Chat_GetChannelColor(ChatTypeInfo["MONSTER_EMOTE"]))
+    dialogText = dialogText:gsub("<", emoteColor:GenerateHexColorMarkup() .. "<")
+    dialogText = dialogText:gsub(">", ">|r")
     self.dialogText:SetText(dialogText)
+    self.dialogText:SetTextColor(Chat_GetChannelColor(ChatTypeInfo["MONSTER_SAY"]))
     self:RefreshDynamicHeight()
 end
 
