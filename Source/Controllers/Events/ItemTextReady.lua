@@ -1,6 +1,7 @@
 local Class = require "Libraries.Self"
 local Event = require "Controllers.Events.Event"
 local SimpleDialogOption = require "Model.DialogOptions.SimpleDialogOption"
+local WoWScheduler = require "Libraries.WoWScheduler"
 
 ---@class ItemTextReady: Event
 local ItemTextReady = Class("ItemTextReady", Event)
@@ -16,7 +17,7 @@ end
 ---@param actions Storyline_Actions
 function ItemTextReady:Observe(event, state, actions)
     event:map(ItemTextGetItem):bindTo(state.unitName)
-    event:map(self.GetAllContent):bindTo(state.dialogTexts)
+    event:debounce(0.1, WoWScheduler):map(self.GetAllContent):bindTo(state.dialogTexts)
     event:mapTo(false):bindTo(state.unitIsNPC)
 
     event:mapTo(SimpleDialogOption(CLOSE, "TrainerGossipIcon", CloseItemText)):bindTo(state.nextAction)

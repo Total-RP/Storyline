@@ -62,6 +62,13 @@ function Utils.TakeNth(n)
     end
 end
 
+function Utils.Round(decimals)
+    return function(num)
+        local mult = 10^(decimals or 0)
+        return math.floor(num * mult + 0.5) / mult
+    end
+end
+
 local LINE_FEED_CODE = string.char(10)
 local CARRIAGE_RETURN_CODE = string.char(13)
 local WEIRD_LINE_BREAK = LINE_FEED_CODE .. CARRIAGE_RETURN_CODE .. LINE_FEED_CODE

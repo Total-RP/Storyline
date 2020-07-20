@@ -14,6 +14,7 @@ end
 ---@param state Storyline_State
 ---@param actions Storyline_Actions
 function QuestProgress:Observe(event, state, actions)
+    event:mapTo("questnpc"):bindTo(state.targetUnit)
     event:mapTo("questnpc"):map(UnitName):bindTo(state.unitName)
     event:map(GetProgressText):map(U.Split):bindTo(state.dialogTexts)
     event:mapTo(true):bindTo(state.unitIsNPC)

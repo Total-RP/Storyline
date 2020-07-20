@@ -71,6 +71,9 @@ function DialogView:new(state, actions)
     state.unitIsNPC
         :bindTo(Rx.Visibility(self.tail))
 
+    -- Hide while dialog is empty (might be loading)
+    state.dialogTexts:map(U.Not(U.IsNil)):bindTo(Rx.Visibility(self.container))
+
     state.dialogTexts
          :filter(U.Not(U.IsNil))
          :combineLatest(state.dialogStep)

@@ -12,4 +12,6 @@
 ## X-Curse-Project-ID: 92398
 ## X-WoWI-ID: 23782
 
+WoWLibs\LibStub.lua
+WoWLibs\LibWindow-1.1.lua
 Storyline.lua

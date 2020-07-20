@@ -3,6 +3,7 @@ local Event = require "Controllers.Events.Event"
 local U = require "Utils"
 local SimpleDialogOption = require "Model.DialogOptions.SimpleDialogOption"
 local AvailableQuestOption = require "Model.DialogOptions.AvailableQuestOption"
+local ActiveQuestOption = require "Model.DialogOptions.ActiveQuestOption"
 
 ---@class GossipShow: Event
 local GossipShow = Class("GossipShow", Event)
@@ -15,6 +16,7 @@ end
 ---@param state Storyline_State
 ---@param actions Storyline_Actions
 function GossipShow:Observe(event, state, actions)
+    event:mapTo("npc"):bindTo(state.targetUnit)
     event:mapTo("npc"):map(UnitName):bindTo(state.unitName)
     event:map(C_GossipInfo.GetText):map(U.Split):bindTo(state.dialogTexts)
     event:mapTo(true):bindTo(state.unitIsNPC)
@@ -24,19 +26,22 @@ function GossipShow:Observe(event, state, actions)
             local firstAvailableQuest = C_GossipInfo.GetAvailableQuests()[1]
             return AvailableQuestOption.createFromQuestInfo(firstAvailableQuest, U.CallWith(C_GossipInfo.SelectAvailableQuest, 1))
         end
+        if C_GossipInfo.GetNumActiveQuests() > 0 then
+            local firstAvailableQuest = C_GossipInfo.GetActiveQuests()[1]
+            return ActiveQuestOption.createFromQuestInfo(firstAvailableQuest, U.CallWith(C_GossipInfo.SelectActiveQuest, 1))
+        end
         if C_GossipInfo.GetNumOptions() > 0 then
             local firstGossip = C_GossipInfo.GetOptions()[1]
             return SimpleDialogOption(firstGossip.name, firstGossip.type .. "GossipIcon", U.CallWith(C_GossipInfo.SelectOption, 1))
         end
         return SimpleDialogOption(CLOSE, "GossipGossipIcon", C_GossipInfo.CloseGossip)
     end)
-    :bindTo(state.nextAction)
+         :bindTo(state.nextAction)
 
     event:bindTo(actions.GO_TO_FIRST_STEP)
-    event
-            :filter(U.IsNil) -- The event will have a texture kit ID for special frames, we don't want to handle those
-            :map(self.ShouldSkipGossip):filter(U.Not(U.IsTrue)) -- Do not show frame when skipping gossip dialogs, so it doesn't blink
-            :bindTo(actions.WINDOW_OPEN)
+    event:filter(U.IsNil) -- The event will have a texture kit ID for special frames, we don't want to handle those
+         :map(self.ShouldSkipGossip):filter(U.Not(U.IsTrue)) -- Do not show frame when skipping gossip dialogs, so it doesn't blink
+         :bindTo(actions.WINDOW_OPEN)
 end
 
 function GossipShow:ShouldSkipGossip()

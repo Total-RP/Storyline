@@ -18,7 +18,6 @@ function NextActionButton:new(state, actions)
             :map(function(nextAction)
                 return nextAction:GetStringRepresentation()
             end)
-            :debug()
             :map(U.First(self))
             :subscribe(self.SetText)
 

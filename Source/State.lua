@@ -18,6 +18,21 @@ function State:new()
     self.requirements = Rx.Subject.create()
     self.unitIsNPC = Rx.BehaviorSubject.create(false)
     self.nextAction = Rx.BehaviorSubject.create()
+
+    self.playerCamera = Rx.BehaviorSubject.create(1)
+    self.playerFacing = Rx.BehaviorSubject.create(0)
+    self.playerTargetDistance = Rx.BehaviorSubject.create(0)
+    self.playerHeightFactor = Rx.BehaviorSubject.create(0)
+    self.playerAnimation = Rx.BehaviorSubject.create(0)
+
+    self.targetUnit = Rx.Subject.create()
+    self.targetCamera = Rx.BehaviorSubject.create(1)
+    self.targetFacing = Rx.BehaviorSubject.create(0)
+    self.targetTargetDistance = Rx.BehaviorSubject.create(0)
+    self.targetHeightFactor = Rx.BehaviorSubject.create(0)
+    self.targetAnimation = Rx.BehaviorSubject.create(0)
+
+    self.windowSize = Rx.BehaviorSubject.create({ width = 700, height = 450 })
 end
 
 return State

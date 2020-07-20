@@ -7,7 +7,6 @@ local ResizeButton = Class("ResizeButton")
 function ResizeButton:new(resizeableFrame, actions)
     self.isResizing = Rx.BehaviorSubject.create(false)
     self:SetupButton()
-    self:MakeFrameResizeable(resizeableFrame)
     self:SetupScripts(resizeableFrame, actions)
 end
 
@@ -25,6 +24,7 @@ function ResizeButton:SetupButton()
     self.button:RegisterForDrag("LeftButton")
 end
 
+---@param resizeableFrame Frame
 function ResizeButton:SetupScripts(resizeableFrame, actions)
 
     -- Show tooltip when the cursor enters the button boundaries
@@ -52,12 +52,9 @@ function ResizeButton:SetupScripts(resizeableFrame, actions)
         :combineLatest(self.isResizing)
         :map(U.TakeNth(2))
         :filter(U.IsTrue)
+        :mapTo(resizeableFrame)
+        :map(resizeableFrame.GetSize)
         :bindTo(actions.WINDOW_RESIZING)
-end
-
-function ResizeButton:MakeFrameResizeable(resizeableFrame)
-    resizeableFrame:SetResizable(true)
-    resizeableFrame:SetClampedToScreen(true)
 end
 
 function ResizeButton:StartResizing(resizeableFrame)

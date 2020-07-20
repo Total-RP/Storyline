@@ -27,6 +27,21 @@ function ActiveQuestOption:new(name, id, level, isComplete, isIgnored, isLegenda
     self.choose = choose
 end
 
+function ActiveQuestOption.createFromQuestInfo(questInfo, choose)
+    return ActiveQuestOption(
+            questInfo.title,
+            questInfo.questID,
+            questInfo.questLevel,
+            questInfo.isComplete,
+            questInfo.isIgnored,
+            questInfo.isLegendary,
+            questInfo.isTrivial,
+            C_CampaignInfo.IsCampaignQuest(questInfo.questID),
+            C_QuestLog.IsQuestCalling(questInfo.questID),
+            choose
+    )
+end
+
 function ActiveQuestOption:GetText()
     return self.name
 end
