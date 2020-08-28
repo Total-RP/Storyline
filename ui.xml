@@ -293,17 +293,6 @@
 			</Frame>
 
 			<Frame name="Storyline_NPCFrameChat" parentKey="chat" frameStrata="HIGH">
-				<Backdrop bgFile="Interface\DialogFrame\UI-DialogBox-Background" edgeFile="Interface\GLUES\COMMON\TextPanel-Border" tile="true">
-					<EdgeSize>
-						<AbsValue val="16"/>
-					</EdgeSize>
-					<TileSize>
-						<AbsValue val="16"/>
-					</TileSize>
-					<BackgroundInsets>
-						<AbsInset left="3" right="3" top="3" bottom="3"/>
-					</BackgroundInsets>
-				</Backdrop>
 				<Size x="0" y="150"/>
 				<Anchors>
 					<Anchor point="BOTTOM" x="0" y="25"/>
@@ -376,6 +365,12 @@
 						<HighlightTexture file="Interface\Buttons\ButtonHilight-Round" alphaMode="ADD"/>
 					</Button>
 				</Frames>
+				<Scripts>
+					<OnLoad>
+						Mixin(self, BackdropTemplateMixin)
+						self:SetBackdrop(BACKDROP_CHAT_BUBBLE_16_16);
+					</OnLoad>
+				</Scripts>
 			</Frame>
 
 

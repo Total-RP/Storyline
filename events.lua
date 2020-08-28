@@ -46,24 +46,16 @@ local UnitIsUnit, UnitExists, DeclineQuest, AcceptQuest, AcknowledgeAutoAcceptQu
 local IsQuestCompletable, CompleteQuest, CloseQuest, GetQuestLogTitle = IsQuestCompletable, CompleteQuest, CloseQuest, GetQuestLogTitle;
 local GetNumQuestChoices, GetQuestReward, GetQuestLogSelection = GetNumQuestChoices, GetQuestReward, GetQuestLogSelection;
 local GetQuestLogQuestText, GetGossipAvailableQuests, GetGossipActiveQuests = GetQuestLogQuestText, GetGossipAvailableQuests, GetGossipActiveQuests;
-local GetNumGossipOptions, GetNumGossipAvailableQuests, GetNumGossipActiveQuests = GetNumGossipOptions, GetNumGossipAvailableQuests, GetNumGossipActiveQuests;
 local GetQuestItemInfo, GetNumQuestItems, GetGossipOptions = GetQuestItemInfo, GetNumQuestItems, GetGossipOptions;
 local GetObjectiveText, GetCoinTextureString, GetRewardXP = GetObjectiveText, GetCoinTextureString, GetRewardXP;
 local GetQuestItemLink, GetNumQuestRewards, GetRewardMoney, GetNumRewardCurrencies = GetQuestItemLink, GetNumQuestRewards, GetRewardMoney, GetNumRewardCurrencies;
-local GetRewardSkillPoints = GetRewardSkillPoints;
-local GetAvailableQuestInfo, GetNumAvailableQuests, GetNumActiveQuests = GetAvailableQuestInfo, GetNumAvailableQuests, GetNumActiveQuests;
-local GetAvailableTitle, GetActiveTitle, CloseGossip = GetAvailableTitle, GetActiveTitle, CloseGossip;
 local GetProgressText, GetTitleText, GetGreetingText = GetProgressText, GetTitleText, GetGreetingText;
 local GetGossipText, GetRewardText, GetQuestText = GetGossipText, GetRewardText, GetQuestText;
 local GetItemInfo, GetContainerNumSlots, GetContainerItemLink, EquipItemByName = GetItemInfo, GetContainerNumSlots, GetContainerItemLink, EquipItemByName;
 local InCombatLockdown, GetInventorySlotInfo, GetInventoryItemLink = InCombatLockdown, GetInventorySlotInfo, GetInventoryItemLink;
-local GetQuestCurrencyInfo, GetMaxRewardCurrencies, GetRewardTitle = GetQuestCurrencyInfo, GetMaxRewardCurrencies, GetRewardTitle;
-local GetFollowerInfo = C_Garrison.GetFollowerInfo;
-local GetQuestMoneyToGet, GetMoney, GetNumQuestCurrencies = GetQuestMoneyToGet, GetMoney, GetNumQuestCurrencies;
-local GetSuggestedGroupNum = GetSuggestedGroupNum;
+
 local UnitIsDead = UnitIsDead;
 local QuestIsFromAreaTrigger, QuestGetAutoAccept = QuestIsFromAreaTrigger, QuestGetAutoAccept;
-local BreakUpLargeNumbers = BreakUpLargeNumbers;
 -- UI
 local Storyline_NPCFrameObjectives, Storyline_NPCFrameObjectivesNo, Storyline_NPCFrameObjectivesYes = Storyline_NPCFrameObjectives, Storyline_NPCFrameObjectivesNo, Storyline_NPCFrameObjectivesYes;
 local Storyline_NPCFrameObjectivesImage = Storyline_NPCFrameObjectivesImage;
@@ -358,7 +350,7 @@ eventHandlers["QUEST_DETAIL"] = function()
 		previousText = Storyline_NPCFrameObjectivesContent.Objectives;
 	end
 
-	local groupNum = GetSuggestedGroupNum();
+	local groupNum = GetSuggestedGroupSize();
 	if groupNum > 0 then
 		contentHeight = contentHeight +  setObjectiveText(Storyline_NPCFrameObjectivesContent.GroupSuggestion, format(QUEST_SUGGESTED_GROUP_NUM, groupNum), previousText);
 		previousText = Storyline_NPCFrameObjectivesContent.GroupSuggestion;
@@ -404,7 +396,7 @@ eventHandlers["QUEST_PROGRESS"] = function()
 		previousText = Storyline_NPCFrameObjectivesContent.Objectives;
 	end
 
-	local groupNum = GetSuggestedGroupNum();
+	local groupNum = GetSuggestedGroupSize();
 	if groupNum > 0 then
 		contentHeight = contentHeight +  setObjectiveText(Storyline_NPCFrameObjectivesContent.GroupSuggestion, format(QUEST_SUGGESTED_GROUP_NUM, groupNum), previousText);
 		previousText = Storyline_NPCFrameObjectivesContent.GroupSuggestion;
@@ -712,7 +704,7 @@ function Storyline_API.initEventsStructure()
 			titleGetter = GetTitleText,
 		},
 		["GOSSIP_SHOW"] = {
-			text = GetGossipText,
+			text = C_GossipInfo.GetText,
 			finishMethod = function()
 				local firstChoice, bucketType, index = Dialogs.getFirstChoice(Dialogs.EVENT_TYPES.GOSSIP_SHOW);
 
@@ -721,7 +713,7 @@ function Storyline_API.initEventsStructure()
 					Dialogs.getDialogChoiceSelectorForEventType(Dialogs.EVENT_TYPES.GOSSIP_SHOW, bucketType)(index);
 				else
 					debug("GOSSIP_SHOW – Finish method : No valid options found, fallback to closing dialog.");
-					CloseGossip();
+					C_GossipInfo.CloseGossip();
 				end
 			end,
 			finishText = function()
@@ -737,7 +729,7 @@ function Storyline_API.initEventsStructure()
 
 				return finishText;
 			end,
-			cancelMethod = CloseGossip,
+			cancelMethod = C_GossipInfo.CloseGossip,
 		},
 		--[[ TODO REMOVE
 		["REPLAY"] = {
@@ -779,7 +771,7 @@ function Storyline_API.initEventsStructure()
 			end
 
 			-- Thanks to Blizzard for firing GOSSIP_SHOW and then GOSSIP_CLOSED when ForceGossip is false...
-			if not ForceGossip() then
+			if not C_GossipInfo.ForceGossip() then
 				storylineFrameShouldOpen = true;
 				C_Timer.After(0.5, function()
 					if storylineFrameShouldOpen then

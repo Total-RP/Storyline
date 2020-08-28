@@ -233,6 +233,6 @@ Storyline_NPCFrame:SetScript("OnHide", function()
 		Storyline_NPCFrameChat.eventInfo = nil;
 	end
 	if Storyline_Data.config.hideOriginalFrames then
-		CloseGossip(); -- Force CloseGossip() when Storyline is close if using the layout engine to prevent issue with NPC dialogs.
+		C_GossipInfo.CloseGossip(); -- Force CloseGossip() when Storyline is close if using the layout engine to prevent issue with NPC dialogs.
 	end
 end)

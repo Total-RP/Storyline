@@ -72,13 +72,7 @@ local AVAILABLE_QUEST_ICONS_TEXTURE_PATHS = {
 }
 
 local function getIconTextureForAvailableQuestType(frequency, isRepeatable, isLegendary)
-	local questIcon = AVAILABLE_QUEST_ICONS_TEXTURE_PATHS.DEFAULT;
-	if isLegendary then
-		questIcon = AVAILABLE_QUEST_ICONS_TEXTURE_PATHS.LEGENDARY;
-	elseif frequency == LE_QUEST_FREQUENCY_DAILY or frequency == LE_QUEST_FREQUENCY_WEEKLY or isRepeatable then
-		questIcon = AVAILABLE_QUEST_ICONS_TEXTURE_PATHS.DAILY;
-	end
-	return questIcon;
+	return QuestUtil.GetQuestIconOffer(isLegendary, frequency, isRepeatable, isLegendary, false)
 end
 
 local ACTIVE_QUEST_ICONS_TEXTURE_PATHS = {
@@ -88,13 +82,7 @@ local ACTIVE_QUEST_ICONS_TEXTURE_PATHS = {
 }
 
 local function getIconTextureForActiveQuestType(frequency, isRepeatable, isLegendary)
-	local questIcon = ACTIVE_QUEST_ICONS_TEXTURE_PATHS.DEFAULT;
-	if isLegendary then
-		questIcon = ACTIVE_QUEST_ICONS_TEXTURE_PATHS.LEGENDARY;
-	elseif frequency == LE_QUEST_FREQUENCY_DAILY or frequency == LE_QUEST_FREQUENCY_WEEKLY or isRepeatable then
-		questIcon = ACTIVE_QUEST_ICONS_TEXTURE_PATHS.DAILY;
-	end
-	return questIcon;
+	return QuestUtil.GetQuestIconActive(true, isLegendary, frequency, isRepeatable, false, false)
 end
 
 local BUTTON_DECORATORS = {
