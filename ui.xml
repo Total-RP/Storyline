@@ -302,9 +302,9 @@
 				<Layers>
 					<Layer level="BACKGROUND">
 						<Texture parentKey="bubbleTail" file="Interface\Tooltips\CHATBUBBLE-TAIL">
-							<Size x="32" y="32"/>
+							<Size x="25" y="25"/>
 							<Anchors>
-								<Anchor point="BOTTOMRIGHT" relativePoint="TOPRIGHT" x="-40" y="-3"/>
+								<Anchor point="BOTTOMRIGHT" relativePoint="TOPRIGHT" x="-40" y="-6"/>
 							</Anchors>
 							<TexCoords left="1" right="0" top="1" bottom="0"/>
 						</Texture>
