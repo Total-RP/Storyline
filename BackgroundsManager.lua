@@ -158,12 +158,16 @@ local DYNAMIC_BACKGROUNDS = {
     --endregion
 }
 
+local STATIC_BACKGROUNDS = {
+    ["1409"] = "charactercreate-startingzone-exilesreach"
+}
+
 -- Use the game's Map API to get a known map ID for the player, bubbling up the chain (cave level > sub-zone > zone > continent)
-local function getBestKnownMapId()
+local function getBestKnownMapId(pool)
     local mapID = C_Map.GetBestMapForUnit("player")
     if mapID then
         repeat
-            if DYNAMIC_BACKGROUNDS[tostring(mapID)] then
+            if pool[tostring(mapID)] then
                 return mapID
             end
             local mapInfo = C_Map.GetMapInfo(mapID)
@@ -174,7 +178,11 @@ local function getBestKnownMapId()
 end
 
 local function getCustomBackgroundForPlayer()
-    return DYNAMIC_BACKGROUNDS[tostring(getBestKnownMapId())]
+    return DYNAMIC_BACKGROUNDS[tostring(getBestKnownMapId(DYNAMIC_BACKGROUNDS))]
+end
+
+local function getCustomZoneBackground()
+    return STATIC_BACKGROUNDS[tostring(getBestKnownMapId(STATIC_BACKGROUNDS))]
 end
 
 ---@class StorylineBackgroundTexture: Texture
@@ -270,6 +278,13 @@ function StorylineBackgroundTexture:RefreshBackground()
         self.dimmingLayer:SetAlpha(0.7)
 
         -- Regular class themed backgrounds
+    elseif Storyline_Data.config.dynamicBackgrounds and getCustomZoneBackground() then
+        local zoneBackground = getCustomZoneBackground()
+        self.backgroundLayer:SetAtlas(zoneBackground)
+        self.dimmingLayer:SetAlpha(0.7)
+        self.backgroundLayer:Show()
+        self.middlegroundLayer:Hide()
+        self.foregroundLayer:Hide()
     else
         local classFilename = select(2, UnitClass("player"))
         if classFilename then
