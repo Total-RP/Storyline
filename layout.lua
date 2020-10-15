@@ -1,7 +1,7 @@
 ----------------------------------------------------------------------------------
 -- Storyline layout
 -- ---------------------------------------------------------------------------
--- Copyright 2015 Renaud "Ellypse" Parize (ellypse@totalrp3.info)
+-- Copyright 2015 Morgane "Ellypse" Parize (ellypse@totalrp3.info)
 --
 -- Licensed under the Apache License, Version 2.0 (the "License");
 -- you may not use this file except in compliance with the License.
