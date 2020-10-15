@@ -16,12 +16,11 @@
 --- limitations under the License.
 ----------------------------------------------------------------------------------
 
---local CustomTutorials = LibStub('CustomTutorials-2.1');
+local CustomTutorials = LibStub('CustomTutorials-2.1');
 
 Storyline_API.Tutorials = {};
 
 function Storyline_API.Tutorials.register(id, data)
-    if true then return end
     data.title = "Storyline";
     data.savedvariable = Storyline_Data;
     data.key = id .. 'Tutorial';
@@ -30,6 +29,5 @@ function Storyline_API.Tutorials.register(id, data)
 end
 
 function Storyline_API.Tutorials.trigger(id, step, ...)
-    if true then return end
     CustomTutorials.TriggerTutorial("Storyline" .. id, step or 1, ...);
 end
