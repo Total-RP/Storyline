@@ -2,7 +2,7 @@
 -- Storyline
 -- ---------------------------------------------------------------------------
 -- Copyright 2015 Sylvain Cossement (telkostrasz@totalrp3.info)
--- Copyright 2015 Renaud "Ellypse" Parize (ellypse@totalrp3.info)
+-- Copyright 2015 Morgane "Ellypse" Parize (ellypse@totalrp3.info)
 --
 -- Licensed under the Apache License, Version 2.0 (the "License");
 -- you may not use this file except in compliance with the License.
@@ -518,7 +518,7 @@ function Storyline_API.addon:OnEnable()
 		["143967"]  = true, -- Island expeditions map Port of Zandalar, Zuldazar
 	}
 
-	ForceGossip = function()
+	C_GossipInfo.ForceGossip = function()
 		-- return if the option is enabled and check if the NPC's dialog is not buggy
 		local npcId = Storyline_API.getNpcId();
 		return Storyline_Data.config.forceGossip and not NPC_IDS_WITH_BROKEN_DIALOGS[npcId] and not Storyline_API.isCurrentNPCBlacklisted();

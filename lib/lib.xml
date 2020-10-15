@@ -4,7 +4,7 @@
 	<!--
 		Storyline
 		Copyright 2015 Sylvain Cossement (telkostrasz@totalrp3.info)
-		Copyright 2015 Renaud Parize (Ellypse) (renaud@parize.me)
+		Copyright 2015 Morgane Parize (Ellypse) (renaud@parize.me)
 
 		Licensed under the Apache License, Version 2.0 (the "License");
 		you may not use this file except in compliance with the License.
@@ -320,6 +320,12 @@
 				</FontString>
 			</Layer>
 		</Layers>
+		<Scripts>
+			<OnLoad>
+				Mixin(self, BackdropTemplateMixin)
+				self:SetBackdrop(BACKDROP_GLUE_TOOLTIP_16_16);
+			</OnLoad>
+		</Scripts>
 	</Frame>
 
 	<!-- Text area -->

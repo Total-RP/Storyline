@@ -1,7 +1,7 @@
 ----------------------------------------------------------------------------------
 --- Storyline tutorials
 --- ---------------------------------------------------------------------------
---- Copyright 2019 Renaud "Ellypse" Parize (ellypse@totalrp3.info)
+--- Copyright 2019 Morgane "Ellypse" Parize (ellypse@totalrp3.info)
 ---
 --- Licensed under the Apache License, Version 2.0 (the "License");
 --- you may not use this file except in compliance with the License.

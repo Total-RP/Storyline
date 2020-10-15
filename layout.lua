@@ -1,7 +1,7 @@
 ----------------------------------------------------------------------------------
 -- Storyline layout
 -- ---------------------------------------------------------------------------
--- Copyright 2015 Renaud "Ellypse" Parize (ellypse@totalrp3.info)
+-- Copyright 2015 Morgane "Ellypse" Parize (ellypse@totalrp3.info)
 --
 -- Licensed under the Apache License, Version 2.0 (the "License");
 -- you may not use this file except in compliance with the License.
@@ -233,6 +233,6 @@ Storyline_NPCFrame:SetScript("OnHide", function()
 		Storyline_NPCFrameChat.eventInfo = nil;
 	end
 	if Storyline_Data.config.hideOriginalFrames then
-		CloseGossip(); -- Force CloseGossip() when Storyline is close if using the layout engine to prevent issue with NPC dialogs.
+		C_GossipInfo.CloseGossip(); -- Force CloseGossip() when Storyline is close if using the layout engine to prevent issue with NPC dialogs.
 	end
 end)
