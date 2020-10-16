@@ -122,6 +122,11 @@ end
 -- Called when the two models are loaded.
 -- This method initializes all scaling parameters.
 --
+
+local AURA_TO_DISPLAY_KIT = {
+	[232698] = 60359
+};
+
 local function modelsLoaded()
 	playerModel:ResetIdleAnimationID();
 	targetModel:ResetIdleAnimationID();
@@ -160,6 +165,16 @@ local function modelsLoaded()
 	if playerModel:GetModelFileIDAsString() then
 		mainFrame.debug.me:SetText(playerModel:GetModelFileIDAsString());
 	end
+
+	AuraUtil.ForEachAura("player", "HELPFUL", 50,function(...)
+		local args = { ... }
+		local auraId = args[10]
+		if AURA_TO_DISPLAY_KIT[auraId] then
+			playerModel:ApplySpellVisualKit(AURA_TO_DISPLAY_KIT[auraId], false)
+		end
+
+		return false;
+	end)
 
 	mainFrame.debug.recorded:Hide();
 	if scalingLib:IsRecorded(playerModel:GetModelFileIDAsString(), targetModel:GetModelFileIDAsString()) then
