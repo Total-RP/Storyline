@@ -569,7 +569,7 @@ function Storyline_API.addon:OnEnable()
 
 	Storyline_NPCFrameBlacklistButton:SetScript("OnClick", function()
 		Storyline_Data.npc_blacklist[Storyline_API.getNpcId()] = true;
-		SelectGossipOption(1);
+		C_GossipInfo.SelectOption(1);
 	end)
 	Ellyb.Tooltips.getTooltip(Storyline_NPCFrameBlacklistButton)
 		:SetTitle(loc("SL_BYPASS_NPC"))
