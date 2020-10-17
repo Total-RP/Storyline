@@ -7,3 +7,4 @@
 ### Added
 
 - Added custom background of Exile's Reach.
+- Added the Shadowform special effect to your character if you have the corresponding buff on yourself.
