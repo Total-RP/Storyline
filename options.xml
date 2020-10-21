@@ -3,7 +3,7 @@
 
 	<!--
 		Storyline options
-		Copyright 2015 Renaud Parize (Ellypse) (renaud@parize.me)
+		Copyright 2015 Morgane Parize (Ellypse) (renaud@parize.me)
 		Copyright 2015 Sylvain Cossement (telkostrasz@totalrp3.info)
 
 		Licensed under the Apache License, Version 2.0 (the "License");
@@ -89,16 +89,10 @@
 		</Layers>
 		<Size y="80" />
 		<Frames>
-			<Slider name="$parentSizeSlider" parentKey="SizeSlider" inherits="OptionsSliderTemplate" obeyStepOnDrag="true">
+			<Slider name="$parentSizeSlider" parentKey="SizeSlider" inherits="OptionsSliderTemplate" obeyStepOnDrag="true" valueStep="1" minValue="9" maxValue="25">
 				<Anchors>
 					<Anchor point="BOTTOMLEFT" relativePoint="BOTTOMLEFT" y="5" x="5" />
 				</Anchors>
-				<Scripts>
-					<OnLoad>
-						self:SetMinMaxValues(9, 25);
-						self:SetValueStep(1);
-					</OnLoad>
-				</Scripts>
 			</Slider>
 			<Frame name="$parentFontDropDown" parentKey="FontDropDown" inherits="UIDropDownMenuTemplate" enableMouse="true">
 				<Anchors>
@@ -187,16 +181,10 @@
 					<Anchor point="RIGHT" x="-32" />
 				</Anchors>
 				<Frames>
-					<Slider name="$parentSlider" parentKey="Slider" inherits="OptionsSliderTemplate" obeyStepOnDrag="true">
+					<Slider name="$parentSlider" parentKey="Slider" inherits="OptionsSliderTemplate" obeyStepOnDrag="true" minValue="0" maxValue="1.5" valueStep="0.1">
 						<Anchors>
 							<Anchor point="TOPLEFT" relativeKey="$parent.TextSample" relativePoint="BOTTOMLEFT" y="-20" />
 						</Anchors>
-						<Scripts>
-							<OnLoad>
-								self:SetMinMaxValues(0, 1.5);
-								self:SetValueStep(0.1);
-							</OnLoad>
-						</Scripts>
 					</Slider>
 				</Frames>
 			</Frame>

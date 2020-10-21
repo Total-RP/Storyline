@@ -5,7 +5,7 @@
 -- This API will provide everything necessary to create and display rewards button.
 --
 -- ---------------------------------------------------------------------------
--- Copyright 2016 Renaud "Ellypse" Parize <ellypse@totalrp3.info> @EllypseCelwe
+-- Copyright 2016 Morgane "Ellypse" Parize <ellypse@totalrp3.info> @EllypseCelwe
 --
 -- Licensed under the Apache License, Version 2.0 (the "License");
 -- you may not use this file except in compliance with the License.

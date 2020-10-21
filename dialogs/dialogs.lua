@@ -2,7 +2,7 @@
 --  Storyline
 --  Dialogs API
 --	---------------------------------------------------------------------------
---	Copyright 2016 Renaud "Ellypse" Parize <ellypse@totalrp3.info> @EllypseCelwe
+--	Copyright 2016 Morgane "Ellypse" Parize <ellypse@totalrp3.info> @EllypseCelwe
 --
 --	Licensed under the Apache License, Version 2.0 (the "License");
 --	you may not use this file except in compliance with the License.
@@ -38,68 +38,48 @@ local EVENT_TYPES = {
 }
 API.EVENT_TYPES = EVENT_TYPES;
 
-local GetNumGossipOptions,GetGossipOptions, GetNumGossipAvailableQuests, GetGossipAvailableQuests, GetNumGossipActiveQuests, GetGossipActiveQuests, GetAvailableQuestInfo, GetAvailableTitle, GetNumAvailableQuests, GetActiveTitle, GetNumActiveQuests = GetNumGossipOptions, GetGossipOptions, GetNumGossipAvailableQuests, GetGossipAvailableQuests, GetNumGossipActiveQuests, GetGossipActiveQuests, GetAvailableQuestInfo, GetAvailableTitle, GetNumAvailableQuests, GetActiveTitle, GetNumActiveQuests;
-local pairs, assert = pairs, assert;
-
-local NUMBER_OF_PARAMETERS_FOR_GOSSIP_OPTIONS = 2;
 local function getGossipChoices()
-	local numberOfGossipOptionsAvailable = GetNumGossipOptions();
-
 	local gossipChoices = {};
-	local gossipOptions = { GetGossipOptions() };
 
-	for i = 1, numberOfGossipOptionsAvailable do
-		local j = i * NUMBER_OF_PARAMETERS_FOR_GOSSIP_OPTIONS;
+	for i, optionInfo in ipairs(C_GossipInfo.GetOptions()) do
 		gossipChoices[i] = {
-			title      = gossipOptions[j - (NUMBER_OF_PARAMETERS_FOR_GOSSIP_OPTIONS - 1)],
-			gossipType = gossipOptions[j - (NUMBER_OF_PARAMETERS_FOR_GOSSIP_OPTIONS - 2)]
+			title      = optionInfo.name,
+			gossipType = optionInfo.type
 		};
 	end
-
 	return gossipChoices;
 end
 
-local NUMBER_OF_PARAMETERS_FOR_AVAILABLE_QUESTS = 8;
 local function getGossipAvailableQuestsChoices()
-	local numberOfAvailableQuests = GetNumGossipAvailableQuests();
-
 	local availableQuestsChoices = {};
-	local availableQuests = { GetGossipAvailableQuests() };
 
-	for i = 1, numberOfAvailableQuests do
-		local j = i * NUMBER_OF_PARAMETERS_FOR_AVAILABLE_QUESTS;
+	for i, questInfo in ipairs( C_GossipInfo.GetAvailableQuests()) do
 		availableQuestsChoices[i] = {
-			title        = availableQuests[j - (NUMBER_OF_PARAMETERS_FOR_AVAILABLE_QUESTS - 1)],
-			lvl          = availableQuests[j - (NUMBER_OF_PARAMETERS_FOR_AVAILABLE_QUESTS - 2)],
-			isTrivial    = availableQuests[j - (NUMBER_OF_PARAMETERS_FOR_AVAILABLE_QUESTS - 3)],
-			frequency    = availableQuests[j - (NUMBER_OF_PARAMETERS_FOR_AVAILABLE_QUESTS - 4)],
-			isRepeatable = availableQuests[j - (NUMBER_OF_PARAMETERS_FOR_AVAILABLE_QUESTS - 5)],
-			isLegendary  = availableQuests[j - (NUMBER_OF_PARAMETERS_FOR_AVAILABLE_QUESTS - 6)],
-			isIgnored    = availableQuests[j - (NUMBER_OF_PARAMETERS_FOR_AVAILABLE_QUESTS - 7)]
+			title        = questInfo.title,
+			lvl          = questInfo.questLevel,
+			isTrivial    = questInfo.isTrivial,
+			frequency    = questInfo.frequency,
+			isRepeatable = questInfo.repeatable,
+			isLegendary  = questInfo.isLegendary,
+			isIgnored    = questInfo.isIgnored
 		};
 	end
 	return availableQuestsChoices;
 end
 
-local NUMBER_OF_PARAMETERS_FOR_ACTIVE_QUESTS = 7;
 local function getGossipActiveQuestsChoices()
-	local numberOfActiveQuests = GetNumGossipActiveQuests();
-
 	-- We will have two buckets: one for the completed quests and one for the non completed ones
 	local activeCompletedQuestsChoices = {};
 	local activeUncompletedQuestsChoices = {};
 
-	local activeQuests = { GetGossipActiveQuests() };
-
-	for i = 1, numberOfActiveQuests do
-		local j = i * NUMBER_OF_PARAMETERS_FOR_ACTIVE_QUESTS;
+	for i, questInfo in ipairs( C_GossipInfo.GetActiveQuests()) do
 		local questData = {
-			title        = activeQuests[j - (NUMBER_OF_PARAMETERS_FOR_ACTIVE_QUESTS - 1)],
-			lvl          = activeQuests[j - (NUMBER_OF_PARAMETERS_FOR_ACTIVE_QUESTS - 2)],
-			isTrivial    = activeQuests[j - (NUMBER_OF_PARAMETERS_FOR_ACTIVE_QUESTS - 3)],
-			isCompleted  = activeQuests[j - (NUMBER_OF_PARAMETERS_FOR_ACTIVE_QUESTS - 4)],
-			isLegendary  = activeQuests[j - (NUMBER_OF_PARAMETERS_FOR_ACTIVE_QUESTS - 5)],
-			isIgnored    = activeQuests[j - (NUMBER_OF_PARAMETERS_FOR_ACTIVE_QUESTS - 6)]
+			title        = questInfo.title,
+			lvl          = questInfo.questLevel,
+			isTrivial    = questInfo.isTrivial,
+			isCompleted  = questInfo.isComplete,
+			isLegendary  = questInfo.isLegendary,
+			isIgnored    = questInfo.isIgnored
 		};
 		-- Place the choice in the appropriate bucket
 		if  questData.isCompleted then
@@ -196,10 +176,10 @@ end
 
 local DIALOG_CHOICES_SELECTORS = {
 	[API.EVENT_TYPES.GOSSIP_SHOW] = {
-		[API.BUCKET_TYPE.AVAILABLE_QUEST]   = SelectGossipAvailableQuest,
-		[API.BUCKET_TYPE.COMPLETED_QUEST]   = SelectGossipActiveQuest,
-		[API.BUCKET_TYPE.UNCOMPLETED_QUEST] = SelectGossipActiveQuest,
-		[API.BUCKET_TYPE.GOSSIP]            = SelectGossipOption,
+		[API.BUCKET_TYPE.AVAILABLE_QUEST]   = C_GossipInfo.SelectAvailableQuest,
+		[API.BUCKET_TYPE.COMPLETED_QUEST]   = C_GossipInfo.SelectActiveQuest,
+		[API.BUCKET_TYPE.UNCOMPLETED_QUEST] = C_GossipInfo.SelectActiveQuest,
+		[API.BUCKET_TYPE.GOSSIP]            = C_GossipInfo.SelectOption,
 	},
 	[API.EVENT_TYPES.QUEST_GREETING] = {
 		[API.BUCKET_TYPE.AVAILABLE_QUEST]   = SelectAvailableQuest,
@@ -210,6 +190,6 @@ local DIALOG_CHOICES_SELECTORS = {
 
 function API.getDialogChoiceSelectorForEventType(eventType, bucketType)
 	assert(DIALOG_CHOICES_SELECTORS[eventType], ("No dialog choice selector for event type %s!"):format(tostring(eventType)));
-	assert(DIALOG_CHOICES_SELECTORS[eventType][bucketType], ("No dialog choice selector for bucket type %s in event type %s!"):format(tostring(bucketType), tostring(eventType)));
+	assert(DIALOG_CHOICES_SELECTORS[eventType][bucketType], ("No dialog choice selector for bucket type %s in event type %s."):format(tostring(bucketType), tostring(eventType)));
 	return DIALOG_CHOICES_SELECTORS[eventType][bucketType];
 end

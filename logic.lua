@@ -2,7 +2,7 @@
 -- Storyline
 -- ---------------------------------------------------------------------------
 -- Copyright 2015 Sylvain Cossement (telkostrasz@totalrp3.info)
--- Copyright 2015 Renaud "Ellypse" Parize (ellypse@totalrp3.info)
+-- Copyright 2015 Morgane "Ellypse" Parize (ellypse@totalrp3.info)
 --
 -- Licensed under the Apache License, Version 2.0 (the "License");
 -- you may not use this file except in compliance with the License.
@@ -122,6 +122,11 @@ end
 -- Called when the two models are loaded.
 -- This method initializes all scaling parameters.
 --
+
+local AURA_TO_DISPLAY_KIT = {
+	[232698] = 60359
+};
+
 local function modelsLoaded()
 	playerModel:ResetIdleAnimationID();
 	targetModel:ResetIdleAnimationID();
@@ -160,6 +165,16 @@ local function modelsLoaded()
 	if playerModel:GetModelFileIDAsString() then
 		mainFrame.debug.me:SetText(playerModel:GetModelFileIDAsString());
 	end
+
+	AuraUtil.ForEachAura("player", "HELPFUL", 50,function(...)
+		local args = { ... }
+		local auraId = args[10]
+		if AURA_TO_DISPLAY_KIT[auraId] then
+			playerModel:ApplySpellVisualKit(AURA_TO_DISPLAY_KIT[auraId], false)
+		end
+
+		return false;
+	end)
 
 	mainFrame.debug.recorded:Hide();
 	if scalingLib:IsRecorded(playerModel:GetModelFileIDAsString(), targetModel:GetModelFileIDAsString()) then
@@ -518,7 +533,7 @@ function Storyline_API.addon:OnEnable()
 		["143967"]  = true, -- Island expeditions map Port of Zandalar, Zuldazar
 	}
 
-	ForceGossip = function()
+	C_GossipInfo.ForceGossip = function()
 		-- return if the option is enabled and check if the NPC's dialog is not buggy
 		local npcId = Storyline_API.getNpcId();
 		return Storyline_Data.config.forceGossip and not NPC_IDS_WITH_BROKEN_DIALOGS[npcId] and not Storyline_API.isCurrentNPCBlacklisted();
@@ -554,7 +569,7 @@ function Storyline_API.addon:OnEnable()
 
 	Storyline_NPCFrameBlacklistButton:SetScript("OnClick", function()
 		Storyline_Data.npc_blacklist[Storyline_API.getNpcId()] = true;
-		SelectGossipOption(1);
+		C_GossipInfo.SelectOption(1);
 	end)
 	Ellyb.Tooltips.getTooltip(Storyline_NPCFrameBlacklistButton)
 		:SetTitle(loc("SL_BYPASS_NPC"))
