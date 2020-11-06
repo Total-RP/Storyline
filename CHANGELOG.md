@@ -1,3 +1,9 @@
+## Changelog for version 3.2.1
+
+### Added
+
+- Added more backgrounds for the various races starting zones (thanks to keyboardturner for providing the data <3)
+
 ## Changelog for version 3.2
 
 ### Fixed
