@@ -159,7 +159,149 @@ local DYNAMIC_BACKGROUNDS = {
 }
 
 local STATIC_BACKGROUNDS = {
-    ["1409"] = "charactercreate-startingzone-exilesreach"
+    ["1409"] = "charactercreate-startingzone-exilesreach",
+
+    --Blood Elf
+
+    ["467"] = "charactercreate-startingzone-bloodelf", -- Sunstrider Isle (Eversong)
+    ["94"] = "charactercreate-startingzone-bloodelf", -- Eversong
+    ["1267"] = "charactercreate-startingzone-bloodelf", -- Eversong 2
+
+    --Draenei
+
+    ["1325"] = "charactercreate-startingzone-draenei", -- Azuremyst
+    ["97"] = "charactercreate-startingzone-draenei", -- Azuremyst 2
+    ["98"] = "charactercreate-startingzone-draenei", -- Tides' Hollow (Microdungeon)
+    ["99"] = "charactercreate-startingzone-draenei", -- Stillpine Hold (Microdungeon)
+    ["468"] = "charactercreate-startingzone-draenei", -- Ammen Vale (Azuremyst)
+    ["776"] = "charactercreate-startingzone-draenei", -- Azuremyst (Orphan)
+    ["891"] = "charactercreate-startingzone-draenei", -- Azuremyst (Legion Scenario)
+    ["892"] = "charactercreate-startingzone-draenei", -- Azuremyst (Legion Scenario 2)
+    ["893"] = "charactercreate-startingzone-draenei", -- Azuremyst (Legion Scenario 3)
+    ["894"] = "charactercreate-startingzone-draenei", -- Azuremyst (Legion Scenario 4)
+
+    --Worgen
+
+    ["179"] = "charactercreate-startingzone-worgen", -- Gilneas (Orphan)
+    ["180"] = "charactercreate-startingzone-worgen", -- Emberstone Mine (Microdungeon)
+    ["181"] = "charactercreate-startingzone-worgen", -- Greymane Manor (Microdungeon)
+    ["182"] = "charactercreate-startingzone-worgen", -- Greymane Manor 2 (Microdungeon)
+    ["202"] = "charactercreate-startingzone-worgen", -- Gilneas City (Gilneas)
+    ["217"] = "charactercreate-startingzone-worgen", -- Ruins of Gilneas
+    ["218"] = "charactercreate-startingzone-worgen", -- Ruins of Gilneas City (Orphan)
+    ["1030"] = "charactercreate-startingzone-worgen", -- Greymane Manor 3 (Microdungeon)
+    ["1031"] = "charactercreate-startingzone-worgen", -- Greymane Manor 4 (Microdungeon)
+    ["1271"] = "charactercreate-startingzone-worgen", -- Gilneas
+    ["1273"] = "charactercreate-startingzone-worgen", -- Ruins of Gilneas 2
+    ["1577"] = "charactercreate-startingzone-worgen", -- Gilneas City 2 (Gilneas)
+
+    --Goblin
+
+    ["194"] = "charactercreate-startingzone-goblin", -- Kezan
+    ["195"] = "charactercreate-startingzone-goblin", -- Kaja'mine (Microdungeon)
+    ["196"] = "charactercreate-startingzone-goblin", -- Kaja'mine 2 (Microdungeon)
+    ["197"] = "charactercreate-startingzone-goblin", -- Kaja'mine 3 (Microdungeon)
+
+    --["174"] = "charactercreate-startingzone-goblin", -- The Lost Isles
+    --["175"] = "charactercreate-startingzone-goblin", -- Kaja'mite Cavern (Microdungeon)
+    --["176"] = "charactercreate-startingzone-goblin", -- Volcanoth's Lair (Microdungeon)
+    --["177"] = "charactercreate-startingzone-goblin", -- Gallywix Labor Mine (Microdungeon)
+    --["178"] = "charactercreate-startingzone-goblin", -- Gallywix Labor Mine 2 (Microdungeon)
+
+    --Human
+
+    ["37"] = "charactercreate-startingzone-human", -- Elwynn Forest
+    ["38"] = "charactercreate-startingzone-human", -- Fargodeep Mine (Microdungeon)
+    ["39"] = "charactercreate-startingzone-human", -- Fargodeep Mine (Microdungeon)
+    ["40"] = "charactercreate-startingzone-human", -- Jasperlode Mine (Microdungeon)
+    ["425"] = "charactercreate-startingzone-human", -- Northshire (Elwynn Forest)
+    ["426"] = "charactercreate-startingzone-human", -- Echo Ridge Mine (Microdungeon)
+    ["1256"] = "charactercreate-startingzone-human", -- Elwynn Forest 2
+
+    --Dwarf
+
+    ["27"] = "charactercreate-startingzone-dwarf", -- Dun Morogh
+    ["28"] = "charactercreate-startingzone-dwarf", -- Colridge Pass (Microdungeon)
+    ["29"] = "charactercreate-startingzone-dwarf", -- The Grizzled Den (Microdungeon)
+    ["31"] = "charactercreate-startingzone-dwarf", -- Gol'Bolar Quarry (Microdungeon)
+    ["427"] = "charactercreate-startingzone-dwarf", -- Coldridge Valley (Orphan)
+    ["428"] = "charactercreate-startingzone-dwarf", -- Frostmane Hovel (Microdungeon)
+    ["470"] = "charactercreate-startingzone-dwarf", -- Frostmane Hold (Microdungeon)
+    ["523"] = "charactercreate-startingzone-dwarf", -- Dun Morogh (Orphan)
+    ["843"] = "charactercreate-startingzone-dwarf", -- Coldridge Valley (Orphan)
+    ["1253"] = "charactercreate-startingzone-dwarf", -- Dun Morogh 2
+
+    --Gnome
+
+    ["30"] = "charactercreate-startingzone-gnome", -- New Tinkertown (The Gnomeregan Starting Zone)
+    ["469"] = "charactercreate-startingzone-gnome", -- New Tinkertown 2 (The Outdoor Gnome Zone)
+    --["840"] = "charactercreate-startingzone-gnome", -- Gnomeregan 1 (Dungeon)
+    --["841"] = "charactercreate-startingzone-gnome", -- Gnomeregan 2 (Dungeon)
+    --["842"] = "charactercreate-startingzone-gnome", -- Gnomeregan 3 (Dungeon)
+    --["1371"] = "charactercreate-startingzone-gnome", -- Gnomeregan A
+    --["1372"] = "charactercreate-startingzone-gnome", -- Gnomeregan B
+    --["1380"] = "charactercreate-startingzone-gnome", -- Gnomeregan C
+    --["1374"] = "charactercreate-startingzone-gnome", -- Gnomeregan D
+
+    --Night Elf
+
+    ["57"] = "charactercreate-startingzone-nightelf", -- Teldrassil
+    ["58"] = "charactercreate-startingzone-nightelf", -- Shadowthread Cave (Microdungeon)
+    ["59"] = "charactercreate-startingzone-nightelf", -- Fel Rock (Microdungeon)
+    ["60"] = "charactercreate-startingzone-nightelf", -- Ban'ethil Barrow Den (Microdungeon)
+    ["61"] = "charactercreate-startingzone-nightelf", -- Ban'ethil Barrow Den 2 (Microdungeon)
+    ["460"] = "charactercreate-startingzone-nightelf", -- Shadowglen (Teldrassil)
+    ["1308"] = "charactercreate-startingzone-nightelf", -- Teldrassil 2
+
+    --Orc
+
+    ["1"] = "charactercreate-startingzone-orc", -- Durotar
+    ["2"] = "charactercreate-startingzone-orc", -- Burning Blade Coven (Microdungeon)
+    ["3"] = "charactercreate-startingzone-orc", -- Tiragarde Keep (Microdungeon)
+    ["4"] = "charactercreate-startingzone-orc", -- Tiragarde Keep 2 (Microdungeon)
+    ["5"] = "charactercreate-startingzone-orc", -- Skull Rock (Microdungeon)
+    ["6"] = "charactercreate-startingzone-orc", -- Dustwind Cave (Microdungeon)
+    ["461"] = "charactercreate-startingzone-orc", -- Valley of Trials (Durotar)
+    ["1305"] = "charactercreate-startingzone-orc", -- Durotar 2
+
+    --Troll
+
+    ["463"] = "charactercreate-startingzone-troll", -- Echo Isles (Durotar)
+    ["464"] = "charactercreate-startingzone-troll", -- Spitescale Cavern (Microdungeon)
+
+    --Tauren
+
+    ["7"] = "charactercreate-startingzone-tauren", -- Mulgore
+    ["8"] = "charactercreate-startingzone-tauren", -- Palemane Rock (Microdungeon)
+    ["9"] = "charactercreate-startingzone-tauren", -- The Venture Co. Mine (Microdungeon)
+    ["462"] = "charactercreate-startingzone-tauren", -- Camp Narache (Mulgore)
+    ["1306"] = "charactercreate-startingzone-tauren", -- Mulgore 2
+
+    --Undead (or Forsaken if you're feeling politically correct)
+
+    ["18"] = "charactercreate-startingzone-undead", -- Tirisfal Glades
+    ["19"] = "charactercreate-startingzone-undead", -- Scarlet Monastery Entrance (Microdungeon)
+    ["20"] = "charactercreate-startingzone-undead", -- Keeper's Rest (Microdungeon)
+    --["302"] = "charactercreate-startingzone-undead", -- Scarlet Monastery 1 (Dungeon)
+    --["303"] = "charactercreate-startingzone-undead", -- Scarlet Monastery 2 (Dungeon)
+    --["304"] = "charactercreate-startingzone-undead", -- Scarlet Monastery 3 (Dungeon)
+    --["305"] = "charactercreate-startingzone-undead", -- Scarlet Monastery 4 (Dungeon)
+    --["431"] = "charactercreate-startingzone-undead", -- Scarlet Halls 1 (Dungeon)
+    --["432"] = "charactercreate-startingzone-undead", -- Scarlet Halls 2 (Dungeon)
+    --["435"] = "charactercreate-startingzone-undead", -- Scarlet Monastery New 1 (Dungeon)
+    --["436"] = "charactercreate-startingzone-undead", -- Scarlet Monastery New 2 (Dungeon)
+    ["465"] = "charactercreate-startingzone-undead", -- Deathknell (Tirisfal Glades)
+    ["466"] = "charactercreate-startingzone-undead", -- Night's Web Hollow (Microdungeon)
+    --["804"] = "charactercreate-startingzone-undead", -- SM Newer 1 (Dungeon)
+    --["805"] = "charactercreate-startingzone-undead", -- SM Newer 2 (Dungeon)
+    ["997"] = "charactercreate-startingzone-undead", -- Tirisfal Glades 2
+    ["1247"] = "charactercreate-startingzone-undead", -- Tirisfal Glades 3
+    --["1465"] = "charactercreate-startingzone-undead", -- Scarlet Halls (Dungeon)
+
+    --Pandaren
+    ["378"] = "charactercreate-startingzone-pandaren", -- The Wandering Isle
+    ["709"] = "charactercreate-startingzone-pandaren", -- The Wandering Isle (Legion)
+
 }
 
 -- Use the game's Map API to get a known map ID for the player, bubbling up the chain (cave level > sub-zone > zone > continent)
