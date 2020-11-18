@@ -1,3 +1,9 @@
+## Changelog for version 3.2.2
+
+### Fixed
+
+- Fixed missing chat bubble texture introduce in patch 9.0.1.
+
 ## Changelog for version 3.2.1
 
 ### Added

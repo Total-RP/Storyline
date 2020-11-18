@@ -304,7 +304,7 @@
 						<Texture parentKey="bubbleTail" file="Interface\Tooltips\CHATBUBBLE-TAIL">
 							<Size x="25" y="25"/>
 							<Anchors>
-								<Anchor point="BOTTOMRIGHT" relativePoint="TOPRIGHT" x="-40" y="-6"/>
+								<Anchor point="BOTTOMRIGHT" relativePoint="TOPRIGHT" x="-40" y="-5"/>
 							</Anchors>
 							<TexCoords left="1" right="0" top="1" bottom="0"/>
 						</Texture>
@@ -368,7 +368,15 @@
 				<Scripts>
 					<OnLoad>
 						Mixin(self, BackdropTemplateMixin)
-						self:SetBackdrop(BACKDROP_CHAT_BUBBLE_16_16);
+						self:SetBackdrop({
+						bgFile = "Interface\\Tooltips\\ChatBubble-Background",
+						edgeFile = "Interface\\Tooltips\\ChatBubble-Backdrop",
+						tile = true,
+						tileEdge = true,
+						tileSize = 16,
+						edgeSize = 16,
+						insets = { left = 16, right = 16, top = 16, bottom = 16 },
+						});
 					</OnLoad>
 				</Scripts>
 			</Frame>
