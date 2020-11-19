@@ -217,11 +217,6 @@
 				</Frames>
 			</Frame>
 		</Frames>
-		<Scripts>
-			<OnShow>
-
-			</OnShow>
-		</Scripts>
 	</Frame>
 
 	<Frame name="StorylineTextOptionsPanel" inherits="StorylineOptionFrameChildTemplate">

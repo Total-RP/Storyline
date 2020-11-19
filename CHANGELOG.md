@@ -1,8 +1,14 @@
+## Changelog for version 3.2.3
+
+### Fixed
+
+- Fixed a missing Blizzard template Lua error causing the settings button to not be visible.
+
 ## Changelog for version 3.2.2
 
 ### Fixed
 
-- Fixed missing chat bubble texture introduce in patch 9.0.1.
+- Fixed missing chat bubble texture introduce in patch 9.0.2.
 
 ## Changelog for version 3.2.1
 

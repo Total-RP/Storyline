@@ -602,10 +602,15 @@
 				</Anchors>
 			</Button>
 
-			<Button name="Storyline_NPCFrameConfigButton" inherits="BrowserButtonTemplate" frameStrata="HIGH">
+			<Button name="Storyline_NPCFrameConfigButton" frameStrata="HIGH">
 				<Anchors>
 					<Anchor point="BOTTOMLEFT" x="5" y="10"/>
 				</Anchors>
+				<Size x="32" y="32"/>
+				<NormalTexture file="Interface\Buttons\UI-SquareButton-Up"/>
+				<PushedTexture file="Interface\Buttons\UI-SquareButton-Down"/>
+				<DisabledTexture file="Interface\Buttons\UI-SquareButton-Disabled"/>
+				<HighlightTexture file="Interface\Buttons\UI-Common-MouseHilight" alphaMode="ADD"/>
 				<Layers>
 					<Layer level="ARTWORK" textureSubLevel="5">
 						<Texture parentKey="Icon" file="Interface\Buttons\UI-OptionsButton">
@@ -616,15 +621,6 @@
 						</Texture>
 					</Layer>
 				</Layers>
-				<Scripts>
-					<OnClick>
-						InterfaceOptionsFrame_OpenToCategory(StorylineOptionsPanel);
-						if not self.shown then -- Dirty fix for the Interface frame shitting itself the first time
-							self.shown = true;
-							InterfaceOptionsFrame_OpenToCategory(StorylineOptionsPanel);
-						end
-					</OnClick>
-				</Scripts>
 			</Button>
 
 		</Frames>
