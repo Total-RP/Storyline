@@ -680,15 +680,12 @@ function Storyline_API.addon:OnEnable()
 	debugInit();
 
 	-- Slash command to show settings frames
-	Storyline_API.addon:RegisterChatCommand("storyline", function()
-		InterfaceOptionsFrame_OpenToCategory(StorylineOptionsPanel);
-		if not Storyline_NPCFrameConfigButton.shown then -- Dirty fix for the Interface frame shitting itself the first time
-			Storyline_NPCFrameConfigButton.shown = true;
-			InterfaceOptionsFrame_OpenToCategory(StorylineOptionsPanel);
-		end;
-	end);
+	Storyline_API.addon:RegisterChatCommand("storyline", Storyline_API.openSettings);
 
-	setTooltipAll(Storyline_NPCFrameConfigButton, "TOP", 0, 0, loc("SL_CONFIG"));
+	Ellyb.Tooltips.getTooltip(Storyline_NPCFrameConfigButton)
+		:SetTitle(loc("SL_CONFIG"))
+		:SetAnchor("TOP");
+	Storyline_NPCFrameConfigButton:SetScript("OnClick", Storyline_API.openSettings);
 
 
 	mainFrame:RegisterForDrag("LeftButton");
@@ -709,4 +706,11 @@ function Storyline_API.addon:OnEnable()
 	Storyline_NPCFrame.Background.SealTexture:SetPoint("BOTTOMRIGHT", Storyline_NPCFrameChatName, "TOPRIGHT", 0, 20)
 	Storyline_NPCFrame.Background.SealText:ClearAllPoints()
 	Storyline_NPCFrame.Background.SealText:SetPoint("BOTTOMRIGHT", Storyline_NPCFrame.Background.SealTexture, "BOTTOMLEFT", -10, 0)
+end
+
+function Storyline_API.openSettings()
+	InterfaceOptionsFrame_OpenToCategory("Storyline");
+	-- Need to be called twice due to a bug present in the game since 2009
+	-- See: https://www.wowace.com/projects/interfaceoptionsframe_opentocate
+	InterfaceOptionsFrame_OpenToCategory("Storyline");
 end
