@@ -476,7 +476,7 @@ local function handleEventSpecifics(event, texts, textIndex, eventInfo)
 
 	showQuestPortraitFrame(event == "QUEST_COMPLETE");
 
-	if textIndex == #texts and eventHandlers[event] then
+	if event == "GOSSIP_SHOW" or (textIndex == #texts and eventHandlers[event]) then
 		currentEvent = event;
 		eventHandlers[event](eventInfo);
 	end
