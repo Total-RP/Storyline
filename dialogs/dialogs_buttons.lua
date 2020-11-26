@@ -71,8 +71,8 @@ local AVAILABLE_QUEST_ICONS_TEXTURE_PATHS = {
 	DAILY     = [[Interface\GossipFrame\DailyQuestIcon]]
 }
 
-local function getIconTextureForAvailableQuestType(frequency, isRepeatable, isLegendary)
-	return QuestUtil.GetQuestIconOffer(isLegendary, frequency, isRepeatable, isLegendary, false)
+local function getIconTextureForAvailableQuestType(frequency, isRepeatable, isLegendary, isCampaign, isCalling)
+	return QuestUtil.GetQuestIconOffer(isLegendary, frequency, isRepeatable, isCampaign, isCalling)
 end
 
 local ACTIVE_QUEST_ICONS_TEXTURE_PATHS = {
@@ -81,18 +81,18 @@ local ACTIVE_QUEST_ICONS_TEXTURE_PATHS = {
 	DAILY     = [[Interface\GossipFrame\DailyActiveQuestIcon]]
 }
 
-local function getIconTextureForActiveQuestType(frequency, isRepeatable, isLegendary)
-	return QuestUtil.GetQuestIconActive(true, isLegendary, frequency, isRepeatable, false, false)
+local function getIconTextureForActiveQuestType(frequency, isRepeatable, isLegendary, isCampaign, isCalling)
+	return QuestUtil.GetQuestIconActive(true, isLegendary, frequency, isRepeatable, isCampaign, isCalling)
 end
 
 local BUTTON_DECORATORS = {
 	[Dialogs.BUCKET_TYPE.COMPLETED_QUEST] = function(button, data)
 		button:SetText(data.title);
-		button:SetIcon(getIconTextureForActiveQuestType(data.frequency, data.isRepeatable, data.isLegendary));
+		QuestUtil.ApplyQuestIconActiveToTexture(button.icon, true, data.isLegendary, data.frequency, data.isRepeatable, data.isCampaign, data.isCovenantCalling)
 	end,
 	[Dialogs.BUCKET_TYPE.AVAILABLE_QUEST] = function(button, data)
 		button:SetText(data.title);
-		button:SetIcon(getIconTextureForAvailableQuestType(data.frequency, data.isRepeatable, data.isLegendary));
+		QuestUtil.ApplyQuestIconOfferToTexture(button.icon, data.isLegendary, data.frequency, data.isRepeatable, data.isCampaign, data.isCovenantCalling);
 		if data.isTrivial then
 			button:GreyOutIcon();
 		end
@@ -103,7 +103,7 @@ local BUTTON_DECORATORS = {
 	end,
 	[Dialogs.BUCKET_TYPE.UNCOMPLETED_QUEST] = function(button, data)
 		button:SetText(data.title);
-		button:SetIcon("Interface\\GossipFrame\\IncompleteQuestIcon");
+		QuestUtil.ApplyQuestIconActiveToTexture(button.icon, false, data.isLegendary, data.frequency, data.isRepeatable, data.isCampaign, data.isCovenantCalling)
 	end
 }
 
