@@ -578,6 +578,18 @@ local targetModel = Storyline_NPCFrame.models.you;
 local playerModel = Storyline_NPCFrame.models.me;
 local ANIMATIONS = Storyline_API.ANIMATIONS;
 
+-- Sadly this list is not exposed, so we will have to maintain it.
+local SPECIAL_GOSSIP_FRAMES = {
+	"npe-guide",
+	"skoldushall",
+	"mortregar",
+	"coldheartinterstitia",
+	"fracturechambers",
+	"soulforges",
+	"theupperreaches",
+	"twistingcorridors",
+}
+
 function Storyline_API.initEventsStructure()
 	local startDialog = Storyline_API.startDialog;
 
@@ -749,6 +761,16 @@ function Storyline_API.initEventsStructure()
 
 	for event, info in pairs(EVENT_INFO) do
 		Ellyb.GameEvents.registerCallback(event, function(...)
+
+			if event == "GOSSIP_SHOW" then
+				local textureId = ...;
+
+				if tContains(SPECIAL_GOSSIP_FRAMES, textureId) then
+					CustomGossipFrameManager:OnEvent(event, ...);
+					return
+				end
+
+			end
 
 			-- Workaround quests auto accepted from items
 			if event == "QUEST_DETAIL" then
