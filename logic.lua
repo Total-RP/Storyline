@@ -231,19 +231,6 @@ function Storyline_API.startDialog(targetType, fullText, event, eventInfo)
 
 	if eventInfo.titleGetter and eventInfo.titleGetter() and eventInfo.titleGetter():len() > 0 then
 		mainFrame.Banner:Show();
-
-		if C_CampaignInfo.IsCampaignQuest(questId) then
-			local faction = UnitFactionGroup("player");
-			if faction == "Horde" then
-				mainFrame.Banner.FactionIcon:SetAtlas("bfa-landingbutton-horde-up")
-			else
-				mainFrame.Banner.FactionIcon:SetAtlas("bfa-landingbutton-alliance-up")
-			end
-			mainFrame.Banner.FactionIcon:Show()
-		else
-			mainFrame.Banner.FactionIcon:Hide()
-		end
-
 		mainFrame.Banner.Title:SetText(eventInfo.titleGetter());
 		if eventInfo.getTitleColor and eventInfo.getTitleColor() then
 			mainFrame.Banner.Title:SetTextColor(eventInfo.getTitleColor());
@@ -251,7 +238,6 @@ function Storyline_API.startDialog(targetType, fullText, event, eventInfo)
 			mainFrame.Banner.Title:SetTextColor(0.95, 0.95, 0.95);
 		end
 	else
-		mainFrame.Banner.FactionIcon:Hide()
 		mainFrame.Banner:Hide();
 	end
 
