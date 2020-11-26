@@ -302,6 +302,13 @@ local STATIC_BACKGROUNDS = {
     ["378"] = "charactercreate-startingzone-pandaren", -- The Wandering Isle
     ["709"] = "charactercreate-startingzone-pandaren", -- The Wandering Isle (Legion)
 
+    --region Shadowlands
+    ["1533"] = "CovenantChoice-Offering-Preview-Frame-Background-Kyrian",
+    ["1569"] = "CovenantChoice-Offering-Preview-Frame-Background-Kyrian",
+    ["1813"] = "CovenantChoice-Offering-Preview-Frame-Background-Kyrian"
+
+    --endregion
+
 }
 
 -- Use the game's Map API to get a known map ID for the player, bubbling up the chain (cave level > sub-zone > zone > continent)
@@ -431,7 +438,8 @@ function StorylineBackgroundTexture:RefreshBackground()
         -- Regular class themed backgrounds
     elseif Storyline_Data.config.dynamicBackgrounds and getCustomZoneBackground() then
         local zoneBackground = getCustomZoneBackground()
-        self.backgroundLayer:SetAtlas(zoneBackground)
+        self.backgroundLayer:SetTexCoord(0, 1, 0, 1)
+        self.backgroundLayer:SetAtlas(zoneBackground, false)
         self.dimmingLayer:SetAlpha(0.7)
         self.backgroundLayer:Show()
         self.middlegroundLayer:Hide()
