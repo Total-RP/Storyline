@@ -254,7 +254,7 @@
 			</Button>
 
 			<Frame parentKey="dump" inherits="Storyline_TextArea">
-				<Size x="140" y="100"/>
+				<Size x="280" y="200"/>
 				<Anchors>
 					<Anchor point="BOTTOMLEFT" relativePoint="BOTTOMRIGHT" x="10" y="10"/>
 				</Anchors>
