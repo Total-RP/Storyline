@@ -281,14 +281,6 @@
 							</Anchors>
 						</FontString>
 					</Layer>
-					<Layer level="OVERLAY" textureSubLevel="4">
-						<Texture parentKey="FactionIcon">
-							<Size x="30" y="33" />
-							<Anchors>
-								<Anchor point="RIGHT" relativePoint="LEFT" relativeKey="$parent.Title" x="0" y="-4"  />
-							</Anchors>
-						</Texture>
-					</Layer>
 				</Layers>
 			</Frame>
 
