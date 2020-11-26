@@ -141,7 +141,7 @@
 					</Frame>
 					<CinematicModel name="Storyline_NPCFrameModelsMe" parentKey="me" setAllPoints="true" mixin="Storyline_PlayerModelMixin">
 						<Frames>
-							<Button parentKey="scroll" enableMouse="true">
+							<Button parentKey="scroll" enableMouse="true" frameStrata="MEDIUM">
 								<Anchors>
 									<Anchor point="TOP" x="0" y="-50"/>
 									<Anchor point="LEFT" x="75" y="0"/>
@@ -158,7 +158,7 @@
 					</CinematicModel>
 					<CinematicModel name="Storyline_NPCFrameModelsYou" parentKey="you" setAllPoints="true" mixin="Storyline_PlayerModelMixin">
 						<Frames>
-							<Button parentKey="scroll" enableMouse="true">
+							<Button parentKey="scroll" enableMouse="true" frameStrata="MEDIUM">
 								<Anchors>
 									<Anchor point="TOP" x="0" y="-50"/>
 									<Anchor point="RIGHT" x="-75" y="0"/>
@@ -173,7 +173,7 @@
 							<OnAnimFinished method="OnAnimFinished"/>
 						</Scripts>
 					</CinematicModel>
-					<Frame name="Storyline_NPCFrameGossipChoices" inherits="Storyline_HoveredFrame" hidden="true">
+					<Frame name="Storyline_NPCFrameGossipChoices" inherits="Storyline_HoveredFrame" hidden="true" frameStrata="HIGH">
 						<Size x="325" y="150"/>
 						<Layers>
 							<Layer level="OVERLAY">
