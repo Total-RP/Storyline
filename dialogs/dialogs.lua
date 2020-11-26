@@ -61,7 +61,9 @@ local function getGossipAvailableQuestsChoices()
 			frequency    = questInfo.frequency,
 			isRepeatable = questInfo.repeatable,
 			isLegendary  = questInfo.isLegendary,
-			isIgnored    = questInfo.isIgnored
+			isIgnored    = questInfo.isIgnored,
+			isCampaign = QuestUtil.ShouldQuestIconsUseCampaignAppearance(questInfo.questID),
+			isCalling = C_QuestLog.IsQuestCalling(questInfo.questID)
 		};
 	end
 	return availableQuestsChoices;
@@ -79,7 +81,9 @@ local function getGossipActiveQuestsChoices()
 			isTrivial    = questInfo.isTrivial,
 			isCompleted  = questInfo.isComplete,
 			isLegendary  = questInfo.isLegendary,
-			isIgnored    = questInfo.isIgnored
+			isIgnored    = questInfo.isIgnored,
+			isCampaign = QuestUtil.ShouldQuestIconsUseCampaignAppearance(questInfo.questID),
+			isCalling = C_QuestLog.IsQuestCalling(questInfo.questID)
 		};
 		-- Place the choice in the appropriate bucket
 		if  questData.isCompleted then
@@ -99,14 +103,15 @@ local function getAvailableQuestsChoices()
 
 	for i = 1, numberOfAvailableQuests do
 		local title = GetAvailableTitle(i);
-		local isTrivial, frequency, isRepeatable, isLegendary, isIgnored = GetAvailableQuestInfo(i);
+		local isTrivial, frequency, isRepeatable, isLegendary, questID = GetAvailableQuestInfo(i);
 		availableQuestsChoices[i] = {
 			title        = title,
 			isTrivial    = isTrivial,
 			frequency    = frequency,
 			isRepeatable = isRepeatable,
 			isLegendary  = isLegendary,
-			isIgnored    = isIgnored
+			isCampaign = QuestUtil.ShouldQuestIconsUseCampaignAppearance(questID),
+			isCalling = C_QuestLog.IsQuestCalling(questID)
 		};
 	end
 	return availableQuestsChoices;
@@ -123,12 +128,15 @@ local function getActiveQuestsChoices()
 	for i = 1, numberOfActiveQuests do
 		local title, isComplete = GetActiveTitle(i);
 		local isTrivial, frequency, isRepeatable, isLegendary = GetAvailableQuestInfo(i);
+		local activeQuestID = GetActiveQuestID(i);
 		local questData = {
 			title        = title,
 			isTrivial    = isTrivial,
 			isCompleted  = isComplete,
 			isRepeatable = isRepeatable,
-			isIgnored    = isLegendary
+			isIgnored    = isLegendary,
+			isCampaign = QuestUtil.ShouldQuestIconsUseCampaignAppearance(activeQuestID),
+			isCalling = C_QuestLog.IsQuestCalling(activeQuestID)
 		};
 		-- Place the choice in the appropriate bucket
 		if  questData.isCompleted then
