@@ -1,3 +1,9 @@
+## Changelog for version 3.2.4
+
+### Fixed
+
+- Storyline will no longer intercept the Torghast level selection dialog.
+
 ## Changelog for version 3.2.3
 
 ### Fixed
