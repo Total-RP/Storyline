@@ -329,18 +329,7 @@
 	</Frame>
 
 	<!-- Text area -->
-	<Frame name="Storyline_TextArea" virtual="true" enableMouse="true">
-		<Backdrop edgeFile="Interface\GLUES\COMMON\TextPanel-Border" bgFile="Interface\DialogFrame\UI-DialogBox-Background" tile="true">
-			<EdgeSize>
-				<AbsValue val="20"/>
-			</EdgeSize>
-			<TileSize>
-				<AbsValue val="200"/>
-			</TileSize>
-			<BackgroundInsets>
-				<AbsInset left="5" right="5" top="5" bottom="5"/>
-			</BackgroundInsets>
-		</Backdrop>
+	<Frame name="Storyline_TextArea" virtual="true" enableMouse="true" inherits="TooltipBackdropTemplate">
 		<Frames>
 			<ScrollFrame parentKey="scroll" name="$parentScroll" inherits="UIPanelScrollFrameTemplate">
 				<Anchors>

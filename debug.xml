@@ -19,18 +19,7 @@
 		limitations under the License.
 	-->
 
-	<Frame name="Storyline_NPCFrameDebug" parentKey="debug" parent="Storyline_NPCFrame" hidden="false">
-		<Backdrop bgFile="Interface\DialogFrame\UI-DialogBox-Background" edgeFile="Interface\Tooltips\UI-Tooltip-Border" tile="true">
-			<EdgeSize>
-				<AbsValue val="16"/>
-			</EdgeSize>
-			<TileSize>
-				<AbsValue val="16"/>
-			</TileSize>
-			<BackgroundInsets>
-				<AbsInset left="5" right="5" top="5" bottom="5"/>
-			</BackgroundInsets>
-		</Backdrop>
+	<Frame name="Storyline_NPCFrameDebug" parentKey="debug" parent="Storyline_NPCFrame" hidden="false" inherits="TooltipBackdropTemplate">
 		<Size x="0" y="160"/>
 		<Anchors>
 			<Anchor point="TOPRIGHT" relativeTo="Storyline_NPCFrame" relativePoint="BOTTOMRIGHT" x="0" y="10"/>
@@ -259,9 +248,14 @@
 					<Anchor point="BOTTOMLEFT" relativePoint="BOTTOMRIGHT" x="10" y="10"/>
 				</Anchors>
 				<Frames>
-					<Button parentKey="dump" inherits="Storyline_CommonButton" text="Dump">
+					<Button parentKey="dump" inherits="Storyline_CommonButton" text="Dump target">
 						<Anchors>
 							<Anchor point="BOTTOMLEFT" relativePoint="TOPLEFT" x="0" y="10"/>
+						</Anchors>
+					</Button>
+					<Button parentKey="dumpMe" inherits="Storyline_CommonButton" text="Dump player">
+						<Anchors>
+							<Anchor point="BOTTOMLEFT" relativePoint="BOTTOMRIGHT" relativeKey="$parent.dump"/>
 						</Anchors>
 					</Button>
 				</Frames>

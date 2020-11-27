@@ -397,38 +397,30 @@ local function debugInit()
 	end
 
 	mainFrame.debug.dump.dump:SetScript("OnClick", function()
---		local info =
---[[["%s~%s"] = {
---  ["me"] = {
---    ["scale"] = %s,
---    ["feet"] = %s,
---    ["offset"] = %s,
---    ["facing"] = %s,
---  },
---  ["you"] = {
---    ["scale"] = %s,
---    ["feet"] = %s,
---    ["offset"] = %s,
---    ["facing"] = %s,
---	}
---},]]
---		local formatted = info:format(
---			playerModel:GetModelFileIDAsString(),
---			targetModel:GetModelFileIDAsString(),
---			mainFrame.models.me.scale, mainFrame.models.me.feet, mainFrame.models.me.offset, mainFrame.models.me.facing,
---			mainFrame.models.you.scale, mainFrame.models.you.feet, mainFrame.models.you.offset, mainFrame.models.you.facing
---		);
 		local info = [[
 ["%s"] = {
 ["scale"] = %s,
 ["feet"] = %s,
 ["offset"] = %s,
 ["facing"] = %s,
-},
-]]
+},]]
 		local formatted = info:format(
 			targetModel:GetModelFileIDAsString(),
 			mainFrame.models.you.scale, mainFrame.models.you.feet, mainFrame.models.you.offset, mainFrame.models.you.facing
+		);
+		mainFrame.debug.dump.scroll.text:SetText(formatted);
+	end);
+	mainFrame.debug.dump.dumpMe:SetScript("OnClick", function()
+		local info = [[
+["%s"] = {
+["scale"] = %s,
+["feet"] = %s,
+["offset"] = %s,
+["facing"] = %s,
+},]]
+		local formatted = info:format(
+			playerModel:GetModelFileIDAsString(),
+			mainFrame.models.me.scale, mainFrame.models.me.feet, mainFrame.models.me.offset, mainFrame.models.me.facing
 		);
 		mainFrame.debug.dump.scroll.text:SetText(formatted);
 	end);
@@ -529,6 +521,9 @@ function Storyline_API.addon:OnEnable()
 		["139522"]  = true, -- Scouting map Alliance
 		["143968"]  = true, -- Island expeditions map Alliance
 		["143967"]  = true, -- Island expeditions map Port of Zandalar, Zuldazar
+
+		-- Shadowlands
+		["172400"] = true, -- Night fae mission table
 	}
 
 	C_GossipInfo.ForceGossip = function()
