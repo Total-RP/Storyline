@@ -230,19 +230,45 @@ local REWARD_GETTERS = {
 			-- If there is only one choice, we already dealt with it in the getItemsReward() function
 			if numberOfItemChoices == 1 then return choices end
 			for i = 1, numberOfItemChoices do
-				local name, texture, numItems, quality, isUsable = GetQuestItemInfo("choice", i);
-				tinsert(choices, {
-					text       = name,
-					icon       = texture,
-					count      = numItems,
-					quality    = quality,
-					index      = i,
-					rewardType = "choice",
-					isUsable   = isUsable,
-				});
+				local lootType = GetQuestItemInfoLootType("choice", i);
+				if (lootType == 0) then -- LOOT_LIST_ITEM
+					local name, texture, numItems, quality, isUsable = GetQuestItemInfo("choice", i);
+					tinsert(choices, {
+						text       = name,
+						icon       = texture,
+						count      = numItems,
+						quality    = quality,
+						index      = i,
+						rewardType = "choice",
+						isUsable   = isUsable
+					})
+				end
+
 			end
 			return choices;
-		end
+		end,
+		[REWARD_TYPES.CURRENCY] = function()
+			local choices = {};
+			local numberOfItemChoices = GetNumQuestChoices();
+			-- If there is only one choice, we already dealt with it in the getItemsReward() function
+			if numberOfItemChoices == 1 then return choices end
+			for i = 1, numberOfItemChoices do
+				local _name, _texture, _amount, _quality = GetQuestCurrencyInfo("choice", i);
+				local currencyID = GetQuestCurrencyID("choice", i);
+				local name, texture, amount, quality = CurrencyContainerUtil.GetCurrencyContainerInfo(currencyID, _amount, _name, _texture, _quality);
+				tinsert(choices, {
+					text  = name,
+					icon  = texture,
+					count = amount,
+					index = i,
+					type  = "currency",
+					quality = quality,
+					currencyID = currencyID
+				});
+
+			end
+			return choices;
+		end,
 	},
 	[BUCKET_TYPES.AURA] = {
 		[REWARD_TYPES.SPELL] = function()
