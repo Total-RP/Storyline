@@ -305,7 +305,25 @@ local STATIC_BACKGROUNDS = {
     --region Shadowlands
     ["1533"] = "CovenantChoice-Offering-Preview-Frame-Background-Kyrian",
     ["1569"] = "CovenantChoice-Offering-Preview-Frame-Background-Kyrian",
-    ["1813"] = "CovenantChoice-Offering-Preview-Frame-Background-Kyrian"
+    ["1813"] = "CovenantChoice-Offering-Preview-Frame-Background-Kyrian",
+
+    ["1536"] = "CovenantChoice-Offering-Preview-Frame-Background-Necrolord",
+    ["1689"] = "CovenantChoice-Offering-Preview-Frame-Background-Necrolord",
+    ["1741"] = "CovenantChoice-Offering-Preview-Frame-Background-Necrolord",
+    ["1814"] = "CovenantChoice-Offering-Preview-Frame-Background-Necrolord",
+
+    ["1565"] = "CovenantChoice-Offering-Preview-Frame-Background-NightFae",
+    ["1603"] = "CovenantChoice-Offering-Preview-Frame-Background-NightFae",
+    ["1643"] = "CovenantChoice-Offering-Preview-Frame-Background-NightFae",
+    ["1709"] = "CovenantChoice-Offering-Preview-Frame-Background-NightFae",
+    ["1739"] = "CovenantChoice-Offering-Preview-Frame-Background-NightFae",
+    ["1740"] = "CovenantChoice-Offering-Preview-Frame-Background-NightFae",
+
+    ["1525"] = "CovenantChoice-Offering-Preview-Frame-Background-Venthyr",
+    ["1688"] = "CovenantChoice-Offering-Preview-Frame-Background-Venthyr",
+    ["1734"] = "CovenantChoice-Offering-Preview-Frame-Background-Venthyr",
+    ["1738"] = "CovenantChoice-Offering-Preview-Frame-Background-Venthyr",
+    ["1742"] = "CovenantChoice-Offering-Preview-Frame-Background-Venthyr",
 
     --endregion
 
