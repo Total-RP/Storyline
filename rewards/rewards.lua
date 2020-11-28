@@ -253,19 +253,21 @@ local REWARD_GETTERS = {
 			-- If there is only one choice, we already dealt with it in the getItemsReward() function
 			if numberOfItemChoices == 1 then return choices end
 			for i = 1, numberOfItemChoices do
-				local _name, _texture, _amount, _quality = GetQuestCurrencyInfo("choice", i);
-				local currencyID = GetQuestCurrencyID("choice", i);
-				local name, texture, amount, quality = CurrencyContainerUtil.GetCurrencyContainerInfo(currencyID, _amount, _name, _texture, _quality);
-				tinsert(choices, {
-					text  = name,
-					icon  = texture,
-					count = amount,
-					index = i,
-					type  = "currency",
-					quality = quality,
-					currencyID = currencyID
-				});
-
+				local lootType = GetQuestItemInfoLootType("choice", i);
+				if (lootType == 1) then -- LOOT_LIST_CURRENCY
+					local _name, _texture, _amount, _quality = GetQuestCurrencyInfo("choice", i);
+					local currencyID = GetQuestCurrencyID("choice", i);
+					local name, texture, amount, quality = CurrencyContainerUtil.GetCurrencyContainerInfo(currencyID, _amount, _name, _texture, _quality);
+					tinsert(choices, {
+						text  = name,
+						icon  = texture,
+						count = amount,
+						index = i,
+						type  = "currency",
+						quality = quality,
+						currencyID = currencyID
+					});
+				end
 			end
 			return choices;
 		end,
