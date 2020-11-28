@@ -1,3 +1,9 @@
+## Changelog for version 3.2.5.1
+
+### Fixed
+
+- Fixed C_CurrencyInfo.GetCurrencyContainerInfo Lua error introduced in the previous version.
+
 ## Changelog for version 3.2.5
 
 ### Added
