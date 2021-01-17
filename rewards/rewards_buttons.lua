@@ -327,12 +327,16 @@ function API.displayRewardsOnGrid(rewardBucketType, rewardsBucket, parent, previ
 			-- we set it's OnClick script
 			if rewardBucketType == Rewards.BUCKET_TYPES.CHOICE and bindClickingOnChoosingReward then
 				button:SetScript("OnClick", function(self)
-					local itemLink = GetQuestItemLink(self.type, self.index);
-					if not HandleModifiedItemClick(itemLink) and self.type == "choice" then
-						GetQuestReward(self.index);
-						Storyline_API.autoEquip(itemLink);
-						Storyline_API.autoEquipAllReward();
+					local itemLink;
+					if rewardType == Rewards.REWARD_TYPES.ITEMS then
+						itemLink = GetQuestItemLink(self.type, self.index);
+						if HandleModifiedItemClick(itemLink) or not self.type == "choice" then
+							return
+						end
 					end
+					GetQuestReward(self.index);
+					Storyline_API.autoEquip(itemLink);
+					Storyline_API.autoEquipAllReward();
 				end);
 			end
 			previousAnchor = button;
