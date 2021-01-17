@@ -214,6 +214,7 @@ local LARGE_BUTTONS = {
 	--[Rewards.REWARD_TYPES.FOLLOWER] = true, -- Follower buttons are really different and need an entire line
 }
 local itemButtons = {};
+local itemButtonsCount = 0;
 local function getRewardButton(parentFrame, rewardType)
 	local button;
 
@@ -230,7 +231,7 @@ local function getRewardButton(parentFrame, rewardType)
 	end
 	if not button then
 		-- Create a new button using the appropriate template
-		button = CreateFrame("Button", REWARDS_BUTTON_FRAME_NAME .. #itemButtons, nil, REWARD_BUTTON_FRAME_TEMPLATES[rewardType] or REWARD_BUTTON_FRAME_TEMPLATES.DEFAULT);
+		button = CreateFrame("Button", REWARDS_BUTTON_FRAME_NAME .. itemButtonsCount, nil, REWARD_BUTTON_FRAME_TEMPLATES[rewardType] or REWARD_BUTTON_FRAME_TEMPLATES.DEFAULT);
 		-- Save inside the button structure if it is a large button type
 		button.isLargeButton = LARGE_BUTTONS[rewardType] == true;
 		for scriptName, scriptFunction in pairs(REWARD_BUTTON_SHARED_SCRIPTS) do
@@ -238,6 +239,7 @@ local function getRewardButton(parentFrame, rewardType)
 		end
 		button.Refresh = refreshButton;
 		tinsert(itemButtons[rewardType], button);
+		itemButtonsCount = itemButtonsCount + 1;
 	end
 	button.hasItem = false;
 	button:SetParent(parentFrame);
