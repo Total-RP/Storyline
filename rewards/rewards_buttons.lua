@@ -132,7 +132,7 @@ end
 
 local function decorateRewardButton(button, rewardType, reward)
 	if rewardType == Rewards.REWARD_TYPES.CURRENCY then
-		decorateCurrencyButton(button, reward.index, Storyline_API.getCurrentEvent() == "QUEST_PROGRESS" and "required" or "reward", reward.icon, reward.text, reward.count, reward.currencyID, reward.quality);
+		decorateCurrencyButton(button, reward.index, reward.rewardType, reward.icon, reward.text, reward.count, reward.currencyID, reward.quality);
 	elseif rewardType == Rewards.REWARD_TYPES.SPELL then
 		decorateSpellButton(button, reward.icon, reward.text, reward.rewardSpellIndex);
 	elseif rewardType == Rewards.REWARD_TYPES.ITEMS then
@@ -327,16 +327,12 @@ function API.displayRewardsOnGrid(rewardBucketType, rewardsBucket, parent, previ
 			-- we set it's OnClick script
 			if rewardBucketType == Rewards.BUCKET_TYPES.CHOICE and bindClickingOnChoosingReward then
 				button:SetScript("OnClick", function(self)
-					local itemLink;
-					if rewardType == Rewards.REWARD_TYPES.ITEMS then
-						itemLink = GetQuestItemLink(self.type, self.index);
-						if HandleModifiedItemClick(itemLink) or not self.type == "choice" then
-							return
-						end
+					local itemLink = GetQuestItemLink(self.type, self.index);
+					if not (self.rewardType == Rewards.REWARD_TYPES.ITEMS and HandleModifiedItemClick(itemLink)) and self.type == "choice" then
+						GetQuestReward(self.index);
+						Storyline_API.autoEquip(itemLink);
+						Storyline_API.autoEquipAllReward();
 					end
-					GetQuestReward(self.index);
-					Storyline_API.autoEquip(itemLink);
-					Storyline_API.autoEquipAllReward();
 				end);
 			end
 			previousAnchor = button;
