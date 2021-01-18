@@ -156,6 +156,7 @@ local REWARD_GETTERS = {
 						count = numItems,
 						index = i,
 						type  = "currency",
+						rewardType = "reward",
 						quality = quality,
 						currencyID = currencyID
 					});
@@ -264,6 +265,7 @@ local REWARD_GETTERS = {
 						count = amount,
 						index = i,
 						type  = "currency",
+						rewardType = "choice",
 						quality = quality,
 						currencyID = currencyID
 					});
