@@ -303,27 +303,27 @@ local STATIC_BACKGROUNDS = {
     ["709"] = "charactercreate-startingzone-pandaren", -- The Wandering Isle (Legion)
 
     --region Shadowlands
-    ["1533"] = "CovenantChoice-Offering-Preview-Frame-Background-Kyrian",
-    ["1569"] = "CovenantChoice-Offering-Preview-Frame-Background-Kyrian",
-    ["1813"] = "CovenantChoice-Offering-Preview-Frame-Background-Kyrian",
+    ["1533"] = "UI-Frame-KyrianChoice-ScrollingBG",
+    ["1569"] = "UI-Frame-KyrianChoice-ScrollingBG",
+    ["1813"] = "UI-Frame-KyrianChoice-ScrollingBG",
 
-    ["1536"] = "CovenantChoice-Offering-Preview-Frame-Background-Necrolord",
-    ["1689"] = "CovenantChoice-Offering-Preview-Frame-Background-Necrolord",
-    ["1741"] = "CovenantChoice-Offering-Preview-Frame-Background-Necrolord",
-    ["1814"] = "CovenantChoice-Offering-Preview-Frame-Background-Necrolord",
+    ["1536"] = "UI-Frame-NecrolordsChoice-ScrollingBG",
+    ["1689"] = "UI-Frame-NecrolordsChoice-ScrollingBG",
+    ["1741"] = "UI-Frame-NecrolordsChoice-ScrollingBG",
+    ["1814"] = "UI-Frame-NecrolordsChoice-ScrollingBG",
 
-    ["1565"] = "CovenantChoice-Offering-Preview-Frame-Background-NightFae",
-    ["1603"] = "CovenantChoice-Offering-Preview-Frame-Background-NightFae",
-    ["1643"] = "CovenantChoice-Offering-Preview-Frame-Background-NightFae",
-    ["1709"] = "CovenantChoice-Offering-Preview-Frame-Background-NightFae",
-    ["1739"] = "CovenantChoice-Offering-Preview-Frame-Background-NightFae",
-    ["1740"] = "CovenantChoice-Offering-Preview-Frame-Background-NightFae",
+    ["1565"] = "UI-Frame-NightFaeChoice-ScrollingBG",
+    ["1603"] = "UI-Frame-NightFaeChoice-ScrollingBG",
+    ["1643"] = "UI-Frame-NightFaeChoice-ScrollingBG",
+    ["1709"] = "UI-Frame-NightFaeChoice-ScrollingBG",
+    ["1739"] = "UI-Frame-NightFaeChoice-ScrollingBG",
+    ["1740"] = "UI-Frame-NightFaeChoice-ScrollingBG",
 
-    ["1525"] = "CovenantChoice-Offering-Preview-Frame-Background-Venthyr",
-    ["1688"] = "CovenantChoice-Offering-Preview-Frame-Background-Venthyr",
-    ["1734"] = "CovenantChoice-Offering-Preview-Frame-Background-Venthyr",
-    ["1738"] = "CovenantChoice-Offering-Preview-Frame-Background-Venthyr",
-    ["1742"] = "CovenantChoice-Offering-Preview-Frame-Background-Venthyr",
+    ["1525"] = "UI-Frame-VenthyrChoice-ScrollingBG",
+    ["1688"] = "UI-Frame-VenthyrChoice-ScrollingBG",
+    ["1734"] = "UI-Frame-VenthyrChoice-ScrollingBG",
+    ["1738"] = "UI-Frame-VenthyrChoice-ScrollingBG",
+    ["1742"] = "UI-Frame-VenthyrChoice-ScrollingBG",
 
     --endregion
 
@@ -404,18 +404,9 @@ function StorylineBackgroundTexture:RefreshBackground()
     self.SealText:Hide()
 
     local questId = GetQuestID()
-    local theme = C_QuestLog.GetQuestDetailsTheme(questId);
 
     -- Special waxed seal quests
-    if theme and theme.background then
-        self.backgroundLayer:SetAtlas(theme.background);
-        self.backgroundLayer:SetTexCoord(0.2, 0.99, 0.60, 0.95)
-        self.dimmingLayer:SetAlpha(0.5)
-        self.backgroundLayer:Show()
-        self.middlegroundLayer:Hide()
-        self.foregroundLayer:Hide()
-
-    elseif SEAL_QUESTS[questId] ~= nil then
+    if SEAL_QUESTS[questId] ~= nil then
         local specialQuestDisplayInfo = SEAL_QUESTS[questId];
         self.backgroundLayer:SetAtlas(specialQuestDisplayInfo.bgAtlas);
         self.backgroundLayer:SetTexCoord(0.2, 0.99, 0.5, 0.95)
@@ -456,8 +447,7 @@ function StorylineBackgroundTexture:RefreshBackground()
         -- Regular class themed backgrounds
     elseif Storyline_Data.config.dynamicBackgrounds and getCustomZoneBackground() then
         local zoneBackground = getCustomZoneBackground()
-        self.backgroundLayer:SetTexCoord(0, 1, 0, 1)
-        self.backgroundLayer:SetAtlas(zoneBackground, false)
+        self.backgroundLayer:SetAtlas(zoneBackground)
         self.dimmingLayer:SetAlpha(0.7)
         self.backgroundLayer:Show()
         self.middlegroundLayer:Hide()

@@ -25,6 +25,7 @@ local MANUALLY_ANIMATED_MODELS = {
 	120791, -- Classic night elf male
 	120590, -- Classic night elf female
 	921844, -- Retail night elf female
+	3487358, -- Maldraxxus HD skeletons
 }
 
 ---@class Storyline_PlayerModelMixin : CinematicModel
