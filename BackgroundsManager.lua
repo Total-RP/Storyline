@@ -404,18 +404,9 @@ function StorylineBackgroundTexture:RefreshBackground()
     self.SealText:Hide()
 
     local questId = GetQuestID()
-    local theme = C_QuestLog.GetQuestDetailsTheme(questId);
 
     -- Special waxed seal quests
-    if theme and theme.background then
-        self.backgroundLayer:SetAtlas(theme.background);
-        self.backgroundLayer:SetTexCoord(0.2, 0.99, 0.60, 0.95)
-        self.dimmingLayer:SetAlpha(0.5)
-        self.backgroundLayer:Show()
-        self.middlegroundLayer:Hide()
-        self.foregroundLayer:Hide()
-
-    elseif SEAL_QUESTS[questId] ~= nil then
+    if SEAL_QUESTS[questId] ~= nil then
         local specialQuestDisplayInfo = SEAL_QUESTS[questId];
         self.backgroundLayer:SetAtlas(specialQuestDisplayInfo.bgAtlas);
         self.backgroundLayer:SetTexCoord(0.2, 0.99, 0.5, 0.95)
@@ -456,8 +447,7 @@ function StorylineBackgroundTexture:RefreshBackground()
         -- Regular class themed backgrounds
     elseif Storyline_Data.config.dynamicBackgrounds and getCustomZoneBackground() then
         local zoneBackground = getCustomZoneBackground()
-        self.backgroundLayer:SetTexCoord(0, 1, 0, 1)
-        self.backgroundLayer:SetAtlas(zoneBackground, false)
+        self.backgroundLayer:SetAtlas(zoneBackground)
         self.dimmingLayer:SetAlpha(0.7)
         self.backgroundLayer:Show()
         self.middlegroundLayer:Hide()
