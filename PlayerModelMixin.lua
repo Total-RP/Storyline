@@ -26,6 +26,12 @@ local MANUALLY_ANIMATED_MODELS = {
 	120590, -- Classic night elf female
 	921844, -- Retail night elf female
 	3487358, -- Maldraxxus HD skeletons
+	4081379, -- Scout Tomul (centaur female)
+	4036647, -- Khansguard Jebotai (centaur male)
+	4521688, -- Agurahl the Butcher (centaur male)
+	4039115, -- Khuri (tuskarr)
+	4039116, -- Hanu (tuskarr)
+	4207724, -- Dracthyr Dragon
 }
 
 ---@class Storyline_PlayerModelMixin : CinematicModel
