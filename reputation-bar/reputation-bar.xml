@@ -79,18 +79,6 @@
                 </Texture>
             </Layer>
         </Layers>
-        <Scripts>
-            <OnLoad>
-                    self:SetStatusBarTexture(1, 1, 1, "BORDER", -1);
-                    self:GetStatusBarTexture():SetGradient("VERTICAL", 8/255, 93/255, 72/255, 11/255, 136/255, 105/255);
-            </OnLoad>
-            <OnEnter>
-                    ShowFriendshipReputationTooltip(self.friendshipFactionID, self, "ANCHOR_TOPRIGHT")
-            </OnEnter>
-            <OnLeave>
-                    GameTooltip:Hide();
-            </OnLeave>
-        </Scripts>
     </StatusBar>
 
     <!-- Load Lua scripts -->
