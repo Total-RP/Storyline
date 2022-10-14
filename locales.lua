@@ -23,6 +23,16 @@ Storyline_API = {
 	locale = {},
 };
 
+STORYLINE_BACKDROP_MIXED_DIALOG_TOOLTIP_400_24_5555 = {
+	bgFile   = "Interface\\DialogFrame\\UI-DialogBox-Background",
+	edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border",
+	tile     = true,
+	tileEdge = true,
+	tileSize = 400,
+	edgeSize = 24,
+	insets   = { left = 5, right = 5, top = 5, bottom = 5 },
+};
+
 Storyline_API.locale.info = {
 
 	--*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
