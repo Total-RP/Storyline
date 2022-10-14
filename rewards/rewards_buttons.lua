@@ -283,6 +283,10 @@ local REWARDS_HEADER_TEXT = {
 	[Rewards.BUCKET_TYPES.OBJECTIVES] = TURN_IN_ITEMS,
 };
 
+local REWARDS_QUEST_COMPLETE_HEADER_TEXT = {
+	[Rewards.BUCKET_TYPES.CHOICE] = REWARD_CHOOSE,
+};
+
 local rewardsHeadersBag = {};
 local function getRewardsHeader(parent, previousText)
 	local header;
@@ -323,7 +327,7 @@ function API.displayRewardsOnGrid(rewardBucketType, rewardsBucket, parent, previ
 	-- Get a header and use the apprioriate text for this reward bucket type (rewards, choices, spells, etc.)
 	---@type FontString
 	local header = getRewardsHeader(parent, previousText);
-	header:SetText(REWARDS_HEADER_TEXT[rewardBucketType]);
+	header:SetText(bindClickingOnChoosingReward and REWARDS_QUEST_COMPLETE_HEADER_TEXT[rewardBucketType] or REWARDS_HEADER_TEXT[rewardBucketType]);
 	header:Show();
 
 	local previousAnchor = header;
