@@ -327,6 +327,55 @@ local STATIC_BACKGROUNDS = {
 
     --endregion
 
+    --region Dragonflight
+    ["2022"] = "Dragonflight-MajorFactions-Expedition-Background",
+    ["2127"] = "Dragonflight-MajorFactions-Expedition-Background",
+
+    ["2025"] = "Dragonflight-MajorFactions-Valdrakken-Background",
+    ["2130"] = "Dragonflight-MajorFactions-Valdrakken-Background",
+
+    ["2026"] = "Dragonflight-MajorFactions-Expedition-Background",
+    ["2107"] = "Dragonflight-MajorFactions-Expedition-Background",
+    ["2118"] = "Dragonflight-MajorFactions-Expedition-Background",
+    ["2131"] = "Dragonflight-MajorFactions-Expedition-Background",
+
+    ["2023"] = "Dragonflight-MajorFactions-Centaur-Background",
+    ["2129"] = "Dragonflight-MajorFactions-Centaur-Background",
+
+    ["2024"] = "Dragonflight-MajorFactions-Tuskarr-Background",
+    ["2128"] = "Dragonflight-MajorFactions-Tuskarr-Background",
+    ["2132"] = "Dragonflight-MajorFactions-Tuskarr-Background",
+
+    ["2112"] = "Dragonflight-MajorFactions-Valdrakken-Background",
+    ["2134"] = "Dragonflight-MajorFactions-Valdrakken-Background",
+    ["2135"] = "Dragonflight-MajorFactions-Valdrakken-Background",
+
+    --endregion
+
+}
+
+local STATIC_BACKGROUNDS_ALPHA = {
+    ["2022"] = 0.3,
+    ["2127"] = 0.3,
+
+    ["2025"] = 0.3,
+    ["2130"] = 0.3,
+
+    ["2026"] = 0.3,
+    ["2107"] = 0.3,
+    ["2118"] = 0.3,
+    ["2131"] = 0.3,
+
+    ["2023"] = 0.3,
+    ["2129"] = 0.3,
+
+    ["2024"] = 0.3,
+    ["2128"] = 0.3,
+    ["2132"] = 0.3,
+
+    ["2112"] = 0.3,
+    ["2134"] = 0.3,
+    ["2135"] = 0.3,
 }
 
 -- Use the game's Map API to get a known map ID for the player, bubbling up the chain (cave level > sub-zone > zone > continent)
@@ -350,6 +399,10 @@ end
 
 local function getCustomZoneBackground()
     return STATIC_BACKGROUNDS[tostring(getBestKnownMapId(STATIC_BACKGROUNDS))]
+end
+
+local function getCustomZoneBackgroundAlpha()
+    return STATIC_BACKGROUNDS_ALPHA[tostring(getBestKnownMapId(STATIC_BACKGROUNDS))]
 end
 
 ---@class StorylineBackgroundTexture: Texture
@@ -426,8 +479,13 @@ function StorylineBackgroundTexture:RefreshBackground()
         end
 
         -- War campaign quests, with a faction themed background
-    elseif C_CampaignInfo.IsCampaignQuest(questId) and not EXCEPTION_QUESTS[questId] then
-        self.backgroundLayer:SetAtlas( "QuestBG-" .. UnitFactionGroup("player"));
+    elseif C_CampaignInfo.IsCampaignQuest(questId) and C_CampaignInfo.GetCampaignID(questId) < 3 and not EXCEPTION_QUESTS[questId] then
+        local theme = C_QuestLog.GetQuestDetailsTheme(questId);
+        local background = "QuestBG-" .. UnitFactionGroup("player");
+        if theme and theme.background then
+            background = theme.background;
+        end
+        self.backgroundLayer:SetAtlas(background);
         self.backgroundLayer:SetTexCoord(0.2, 0.99, 0.5, 0.95)
         self.dimmingLayer:SetAlpha(0.5)
         self.backgroundLayer:Show()
@@ -444,14 +502,17 @@ function StorylineBackgroundTexture:RefreshBackground()
 
         self.dimmingLayer:SetAlpha(0.7)
 
-        -- Regular class themed backgrounds
+        -- Zone themed backgrounds
     elseif Storyline_Data.config.dynamicBackgrounds and getCustomZoneBackground() then
         local zoneBackground = getCustomZoneBackground()
         self.backgroundLayer:SetAtlas(zoneBackground)
-        self.dimmingLayer:SetAlpha(0.7)
+        local zoneBackgroundAlpha = getCustomZoneBackgroundAlpha()
+        self.dimmingLayer:SetAlpha(zoneBackgroundAlpha or 0.7)
         self.backgroundLayer:Show()
         self.middlegroundLayer:Hide()
         self.foregroundLayer:Hide()
+
+        -- Regular class themed backgrounds
     else
         local classFilename = select(2, UnitClass("player"))
         if classFilename then
