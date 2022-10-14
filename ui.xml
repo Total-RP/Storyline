@@ -481,7 +481,11 @@
 				</Frames>
 			</Button>
 
-			<Frame name="Storyline_NPCFrameRewards" setAllPoints="true" frameStrata="HIGH">
+			<Frame name="Storyline_NPCFrameRewards" frameStrata="HIGH">
+				<Size x="70" y="70"/>
+				<Anchors>
+					<Anchor point="TOP" x="0" y="-200"/>
+				</Anchors>
 				<Layers>
 					<Layer level="BORDER" textureSubLevel="1">
 						<Texture name="Storyline_NPCFrameRewardsHolo" file="Interface\UNITPOWERBARALT\PandarenTrainingLarge_Circular_Flash" alphaMode="ADD" alpha="0.5">
