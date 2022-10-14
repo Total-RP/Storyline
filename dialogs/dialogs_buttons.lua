@@ -59,12 +59,6 @@ end
 -- BUTTONS DECORATORS
 --*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
 
-local GOSSIP_ICONS_TEXTURE_PATH = [[Interface\GossipFrame\%sGossipIcon]];
-
-local function getIconTextureForGossipType(gossipType)
-	return GOSSIP_ICONS_TEXTURE_PATH:format(gossipType);
-end
-
 local AVAILABLE_QUEST_ICONS_TEXTURE_PATHS = {
 	DEFAULT   = [[Interface\GossipFrame\AvailableQuestIcon]],
 	LEGENDARY = [[Interface\GossipFrame\AvailableLegendaryQuestIcon]],
@@ -99,7 +93,7 @@ local BUTTON_DECORATORS = {
 	end,
 	[Dialogs.BUCKET_TYPE.GOSSIP] = function(button, data)
 		button:SetText(data.title);
-		button:SetIcon(getIconTextureForGossipType(data.gossipType));
+		button:SetIcon(data.gossipIcon);
 	end,
 	[Dialogs.BUCKET_TYPE.UNCOMPLETED_QUEST] = function(button, data)
 		button:SetText(data.title);
@@ -182,7 +176,7 @@ local BUTTON_API = {
 
 
 		self:SetScript("OnClick", function()
-			Dialogs.getDialogChoiceSelectorForEventType(eventType, bucketType)(choiceIndex);
+			Dialogs.getDialogChoiceSelectorForEventType(eventType, bucketType)(data.id or choiceIndex);
 		end)
 
 		-- Buttons appear quickly one after the other in a fade-in animation
