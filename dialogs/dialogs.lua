@@ -43,8 +43,9 @@ local function getGossipChoices()
 
 	for i, optionInfo in ipairs(C_GossipInfo.GetOptions()) do
 		gossipChoices[i] = {
-			title      = optionInfo.name,
-			gossipType = optionInfo.type
+			id         = optionInfo.gossipOptionID,
+			title      = optionInfo.flags == Enum.GossipOptionRecFlags.QuestLabelPrepend and GOSSIP_QUEST_OPTION_PREPEND:format(optionInfo.name) or optionInfo.name,
+			gossipIcon = optionInfo.overrideIconID or optionInfo.icon
 		};
 	end
 	return gossipChoices;
@@ -55,6 +56,7 @@ local function getGossipAvailableQuestsChoices()
 
 	for i, questInfo in ipairs( C_GossipInfo.GetAvailableQuests()) do
 		availableQuestsChoices[i] = {
+			id           = questInfo.questID,
 			title        = questInfo.title,
 			lvl          = questInfo.questLevel,
 			isTrivial    = questInfo.isTrivial,
@@ -76,6 +78,7 @@ local function getGossipActiveQuestsChoices()
 
 	for i, questInfo in ipairs( C_GossipInfo.GetActiveQuests()) do
 		local questData = {
+			id           = questInfo.questID,
 			title        = questInfo.title,
 			lvl          = questInfo.questLevel,
 			isTrivial    = questInfo.isTrivial,
@@ -173,7 +176,7 @@ function API.getFirstChoice(eventType)
 	for _, choicesBag in pairs(dialogChoices) do
 		bucketType = _;
 		for _, choice in pairs(choicesBag) do
-			index = _;
+			index = choice.id or _;
 			firstChoice = choice;
 			break
 		end
