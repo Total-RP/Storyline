@@ -286,7 +286,7 @@ Storyline_ResizeShadowFrame:SetScript("OnUpdate", function(self)
 	if width < self.minWidth then
 		widthColor = "|cffff0000";
 	end
-	Storyline_ResizeShadowFrameText:SetText(widthColor .. math.ceil(width) .. "|r x " .. heightColor .. math.ceil(height));
+	Storyline_ResizeShadowFrame.text:SetText(widthColor .. math.ceil(width) .. "|r x " .. heightColor .. math.ceil(height));
 end);
 
 --*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
