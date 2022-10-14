@@ -24,7 +24,7 @@
 local tinsert, pairs = tinsert, pairs;
 local GetQuestItemInfo, GetNumQuestChoices = GetQuestItemInfo, GetNumQuestChoices;
 local IsFollowerCollected, IsCharacterNewlyBoosted, IsSpellKnownOrOverridesKnown, GetRewardSpell, GetNumRewardSpells = C_Garrison.IsFollowerCollected, IsCharacterNewlyBoosted, IsSpellKnownOrOverridesKnown, GetRewardSpell, GetNumRewardSpells;
-local GetCoinTextureString, GetQuestMoneyToGet, GetNumQuestItems, GetQuestCurrencyInfo, GetNumQuestCurrencies, GetMoney = GetCoinTextureString, GetQuestMoneyToGet, GetNumQuestItems, GetQuestCurrencyInfo, GetNumQuestCurrencies, GetMoney;
+local GetQuestMoneyToGet, GetNumQuestItems, GetQuestCurrencyInfo, GetNumQuestCurrencies, GetMoney = GetQuestMoneyToGet, GetNumQuestItems, GetQuestCurrencyInfo, GetNumQuestCurrencies, GetMoney;
 local BreakUpLargeNumbers, GetRewardXP, GetNumRewardCurrencies, GetRewardTitle, GetRewardMoney, GetNumQuestRewards, GetRewardSkillPoints = BreakUpLargeNumbers, GetRewardXP, GetNumRewardCurrencies, GetRewardTitle, GetRewardMoney, GetNumQuestRewards, GetRewardSkillPoints;
 
 Storyline_API.rewards = {};
@@ -75,6 +75,31 @@ local MONEY_ICONS = {
 	GOLD   = "Interface\\ICONS\\inv_misc_coin_01"
 }
 
+local function GetCoinTextureStringHD(amount, fontHeight)
+	local coinTextureString = "";
+	local remainingAmount = amount;
+	if not fontHeight then fontHeight = 14 end;
+	if amount >= COPPER_PER_GOLD then
+		local goldAmount = math.floor(remainingAmount / COPPER_PER_GOLD);
+		if goldAmount > 0 then
+			coinTextureString = coinTextureString .. goldAmount .. " |A:coin-gold:" .. fontHeight .. ":" .. fontHeight .. "|a ";
+			remainingAmount = remainingAmount - goldAmount * COPPER_PER_GOLD;
+		end
+	end
+	if amount >= COPPER_PER_SILVER then
+		local silverAmount = math.floor(remainingAmount / COPPER_PER_SILVER);
+		if silverAmount > 0 then
+			coinTextureString = coinTextureString .. silverAmount .. " |A:coin-silver:" .. fontHeight .. ":" .. fontHeight .. "|a ";
+			remainingAmount = remainingAmount - silverAmount * COPPER_PER_SILVER;
+		end
+	end
+	if remainingAmount > 0 then
+		coinTextureString = coinTextureString .. remainingAmount .. " |A:coin-copper:" .. fontHeight .. ":" .. fontHeight .. "|a ";
+	end
+
+	return coinTextureString;
+end
+
 local QUEST_SESSION_BONUS_REWARD_ITEM_ID = 171305
 local item = Item:CreateFromItemID(QUEST_SESSION_BONUS_REWARD_ITEM_ID)
 local SALVAGED_CACHE_OF_GOODS = {}
@@ -120,7 +145,7 @@ local REWARD_GETTERS = {
 				else
 					icon = MONEY_ICONS.GOLD;
 				end
-				local moneyString = GetCoinTextureString(money);
+				local moneyString = GetCoinTextureStringHD(money);
 				tinsert(rewards, {
 					text = moneyString,
 					icon = icon,
@@ -435,7 +460,7 @@ OBJECTIVES_GETTERS = {
 			else
 				icon = MONEY_ICONS.GOLD;
 			end
-			local moneyString = GetCoinTextureString(moneyObjective);
+			local moneyString = GetCoinTextureStringHD(moneyObjective);
 			tinsert(money, {
 				text = moneyString,
 				icon = icon,
