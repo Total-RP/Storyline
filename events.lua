@@ -620,6 +620,7 @@ function Storyline_API.initEventsStructure()
 
 				if firstChoice then
 					finishText = firstChoice.title;
+					finishText = finishText:gsub("|cFF0000FF", "|cFF8888FF"); -- Lightening the blue text to be more visible
 					debug(("QUEST_GREETING – Finish text : Found first choice with text %s."):format(finishText));
 				else
 					debug(("QUEST_GREETING – Finish text : Could not find a first choice, using default finish text %s."):format(finishText));
@@ -734,6 +735,7 @@ function Storyline_API.initEventsStructure()
 
 				if firstChoice then
 					finishText = firstChoice.title;
+					finishText = finishText:gsub("|cFF0000FF", "|cFF8888FF"); -- Lightening the blue text to be more visible
 					debug(("GOSSIP_SHOW – Finish text : Found first choice with text %s."):format(finishText));
 				else
 					debug(("GOSSIP_SHOW – Finish text : Could not find a first choice, using default finish text %s."):format(finishText));
