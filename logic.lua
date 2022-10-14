@@ -28,6 +28,7 @@ local showStorylineFrame = Storyline_API.layout.showStorylineFrame;
 local hideStorylineFrame = Storyline_API.layout.hideStorylineFrame;
 local strtrim = strtrim;
 local insert = table.insert;
+local debug = Storyline_API.debug;
 
 -- WOW API
 local strsplit, pairs, tostring = strsplit, pairs, tostring;
@@ -209,6 +210,8 @@ local background = mainFrame.Background
 -- @param eventInfo
 --
 function Storyline_API.startDialog(targetType, fullText, event, eventInfo)
+	-- Some NPCs are busted even with ForceGossip false
+	if Storyline_API.isCurrentNPCBrokenGossip() then return	end
 
 	local questId = GetQuestID()
 	background:RefreshBackground()
@@ -524,12 +527,35 @@ function Storyline_API.addon:OnEnable()
 
 		-- Shadowlands
 		["172400"] = true, -- Night fae mission table
+
+		-- Dragonflight
+		["381086"] = true, -- Valdrakken Jewelcrafting Table
+		["382276"] = true, -- Valdrakken Jewelcrafting Table
+		["382260"] = true, -- Valdrakken Engineering Table
+		["382261"] = true, -- Valdrakken Engineering Table
+		["382262"] = true, -- Valdrakken Leatherworking Table
+		["382264"] = true, -- Valdrakken Leatherworking Table
+		["382263"] = true, -- Valdrakken Inscription Table
+		["382266"] = true, -- Valdrakken Inscription Table
+		["382265"] = true, -- Valdrakken Alchemy Table
+		["382270"] = true, -- Valdrakken Alchemy Table
+		["382268"] = true, -- Valdrakken Tailoring Table
+		["382269"] = true, -- Valdrakken Tailoring Table
+		["382271"] = true, -- Valdrakken Blacksmith Table
+		["382274"] = true, -- Valdrakken Blacksmith Table
+		["382272"] = true, -- Valdrakken Enchanting Table
+		["382273"] = true, -- Valdrakken Enchanting Table
 	}
+
+	function Storyline_API.isCurrentNPCBrokenGossip()
+		return NPC_IDS_WITH_BROKEN_DIALOGS[Storyline_API.getNpcId()] ~= nil
+	end
 
 	C_GossipInfo.ForceGossip = function()
 		-- return if the option is enabled and check if the NPC's dialog is not buggy
 		local npcId = Storyline_API.getNpcId();
-		return Storyline_Data.config.forceGossip and not NPC_IDS_WITH_BROKEN_DIALOGS[npcId] and not Storyline_API.isCurrentNPCBlacklisted();
+		debug(("NPC ID – %s"):format(tostring(npcId)));
+		return Storyline_Data.config.forceGossip and not Storyline_API.isCurrentNPCBrokenGossip() and not Storyline_API.isCurrentNPCBlacklisted();
 	end
 
 	Storyline_API.locale.init();
