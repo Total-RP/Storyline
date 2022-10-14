@@ -130,6 +130,9 @@
 					GameTooltip:SetText(self.tooltip, nil, nil, nil, nil, true);
 				end
 			</OnEnter>
+			<OnLeave>
+				GameTooltip:Hide();
+			</OnLeave>
 		</Scripts>
 	</CheckButton>
 
