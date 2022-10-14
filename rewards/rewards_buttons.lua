@@ -96,6 +96,20 @@ local function decorateStandardButton(button, texture, name, tt, ttsub, isNotUsa
 	end);
 end
 
+local function decorateReputationButton(button, texture, name, count, tt, ttsub)
+	button.Icon:SetTexture(texture);
+	button.Name:SetText(name);
+	button.Count:SetText(count);
+	button:SetScript("OnEnter", function(self)
+		GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
+		GameTooltip:AddLine("|cffffffff" .. tt);
+		if ttsub then
+			GameTooltip:AddLine("|cffffffff" .. ttsub);
+		end
+		GameTooltip:Show();
+	end);
+end
+
 local function decorateSkillPointButton(button, texture, name, skillPoints)
 	button.Name:SetFormattedText(BONUS_SKILLPOINTS, name);
 	button.tooltip = format(BONUS_SKILLPOINTS_TOOLTIP, skillPoints, name);
@@ -143,6 +157,8 @@ local function decorateRewardButton(button, rewardType, reward)
 		decorateSkillPointButton(button, reward.icon, reward.text, reward.skillPoints);
 	elseif rewardType == Rewards.REWARD_TYPES.BONUS then
 		decorateBonusButton(button, reward.bonus)
+	elseif rewardType == Rewards.REWARD_TYPES.REPUTATION then
+		decorateReputationButton(button, reward.icon, reward.text, reward.count, reward.tooltipTitle, reward.tooltipSub)
 	else
 		decorateStandardButton(button, reward.icon, reward.text, reward.tooltipTitle, reward.tooltipSub);
 	end
