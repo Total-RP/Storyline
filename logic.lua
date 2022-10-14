@@ -190,8 +190,8 @@ local function setModelsAlpha(value)
 	local slideInValue = SLIDE_IN - (SLIDE_IN * value);
 	targetModel:SetAlpha(value);
 	playerModel:SetAlpha(value);
-	playerModel:SetPosition(nil, slideInValue * -1)
-	targetModel:SetPosition(nil, slideInValue);
+	playerModel:SetPosition(0, slideInValue * -1, 0)
+	targetModel:SetPosition(0, slideInValue, 0);
 end
 
 local alphaTransitionator = Ellyb.Transitionator();
