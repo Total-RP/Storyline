@@ -648,6 +648,9 @@ function Storyline_API.addon:OnEnable()
 	Ellyb.GameEvents.registerCallback("GOSSIP_CLOSED", function()
 		hideStorylineFrame();
 	end);
+	Ellyb.GameEvents.registerCallback("GOSSIP_CONFIRM_CANCEL", function()
+		hideStorylineFrame();
+	end);
 	Ellyb.GameEvents.registerCallback("QUEST_FINISHED", function()
 		hideStorylineFrame();
 	end);
