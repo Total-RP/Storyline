@@ -21,6 +21,8 @@
 --- Rewards getters
 ---------------------------------------------
 
+local Ellyb = Ellyb(...);
+
 local tinsert, pairs = tinsert, pairs;
 local GetQuestItemInfo, GetNumQuestChoices = GetQuestItemInfo, GetNumQuestChoices;
 local IsFollowerCollected, IsCharacterNewlyBoosted, IsSpellKnownOrOverridesKnown, GetRewardSpell, GetNumRewardSpells = C_Garrison.IsFollowerCollected, IsCharacterNewlyBoosted, IsSpellKnownOrOverridesKnown, GetRewardSpell, GetNumRewardSpells;
@@ -56,11 +58,12 @@ local REWARD_TYPES = {
 	MONNEY = 2,
 	PLAYER_TITLE = 3,
 	CURRENCY = 4,
-	SKILL_POINTS = 5,
-	ITEMS = 6,
-	SPELL = 7,
-	FOLLOWER = 8,
-	BONUS = 9,
+	REPUTATION = 5,	-- Dragonflight onwards
+	SKILL_POINTS = 6,
+	ITEMS = 7,
+	SPELL = 8,
+	FOLLOWER = 9,
+	BONUS = 10,
 }
 API.REWARD_TYPES = REWARD_TYPES;
 
@@ -248,6 +251,37 @@ local REWARD_GETTERS = {
 
 			return rewards
 		end,
+		[REWARD_TYPES.REPUTATION] = function()
+			local rewards = {};
+			local reputationRewards = C_QuestOffer.GetQuestOfferMajorFactionReputationRewards();
+			if not reputationRewards then return rewards end
+			for i, rewardInfo in ipairs(reputationRewards) do
+				local majorFactionData = C_MajorFactions.GetMajorFactionData(rewardInfo.factionID);
+				local rewardText = QUEST_REPUTATION_REWARD_TITLE:format(majorFactionData.name);
+				local rewardTooltip = QUEST_REPUTATION_REWARD_TOOLTIP:format(rewardInfo.rewardAmount, majorFactionData.name);
+
+				local majorFactionTextureKits = {
+					[2503] = "Centaur",
+					[2507] = "Expedition",
+					[2510] = "Valdrakken",
+					[2511] = "Tuskarr",
+				};
+
+				local texture = string.format("Interface\\Icons\\UI_MajorFaction_%s", majorFactionTextureKits[majorFactionData.factionID]);
+
+				tinsert(rewards, {
+					text  = rewardText,
+					icon  = texture,
+					count = rewardInfo.rewardAmount,
+					index = i,
+					type  = "reputation",
+					rewardType = "reward",
+					tooltipTitle = rewardText,
+					tooltipSub = Ellyb.ColorManager.YELLOW(rewardTooltip)
+				});
+			end
+			return rewards;
+		end
 	},
 	[BUCKET_TYPES.CHOICE] = {
 		[REWARD_TYPES.ITEMS] = function()
