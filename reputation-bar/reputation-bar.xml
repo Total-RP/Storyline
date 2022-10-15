@@ -21,7 +21,7 @@
 
     <StatusBar name="Storyline_NPCFriendshipStatusBar" hidden="true" frameStrata="DIALOG" parent="Storyline_NPCFrame" inherits="NPCFriendshipStatusBarTemplate">
         <Anchors>
-            <Anchor point="TOPRIGHT" y="8" x="-6" relativePoint="TOPRIGHT" relativeTo="Storyline_NPCFrameChat"/>
+            <Anchor point="TOPRIGHT" y="17" x="-65" relativePoint="TOPRIGHT" relativeTo="Storyline_NPCFrameChat"/>
         </Anchors>
     </StatusBar>
 
