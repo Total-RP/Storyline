@@ -18,8 +18,6 @@
 ----------------------------------------------------------------------------------
 ---
 
-local Ellyb = Ellyb(...);
-
 ---@type StatusBar
 local StorylineReputationBar = Storyline_NPCFriendshipStatusBar;
 
