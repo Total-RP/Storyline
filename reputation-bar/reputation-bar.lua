@@ -23,68 +23,31 @@ local Ellyb = Ellyb(...);
 ---@type StatusBar
 local StorylineReputationBar = Storyline_NPCFriendshipStatusBar;
 
-local FRIENDSHIP_BAR_COLORS = {
-	[1] = PURE_RED_COLOR,
-	[2] = FACTION_ORANGE_COLOR,
-	[3] = FACTION_YELLOW_COLOR,
-	[4] = FACTION_GREEN_COLOR,
-};
-
 local customReputationColors = {
-	[1391545]   = CreateColor(0.227,0.203,0.745, 1), -- Arcane thirst of the Nightfallen
+	NIGHTFALLEN = CreateColor(0.227,0.203,0.745, 1), -- Arcane thirst of the Nightfallen
 }
-local DEFAULT_ICON = [[Interface\Common\friendship-heart]];
 
-local function OnReputationBarLoad(self)
-	local texture = self:CreateTexture(nil, "BORDER", nil, -1);
-	texture:SetGradient("VERTICAL", Ellyb.Color.CreateFromRGBA(8/255, 93/255, 72/255, 1), Ellyb.Color.CreateFromRGBA(11/255, 136/255, 105/255, 1));
-	self:SetStatusBarTexture(texture);
-end
+local customReputationFactionID = {
+	[1860]   = customReputationColors.NIGHTFALLEN,
+	[1861]   = customReputationColors.NIGHTFALLEN,
+	[1862]   = customReputationColors.NIGHTFALLEN,
+	[1919]   = customReputationColors.NIGHTFALLEN,
+}
 
 local function OnReputationBarEnter(self)
 	ReputationBarMixin.ShowFriendshipReputationTooltip(self, self.friendshipFactionID, self, "ANCHOR_TOPRIGHT")
 end
 
-local function OnReputationBarLeave(self)
-	GameTooltip:Hide();
-end
-
-StorylineReputationBar:SetScript("OnLoad", OnReputationBarLoad);
 StorylineReputationBar:SetScript("OnEnter", OnReputationBarEnter);
-StorylineReputationBar:SetScript("OnLeave", OnReputationBarLeave);
 
-local function UpdateFriendship(_, factionID)
-	local reputationInfo = C_GossipInfo.GetFriendshipReputation(factionID or 0);
-	if reputationInfo and reputationInfo.friendshipFactionID and reputationInfo.friendshipFactionID > 0 then
-		StorylineReputationBar.friendshipFactionID = reputationInfo.friendshipFactionID;
-		if ( not reputationInfo.nextThreshold ) then
-			reputationInfo.reactionThreshold, reputationInfo.nextThreshold, reputationInfo.standing = 0, 1, 1;
-		end
-
-		StorylineReputationBar.icon:SetTexture(reputationInfo.texture or DEFAULT_ICON);
-
-		local numColors = 4;
-		local colorIndex;
-		if (not reputationInfo.overrideColor) then
-			local rankInfo = C_GossipInfo.GetFriendshipReputationRanks(reputationInfo.friendshipFactionID);
-
-			colorIndex = StorylineReputationBar:GetColorIndex(rankInfo.currentLevel, rankInfo.maxLevel, numColors);
-		else
-			colorIndex = reputationInfo.overrideColor;
-		end
-
-		-- Nice touch: we will recolor the status bar for some specific rep, because its prettier :3
-		---@type ColorMixin
-		local statusBarColor = customReputationColors[reputationInfo.texture] or FRIENDSHIP_BAR_COLORS[colorIndex];
-		StorylineReputationBar:SetStatusBarColor(statusBarColor:GetRGB());
-
-		StorylineReputationBar:SetMinMaxValues(reputationInfo.reactionThreshold, reputationInfo.nextThreshold);
-		StorylineReputationBar:SetValue(reputationInfo.standing);
-		StorylineReputationBar:Show();
-	else
-		StorylineReputationBar:Hide();
+local SetStatusBarColorDefault = StorylineReputationBar.SetStatusBarColor;
+function StorylineReputationBar:SetStatusBarColor(R, G, B, A)
+	local customStatusBarColor = customReputationFactionID[StorylineReputationBar.friendshipFactionID];
+	if customStatusBarColor then
+		R, G, B, A = customStatusBarColor:GetRGBA();
 	end
+	SetStatusBarColorDefault(StorylineReputationBar, R, G, B, A);
 end
 
-hooksecurefunc(GossipFrame.FriendshipStatusBar, "Update", UpdateFriendship)
-hooksecurefunc(QuestFrame.FriendshipStatusBar, "Update", UpdateFriendship)
+hooksecurefunc(GossipFrame.FriendshipStatusBar, "Update", function() StorylineReputationBar:Update() end);
+hooksecurefunc(QuestFrame.FriendshipStatusBar, "Update", function() StorylineReputationBar:Update() end)
