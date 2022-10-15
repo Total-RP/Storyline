@@ -476,7 +476,7 @@ local function handleEventSpecifics(event, texts, textIndex, eventInfo)
 
 	showQuestPortraitFrame(event == "QUEST_COMPLETE");
 
-	if event == "PLAYER_INTERACTION_MANAGER_FRAME_SHOW" or (textIndex == #texts and eventHandlers[event]) then
+	if event == "GOSSIP_SHOW" or (textIndex == #texts and eventHandlers[event]) then
 		currentEvent = event;
 		eventHandlers[event](eventInfo);
 	end
@@ -716,7 +716,7 @@ function Storyline_API.initEventsStructure()
 			cancelMethod = CloseQuest,
 			titleGetter = GetTitleText,
 		},
-		["PLAYER_INTERACTION_MANAGER_FRAME_SHOW"] = {
+		["GOSSIP_SHOW"] = {
 			text = C_GossipInfo.GetText,
 			finishMethod = function()
 				local firstChoice, bucketType, index = Dialogs.getFirstChoice(Dialogs.EVENT_TYPES.GOSSIP_SHOW);
@@ -764,11 +764,11 @@ function Storyline_API.initEventsStructure()
 	for event, info in pairs(EVENT_INFO) do
 		Ellyb.GameEvents.registerCallback(event, function(...)
 
-			if event == "PLAYER_INTERACTION_MANAGER_FRAME_SHOW" then
-				local playerInteractionType = ...;
-				if playerInteractionType ~= Enum.PlayerInteractionType.Gossip then
-					hideStorylineFrame();
-					return
+			if event == "GOSSIP_SHOW" then
+				local textureId = ...;
+
+				if tContains(SPECIAL_GOSSIP_FRAMES, textureId) then
+					CustomGossipFrameManager:OnEvent(event, ...);
 				end
 			end
 
