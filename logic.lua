@@ -675,6 +675,12 @@ function Storyline_API.addon:OnEnable()
 	Ellyb.GameEvents.registerCallback("PLAYER_INTERACTION_MANAGER_FRAME_HIDE", function()
 		hideStorylineFrame();
 	end);
+	Ellyb.GameEvents.registerCallback("PLAYER_INTERACTION_MANAGER_FRAME_SHOW", function(...)
+		local playerInteractionType = ...;
+		if playerInteractionType ~= Enum.PlayerInteractionType.Gossip then
+			hideStorylineFrame();
+		end
+	end);
 	Ellyb.GameEvents.registerCallback("QUEST_FINISHED", function()
 		hideStorylineFrame();
 	end);
