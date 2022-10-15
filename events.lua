@@ -759,8 +759,6 @@ function Storyline_API.initEventsStructure()
 	};
 	Storyline_API.EVENT_INFO = EVENT_INFO;
 
-	local storylineFrameShouldOpen = false;
-
 	for event, info in pairs(EVENT_INFO) do
 		Ellyb.GameEvents.registerCallback(event, function(...)
 
@@ -792,17 +790,7 @@ function Storyline_API.initEventsStructure()
 				end
 			end
 
-			-- Thanks to Blizzard for firing GOSSIP_SHOW and then GOSSIP_CLOSED when ForceGossip is false...
-			if not C_GossipInfo.ForceGossip() then
-				storylineFrameShouldOpen = true;
-				C_Timer.After(0.5, function()
-					if storylineFrameShouldOpen then
-						startDialog("npc", info.text(), event, info);
-					end
-				end)
-			else
-				startDialog("npc", info.text(), event, info);
-			end
+			startDialog("npc", info.text(), event, info);
 		end);
 	end
 
@@ -813,9 +801,6 @@ function Storyline_API.initEventsStructure()
 	end)
 
 	Ellyb.GameEvents.registerCallback("QUEST_ITEM_UPDATE", RewardsButtons.refreshButtons);
-	Ellyb.GameEvents.registerCallback("PLAYER_INTERACTION_MANAGER_FRAME_HIDE", function()
-		storylineFrameShouldOpen = false;
-	end);
 
 	-- UI
 	setTooltipAll(Storyline_NPCFrameChatPrevious, "BOTTOM", 0, 0, loc("SL_RESET"), loc("SL_RESET_TT"));
