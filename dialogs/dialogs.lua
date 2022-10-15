@@ -41,8 +41,8 @@ API.EVENT_TYPES = EVENT_TYPES;
 local function getGossipChoices()
 	local gossipChoices = {};
 
-	for i, optionInfo in ipairs(C_GossipInfo.GetOptions()) do
-		gossipChoices[i] = {
+	for _, optionInfo in ipairs(C_GossipInfo.GetOptions()) do
+		gossipChoices[optionInfo.orderIndex + 1] = {
 			id         = optionInfo.gossipOptionID,
 			title      = optionInfo.flags == Enum.GossipOptionRecFlags.QuestLabelPrepend and GOSSIP_QUEST_OPTION_PREPEND:format(optionInfo.name) or optionInfo.name,
 			gossipIcon = optionInfo.overrideIconID or optionInfo.icon
