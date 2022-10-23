@@ -19,10 +19,10 @@ externals:
 
   # Our own scaling and animation lib
   lib/TRP-Anim-DB:
-      url: git://github.com/Ellypse/TRP-Anim-DB.git
+      url: https://github.com/Total-RP/TRP-Anim-DB.git
 
   lib/CustomTutorials-2.1:
-      url: git://github.com/Jaliborc/CustomTutorials-2.1.git
+      url: https://github.com/Jaliborc/CustomTutorials-2.1.git
 
 manual-changelog:
   filename: CHANGELOG.md
