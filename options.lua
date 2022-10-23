@@ -84,10 +84,10 @@ local function decorateTextOptions(title, optionKey, affectedText)
 	StorylineTextOptionsPanel[optionKey].TextSample:SetFont(font, scale, outline);
 
 	setupListBox(StorylineTextOptionsPanel[optionKey].FontDropDown, fonts, function(fontIndex)
-		local font = Storyline_API.lib.getFontPath(fontIndex);
-		local _, scale, outline = affectedText:GetFont();
+		local dropdownTextFont = Storyline_API.lib.getFontPath(fontIndex);
+		local _, dropdownTextScale, dropdownTextOutline = affectedText:GetFont();
 		affectedText:SetFont(font, scale, outline);
-		StorylineTextOptionsPanel[optionKey].TextSample:SetFont(font, scale, outline);
+		StorylineTextOptionsPanel[optionKey].TextSample:SetFont(dropdownTextFont, dropdownTextScale, dropdownTextOutline);
 		Storyline_Data.config[optionKey].Font = fontIndex;
 	end, nil, 100, true, true);
 	StorylineTextOptionsPanel[optionKey].FontDropDown:SetSelectedValue(Storyline_Data.config[optionKey].Font);
@@ -124,8 +124,8 @@ local function decorateTextTemplateOptions(title, optionKey, defaultTextOptions,
 
 	setupListBox(StorylineTextOptionsPanel[optionKey].FontDropDown, fonts, function(fontIndex)
 		Storyline_Data.config[optionKey].Font = fontIndex;
-		local font = Storyline_API.lib.getFontPath(fontIndex);
-		StorylineTextOptionsPanel[optionKey].TextSample:SetFont(font, Storyline_Data.config[optionKey].Size, Storyline_Data.config[optionKey].Outline);
+		local dropdownTextFont = Storyline_API.lib.getFontPath(fontIndex);
+		StorylineTextOptionsPanel[optionKey].TextSample:SetFont(dropdownTextFont, Storyline_Data.config[optionKey].Size, Storyline_Data.config[optionKey].Outline);
 		callback(Storyline_Data.config[optionKey]);
 	end, nil, 100, true, true);
 	StorylineTextOptionsPanel[optionKey].FontDropDown:SetSelectedValue(Storyline_Data.config[optionKey].Font);

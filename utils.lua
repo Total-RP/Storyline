@@ -97,7 +97,7 @@ local function getQuestTriviality(isTrivial)
 end
 Storyline_API.getQuestTriviality = getQuestTriviality;
 
-local function getQuestLevelColor(questLevel)
+local function getQuestLevelColor()
 	return 0.9, 0.6, 0;
 end
 Storyline_API.getQuestLevelColor = getQuestLevelColor;

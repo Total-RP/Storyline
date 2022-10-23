@@ -473,7 +473,7 @@ function Storyline_API.isCurrentNPCBlacklisted()
 	return Storyline_Data.npc_blacklist[Storyline_API.getNpcId()] ~= nil
 end
 
-function Storyline_API.addon:OnEnable()
+function Storyline_API.addon.OnEnable()
 
 	if not Storyline_Data then
 		Storyline_Data = {};
@@ -488,7 +488,7 @@ function Storyline_API.addon:OnEnable()
 	if not Storyline_Data.customscale.personal then
 		Storyline_Data.customscale.personal = {};
 	end
-	scalingDB = Storyline_Data.customscale;
+
 	customHeightDB = Storyline_Data.customscale.relative;
 	customPersonalDB = Storyline_Data.customscale.personal;
 
@@ -518,7 +518,6 @@ function Storyline_API.addon:OnEnable()
 		["98939"]  = true, -- Number Nine Jia (Monks order hall)
 		["105998"] = true, -- Winstone Wolfe (Rogues order hall)
 		["97989"]  = true, -- Leafbeard the Storied (Druids order hall)
-		["105998"] = true, -- Winstone Wolfe (Rogues order hall)
 		["97389"]  = true, -- Eye of Odyn
 
 		-- BfA

@@ -130,7 +130,7 @@ local function getActiveQuestsChoices()
 
 	for i = 1, numberOfActiveQuests do
 		local title, isComplete = GetActiveTitle(i);
-		local isTrivial, frequency, isRepeatable, isLegendary = GetAvailableQuestInfo(i); -- luacheck: ignore 212
+		local isTrivial, _, isRepeatable, isLegendary = GetAvailableQuestInfo(i);
 		local activeQuestID = GetActiveQuestID(i);
 		local questData = {
 			title        = title,
