@@ -177,15 +177,15 @@ local REWARD_GETTERS = {
 				local name, texture, numItems, quality = GetQuestCurrencyInfo("reward", i);
 				if name and texture and numItems then
 					local currencyID = GetQuestCurrencyID("reward", i);
-					name, texture, _, quality = CurrencyContainerUtil.GetCurrencyContainerInfo(currencyID, numItems, name, texture, quality);
+					local currencyName, currencyTexture, _, currencyQuality = CurrencyContainerUtil.GetCurrencyContainerInfo(currencyID, numItems, name, texture, quality);
 					tinsert(rewards, {
-						text  = name,
-						icon  = texture,
+						text  = currencyName,
+						icon  = currencyTexture,
 						count = numItems,
 						index = i,
 						type  = "currency",
 						rewardType = "reward",
-						quality = quality,
+						quality = currencyQuality,
 						currencyID = currencyID
 					});
 				end
@@ -339,7 +339,7 @@ local REWARD_GETTERS = {
 			local numberOfSpellRewards = GetNumRewardSpells();
 
 			for rewardSpellIndex = 1, numberOfSpellRewards do
-				local texture, name, isTradeskillSpell, isSpellLearned, hideSpellLearnText, isBoostSpell, garrFollowerID, genericUnlock, spellID = GetRewardSpell(rewardSpellIndex);
+				local texture, name, isTradeskillSpell, isSpellLearned, _, isBoostSpell, garrFollowerID, genericUnlock, spellID = GetRewardSpell(rewardSpellIndex);
 				local knownSpell = IsSpellKnownOrOverridesKnown(spellID);
 
 				-- Filter out already learned spell or garrison followers
@@ -391,11 +391,11 @@ local REWARD_GETTERS = {
 			local numberOfSpellRewards = GetNumRewardSpells();
 
 			for rewardSpellIndex = 1, numberOfSpellRewards do
-				local texture, name, isTradeskillSpell, isSpellLearned, hideSpellLearnText, isBoostSpell, garrFollowerID, genericUnlock, spellID = GetRewardSpell(rewardSpellIndex);
+				local texture, name, _, _, _, _, _, genericUnlock, spellID = GetRewardSpell(rewardSpellIndex);
 				local knownSpell = IsSpellKnownOrOverridesKnown(spellID);
 
 				-- Filter out already learned spell or garrison followers
-				if texture and genericUnlock then
+				if texture and genericUnlock and not knownSpell then
 					tinsert(auraRewards, {
 						text   			 = name,
 						icon   			 = texture,
@@ -414,7 +414,7 @@ local REWARD_GETTERS = {
 			local numberOfSpellRewards = GetNumRewardSpells();
 
 			for rewardSpellIndex = 1, numberOfSpellRewards do
-				local texture, name, isTradeskillSpell, isSpellLearned, hideSpellLearnText, isBoostSpell, garrFollowerID, genericUnlock, spellID = GetRewardSpell(rewardSpellIndex);
+				local texture, name, _, isSpellLearned, _, _, _, _, spellID = GetRewardSpell(rewardSpellIndex);
 				local knownSpell = IsSpellKnownOrOverridesKnown(spellID);
 
 				-- Filter out already learned spell or garrison followers
@@ -507,7 +507,7 @@ OBJECTIVES_GETTERS = {
 	[REWARD_TYPES.ITEMS] = function()
 		local itemObjectives = {};
 		for i = 1, GetNumQuestItems() do
-			local name, texture, numItems, quality, isUsable = GetQuestItemInfo("required", i);
+			local name, texture, numItems, _, isUsable = GetQuestItemInfo("required", i);
 			tinsert(itemObjectives, {
 				text = name,
 				icon = texture,
