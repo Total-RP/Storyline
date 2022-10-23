@@ -17,8 +17,6 @@
 -- limitations under the License.
 ----------------------------------------------------------------------------------
 
-local Ellyb = Ellyb(...);
-
 -- Storyline API
 local loc = Storyline_API.locale.getText;
 local setupListBox = Storyline_API.lib.setupListBox;
@@ -27,7 +25,7 @@ local setTooltipForSameFrame = Storyline_API.lib.setTooltipForSameFrame;
 local StorylineOptionsPanel = StorylineOptionsPanel;
 local StorylineTextOptionsPanel = StorylineTextOptionsPanel;
 local StorylineMiscellaneousOptionsPanel = StorylineMiscellaneousOptionsPanel;
-local Storyline_NPCFrameChatName, Storyline_NPCFrameChatText, Storyline_NPCFrameTitle, Storyline_NPCFrameChatNextText = Storyline_NPCFrameChatName, Storyline_NPCFrameChatText, Storyline_NPCFrameTitle, Storyline_NPCFrameChatNextText;
+local Storyline_NPCFrameChatName, Storyline_NPCFrameChatText, Storyline_NPCFrameChatNextText = Storyline_NPCFrameChatName, Storyline_NPCFrameChatText, Storyline_NPCFrameChatNextText;
 
 Storyline_API.options = {}
 

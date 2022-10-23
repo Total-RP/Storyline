@@ -27,7 +27,6 @@ local refreshTooltipForFrame = Storyline_RefreshTooltipForFrame;
 local Storyline_MainTooltip = Storyline_MainTooltip;
 local log = Storyline_API.lib.log;
 local getTextureString = Storyline_API.lib.getTextureString;
-local getId = Storyline_API.lib.generateID;
 local loc = Storyline_API.locale.getText;
 local format = format;
 local hideStorylineFrame = Storyline_API.layout.hideStorylineFrame;
@@ -68,7 +67,6 @@ local Rewards = Storyline_API.rewards;
 local RewardsButtons = Storyline_API.rewards.buttons;
 
 -- Constants
-local GOSSIP_DELAY = 0.2;
 local EVENT_INFO;
 local eventHandlers = {};
 local QUEST_SUGGESTED_GROUP_NUM, QUEST_OBJECTIVES = QUEST_SUGGESTED_GROUP_NUM, QUEST_OBJECTIVES;
@@ -220,18 +218,6 @@ Storyline_API.autoEquipAllReward = autoEquipAllReward;
 --*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
 -- Utils
 --*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
-
-local function getQuestData(qTitle)
-	for questIndex=1, GetNumQuestLogEntries() do
-		local questTitle, level, questTag, suggestedGroup, isHeader, isCollapsed, isComplete, isDaily, questID = GetQuestLogTitle(questIndex);
-		if questTitle == qTitle then
-			SelectQuestLogEntry(questIndex);
-			local questDescription, questObjectives = GetQuestLogQuestText();
-			return questObjectives or "";
-		end
-	end
-	return "";
-end
 
 local function showQuestPortraitFrame(isOnCompleteStep)
 	if not Storyline_Data.config.hideOriginalFrames then
@@ -400,7 +386,7 @@ eventHandlers["QUEST_PROGRESS"] = function()
 end
 
 local CLICKING_ON_REWARDS_MEANS_CHOOSING_IT = true;
-eventHandlers["QUEST_COMPLETE"] = function(eventInfo)
+eventHandlers["QUEST_COMPLETE"] = function()
 
 	local rewardsBucket, bestIcon, totalNumberOfRewards = Rewards.getRewards();
 
@@ -478,8 +464,6 @@ local function playText(textIndex, targetModel)
 	end
 
 	local text = Storyline_NPCFrameChat.texts[textIndex];
-	local delay = GOSSIP_DELAY;
-	local textLineToken = getId();
 
 	Storyline_NPCFrameChatText:SetTextColor(ChatTypeInfo["MONSTER_SAY"].r, ChatTypeInfo["MONSTER_SAY"].g, ChatTypeInfo["MONSTER_SAY"].b);
 
@@ -558,8 +542,6 @@ end
 --*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
 
 ---@type Storyline_PlayerModelMixin
-local targetModel = Storyline_NPCFrame.models.you;
----@type Storyline_PlayerModelMixin
 local playerModel = Storyline_NPCFrame.models.me;
 local ANIMATIONS = Storyline_API.ANIMATIONS;
 
@@ -589,7 +571,7 @@ function Storyline_API.initEventsStructure()
 		["QUEST_GREETING"] = {
 			text = GetGreetingText,
 			finishMethod = function()
-				local firstChoice, bucketType, index = Dialogs.getFirstChoice(Dialogs.EVENT_TYPES.QUEST_GREETING);
+				local _, bucketType, index = Dialogs.getFirstChoice(Dialogs.EVENT_TYPES.QUEST_GREETING);
 
 				if Dialogs.getDialogChoiceSelectorForEventType(Dialogs.EVENT_TYPES.QUEST_GREETING, bucketType) then
 					debug(("QUEST_GREETING – Finish method : Using selector method found for bucket type %s at index %s."):format(bucketType, index));
@@ -665,7 +647,7 @@ function Storyline_API.initEventsStructure()
 		["QUEST_COMPLETE"] = {
 			text = GetRewardText,
 			finishMethod = function()
-				local rewardsBucket, bestIcon, totalNumberOfRewards = Rewards.getRewards();
+				local _, _, totalNumberOfRewards = Rewards.getRewards();
 
 				if not Storyline_NPCFrameRewards.Content:IsVisible() and totalNumberOfRewards > 0 then
 					configureHoverFrame(Storyline_NPCFrameRewards.Content, Storyline_NPCFrameRewardsItem, "TOP");
@@ -694,7 +676,7 @@ function Storyline_API.initEventsStructure()
 				end
 			end,
 			finishText = function()
-				local rewardsBucket, bestIcon, totalNumberOfRewards = Rewards.getRewards();
+				local _, _, totalNumberOfRewards = Rewards.getRewards();
 
 				return totalNumberOfRewards > 0 and loc("SL_GET_REWARD") or Storyline_NPCFrameChatNextText:SetText(loc("SL_CONTINUE"));
 			end,

@@ -21,7 +21,7 @@
 local getId = Storyline_API.lib.generateID;
 
 -- WOW API
-local after, tostring, print = C_Timer.After, tostring, print;
+local tostring, print = tostring, print;
 
 ---
 -- I am using this little local function because I always forget a print or two :P

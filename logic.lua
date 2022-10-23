@@ -19,10 +19,10 @@
 local Ellyb = Ellyb(...);
 
 -- Storyline API
-local wipe, tContains = wipe, tContains;
+local wipe = wipe;
 local UnitGUID = UnitGUID;
-local setTooltipForSameFrame, setTooltipAll = Storyline_API.lib.setTooltipForSameFrame, Storyline_API.lib.setTooltipAll;
-local loc, tsize = Storyline_API.locale.getText, Storyline_API.lib.tsize;
+local setTooltipAll = Storyline_API.lib.setTooltipAll;
+local loc = Storyline_API.locale.getText;
 local playNext = Storyline_API.playNext;
 local showStorylineFrame = Storyline_API.layout.showStorylineFrame;
 local hideStorylineFrame = Storyline_API.layout.hideStorylineFrame;
