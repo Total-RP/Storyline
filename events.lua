@@ -26,31 +26,27 @@ local setTooltipForSameFrame, setTooltipAll = Storyline_API.lib.setTooltipForSam
 local refreshTooltipForFrame = Storyline_RefreshTooltipForFrame;
 local Storyline_MainTooltip = Storyline_MainTooltip;
 local log = Storyline_API.lib.log;
-local getTextureString, colorCodeFloat = Storyline_API.lib.getTextureString, Storyline_API.lib.colorCodeFloat;
+local getTextureString = Storyline_API.lib.getTextureString;
 local getId = Storyline_API.lib.generateID;
 local loc = Storyline_API.locale.getText;
 local format = format;
-local getQuestIcon, getQuestActiveIcon = Storyline_API.getQuestIcon, Storyline_API.getQuestActiveIcon;
-local selectFirstGossip, 	selectMultipleGossip = Storyline_API.selectFirstGossip, Storyline_API.selectMultipleGossip;
-local selectMultipleRewards, selectFirstGreetingActive = Storyline_API.selectMultipleRewards, Storyline_API.selectFirstGreetingActive;
 local hideStorylineFrame = Storyline_API.layout.hideStorylineFrame;
 local hideQuestRewardFrameIfNeed = Storyline_API.layout.hideQuestRewardFrameIfNeed;
 local debug = Storyline_API.debug;
 local tsize = Storyline_API.lib.tsize;
 
 -- WOW API
-local faction, faction_loc = UnitFactionGroup("player");
-local pairs, CreateFrame, wipe, type, tinsert, after, select, huge = pairs, CreateFrame, wipe, type, tinsert, C_Timer.After, select, math.huge;
+local pairs, wipe, type, after, select, huge = pairs, wipe, type, C_Timer.After, select, math.huge;
 local ChatTypeInfo = ChatTypeInfo;
 local UnitIsUnit, UnitExists, DeclineQuest, AcceptQuest, AcknowledgeAutoAcceptQuest = UnitIsUnit, UnitExists, DeclineQuest, AcceptQuest, AcknowledgeAutoAcceptQuest;
 local IsQuestCompletable, CompleteQuest, CloseQuest, GetQuestLogTitle = IsQuestCompletable, CompleteQuest, CloseQuest, GetQuestLogTitle;
-local GetNumQuestChoices, GetQuestReward, GetQuestLogSelection = GetNumQuestChoices, GetQuestReward, GetQuestLogSelection;
-local GetQuestLogQuestText, GetGossipAvailableQuests, GetGossipActiveQuests = GetQuestLogQuestText, GetGossipAvailableQuests, GetGossipActiveQuests;
-local GetQuestItemInfo, GetNumQuestItems, GetGossipOptions = GetQuestItemInfo, GetNumQuestItems, GetGossipOptions;
-local GetObjectiveText, GetCoinTextureString, GetRewardXP = GetObjectiveText, GetCoinTextureString, GetRewardXP;
-local GetQuestItemLink, GetNumQuestRewards, GetRewardMoney, GetNumRewardCurrencies = GetQuestItemLink, GetNumQuestRewards, GetRewardMoney, GetNumRewardCurrencies;
+local GetNumQuestChoices, GetQuestReward = GetNumQuestChoices, GetQuestReward;
+local GetQuestLogQuestText = GetQuestLogQuestText;
+local GetQuestItemInfo, GetNumQuestItems = GetQuestItemInfo, GetNumQuestItems;
+local GetObjectiveText = GetObjectiveText;
+local GetQuestItemLink, GetNumQuestRewards = GetQuestItemLink, GetNumQuestRewards;
 local GetProgressText, GetTitleText, GetGreetingText = GetProgressText, GetTitleText, GetGreetingText;
-local GetGossipText, GetRewardText, GetQuestText = GetGossipText, GetRewardText, GetQuestText;
+local GetRewardText, GetQuestText = GetRewardText, GetQuestText;
 local GetItemInfo, GetContainerNumSlots, GetContainerItemLink, EquipItemByName = GetItemInfo, GetContainerNumSlots, GetContainerItemLink, EquipItemByName;
 local InCombatLockdown, GetInventorySlotInfo, GetInventoryItemLink = InCombatLockdown, GetInventorySlotInfo, GetInventoryItemLink;
 
@@ -63,7 +59,7 @@ local Storyline_NPCFrameRewardsItemIcon, Storyline_NPCFrameRewardsItem, Storylin
 local Storyline_NPCFrame, Storyline_NPCFrameChatNextText = Storyline_NPCFrame, Storyline_NPCFrameChatNextText;
 local Storyline_NPCFrameChat, Storyline_NPCFrameChatText = Storyline_NPCFrameChat, Storyline_NPCFrameChatText;
 local Storyline_NPCFrameChatNext, Storyline_NPCFrameChatPrevious = Storyline_NPCFrameChatNext, Storyline_NPCFrameChatPrevious;
-local Storyline_NPCFrameConfigButton, Storyline_NPCFrameObjectivesContent = Storyline_NPCFrameConfigButton, Storyline_NPCFrameObjectivesContent;
+local Storyline_NPCFrameObjectivesContent = Storyline_NPCFrameObjectivesContent;
 local Storyline_NPCFrameGossipChoices = Storyline_NPCFrameGossipChoices;
 local Dialogs = Storyline_API.dialogs;
 local DialogsButtons = Storyline_API.dialogs.buttons;
@@ -72,14 +68,9 @@ local Rewards = Storyline_API.rewards;
 local RewardsButtons = Storyline_API.rewards.buttons;
 
 -- Constants
-local OPTIONS_MARGIN, OPTIONS_TOP = 175, -175;
 local GOSSIP_DELAY = 0.2;
-local gossipColor = "|cffffffff";
 local EVENT_INFO;
 local eventHandlers = {};
-local BONUS_SKILLPOINTS = BONUS_SKILLPOINTS;
-local ITEM_QUALITY_COLORS = ITEM_QUALITY_COLORS;
-local REQUIRED_MONEY = REQUIRED_MONEY;
 local QUEST_SUGGESTED_GROUP_NUM, QUEST_OBJECTIVES = QUEST_SUGGESTED_GROUP_NUM, QUEST_OBJECTIVES;
 
 --region Sealed quest info
@@ -102,12 +93,6 @@ local SEAL_QUESTS = {
 
 	[53372] = { bgAtlas = "QuestBG-Horde", text = "|cff480404"..QUEST_WARCHIEF_SYLVANAS_WINDRUNNER.."|r", sealAtlas = "Quest-Horde-WaxSeal"},
 	[53370] = { bgAtlas = "QuestBG-Alliance", text = "|cff042c54"..QUEST_KING_ANDUIN_WRYNN.."|r", sealAtlas = "Quest-Alliance-WaxSeal"},
-};
-local EXCEPTION_QUESTS = {
-	[53029] = true,
-	[53026] = true,
-	[51211] = true,
-	[52428] = true,
 };
 --endregion
 
@@ -164,7 +149,7 @@ local function autoEquip(itemLink)
 	-- Hotfix for a weir bug introduced with world scaling in 7.3.5: some quests rewards doesn't have item link (Blizz please…)
 	if not itemLink then return end;
 
-	local name, link, quality, lootLevel, reqLevel, class, subclass, maxStack, equipSlot, texture, vendorPrice = GetItemInfo(itemLink);
+	local name, _, _, lootLevel, _, _, _, _, equipSlot, _, _ = GetItemInfo(itemLink);
 	log(("autoEquip %s on slot %s"):format(name, equipSlot));
 
 	-- First, determine if we should auto equip

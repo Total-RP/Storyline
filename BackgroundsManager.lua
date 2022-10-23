@@ -496,9 +496,9 @@ function StorylineBackgroundTexture:RefreshBackground()
     elseif Storyline_Data.config.dynamicBackgrounds and getCustomBackgroundForPlayer() then
         local dynamicBackground = getCustomBackgroundForPlayer()
 
-        self:ApplyGarrisonBackgroundAtlas(self.backgroundLayer, "locBackTexCoordRange", "_GarrMissionLocation-" .. dynamicBackground .. "-Back")
-        self:ApplyGarrisonBackgroundAtlas(self.middlegroundLayer, "locMidTexCoordRange", "_GarrMissionLocation-" .. dynamicBackground .. "-Mid")
-        self:ApplyGarrisonBackgroundAtlas(self.foregroundLayer, "locForeTexCoordRange", "_GarrMissionLocation-" .. dynamicBackground .. "-Fore")
+        self:ApplyGarrisonBackgroundAtlas(self.backgroundLayer, "_GarrMissionLocation-" .. dynamicBackground .. "-Back")
+        self:ApplyGarrisonBackgroundAtlas(self.middlegroundLayer, "_GarrMissionLocation-" .. dynamicBackground .. "-Mid")
+        self:ApplyGarrisonBackgroundAtlas(self.foregroundLayer, "_GarrMissionLocation-" .. dynamicBackground .. "-Fore")
 
         self.dimmingLayer:SetAlpha(0.7)
 
@@ -529,7 +529,7 @@ function StorylineBackgroundTexture:RefreshBackground()
 
 end
 
-function StorylineBackgroundTexture:ApplyGarrisonBackgroundAtlas(texture, textureCoordRangeKey, atlas)
+function StorylineBackgroundTexture:ApplyGarrisonBackgroundAtlas(texture, atlas)
     if atlas then
         local info = C_Texture.GetAtlasInfo(atlas);
         if info and info.width and info.width ~= 0 then

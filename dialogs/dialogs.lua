@@ -130,7 +130,7 @@ local function getActiveQuestsChoices()
 
 	for i = 1, numberOfActiveQuests do
 		local title, isComplete = GetActiveTitle(i);
-		local isTrivial, frequency, isRepeatable, isLegendary = GetAvailableQuestInfo(i);
+		local isTrivial, frequency, isRepeatable, isLegendary = GetAvailableQuestInfo(i); -- luacheck: ignore 212
 		local activeQuestID = GetActiveQuestID(i);
 		local questData = {
 			title        = title,
@@ -175,12 +175,13 @@ function API.getFirstChoice(eventType)
 	local dialogChoices = API.getChoices(eventType);
 	for _, choicesBag in pairs(dialogChoices) do
 		bucketType = _;
-		for _, choice in pairs(choicesBag) do
-			index = choice.id or _;
-			firstChoice = choice;
+
+		-- Retrieving the first choice
+		index, firstChoice = next(choicesBag);
+		if firstChoice then
+			index = firstChoice.id or index;
 			break
 		end
-		if firstChoice then break end
 	end
 	return firstChoice, bucketType, index;
 end

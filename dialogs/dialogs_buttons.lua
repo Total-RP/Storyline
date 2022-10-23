@@ -25,7 +25,6 @@ local animationLib = LibStub:GetLibrary("TRP-Dialog-Animation-DB");
 local tinsert, pairs, assert = tinsert, pairs, assert;
 local CreateFrame = CreateFrame;
 local after = C_Timer.After;
-local LE_QUEST_FREQUENCY_DAILY, LE_QUEST_FREQUENCY_WEEKLY = LE_QUEST_FREQUENCY_DAILY, LE_QUEST_FREQUENCY_WEEKLY;
 
 --- Insert values of table 2 inside table 1
 -- @param tableInWhichValuesWillBeInserted
@@ -58,26 +57,6 @@ end
 --*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
 -- BUTTONS DECORATORS
 --*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
-
-local AVAILABLE_QUEST_ICONS_TEXTURE_PATHS = {
-	DEFAULT   = [[Interface\GossipFrame\AvailableQuestIcon]],
-	LEGENDARY = [[Interface\GossipFrame\AvailableLegendaryQuestIcon]],
-	DAILY     = [[Interface\GossipFrame\DailyQuestIcon]]
-}
-
-local function getIconTextureForAvailableQuestType(frequency, isRepeatable, isLegendary, isCampaign, isCalling)
-	return QuestUtil.GetQuestIconOffer(isLegendary, frequency, isRepeatable, isCampaign, isCalling)
-end
-
-local ACTIVE_QUEST_ICONS_TEXTURE_PATHS = {
-	DEFAULT   = [[Interface\GossipFrame\ActiveQuestIcon]],
-	LEGENDARY = [[Interface\GossipFrame\ActiveLegendaryQuestIcon]],
-	DAILY     = [[Interface\GossipFrame\DailyActiveQuestIcon]]
-}
-
-local function getIconTextureForActiveQuestType(frequency, isRepeatable, isLegendary, isCampaign, isCalling)
-	return QuestUtil.GetQuestIconActive(true, isLegendary, frequency, isRepeatable, isCampaign, isCalling)
-end
 
 local BUTTON_DECORATORS = {
 	[Dialogs.BUCKET_TYPE.COMPLETED_QUEST] = function(button, data)
@@ -264,7 +243,6 @@ local fontSettings = {};
 defaultButton:Hide();
 
 local function applyFontStyleToEveryExistingButtons()
-	local fontSettings = API.getFontSettings();
 	local totalButtonHeights = 0;
 	for _, existingButton in pairs(buttonsBag) do
 		existingButton:SetFont(fontSettings.font, fontSettings.size, fontSettings.outline);
