@@ -24,12 +24,11 @@ local Ellyb = Ellyb(...)
 
 local assert, tinsert, pairs = assert, tinsert, pairs;
 local CreateFrame = CreateFrame;
-local tsize = Storyline_API.lib.tsize;
 local format = format;
 
 local GetQuestReward, HandleModifiedItemClick, GetQuestItemLink, GameTooltip_ShowCompareItem = GetQuestReward, HandleModifiedItemClick, GetQuestItemLink, GameTooltip_ShowCompareItem;
 local getFollowerInfo = C_Garrison.GetFollowerInfo;
-local IsShiftKeyDown, IsModifiedClick = IsShiftKeyDown, IsModifiedClick;
+local IsModifiedClick = IsModifiedClick;
 
 Storyline_API.rewards.buttons = {};
 local API = Storyline_API.rewards.buttons;
