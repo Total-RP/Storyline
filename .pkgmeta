@@ -4,26 +4,6 @@ enable-nolib-creation: no
 ignore:
   - README.md
 
-externals:
-  # Ace libs
-  lib/AceAddon-3.0:
-      url: https://repos.wowace.com/wow/ace3/trunk/AceAddon-3.0
-  lib/AceConsole-3.0:
-      url: https://repos.wowace.com/wow/ace3/trunk/AceConsole-3.0
-  lib/CallbackHandler-1.0:
-      url: https://repos.wowace.com/wow/ace3/trunk/CallbackHandler-1.0
-  lib/LibSharedMedia-3.0:
-      url: https://repos.wowace.com/wow/libsharedmedia-3-0/trunk/LibSharedMedia-3.0
-  lib/LibStub:
-      url: https://repos.wowace.com/wow/ace3/trunk/LibStub
-
-  # Our own scaling and animation lib
-  lib/TRP-Anim-DB:
-      url: https://github.com/Total-RP/TRP-Anim-DB.git
-
-  lib/CustomTutorials-2.1:
-      url: https://github.com/Jaliborc/CustomTutorials-2.1.git
-
 manual-changelog:
   filename: CHANGELOG.md
   markup-type: markdown
