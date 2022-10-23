@@ -141,6 +141,11 @@ stds.wow = {
                 "ShouldQuestIconsUseCampaignAppearance",
             },
         },
+        Settings = {
+            fields = {
+                "OpenToCategory",
+            },
+        },
 
         "AcceptQuest",
         "AcknowledgeAutoAcceptQuest",
