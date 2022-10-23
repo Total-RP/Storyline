@@ -34,7 +34,6 @@ local debug = Storyline_API.debug;
 local strsplit, pairs, tostring = strsplit, pairs, tostring;
 local UnitIsUnit, UnitExists, UnitName = UnitIsUnit, UnitExists, UnitName;
 local IsAltKeyDown, IsShiftKeyDown, IsControlKeyDown = IsAltKeyDown, IsShiftKeyDown, IsControlKeyDown;
-local InterfaceOptionsFrame_OpenToCategory = InterfaceOptionsFrame_OpenToCategory;
 
 -- UI
 local mainFrame = Storyline_NPCFrame;
@@ -45,7 +44,7 @@ targetModel.isModelDisplayedOnLeft = false;
 local playerModel = mainFrame.models.me;
 
 local scalingLib = LibStub:GetLibrary("TRP-Dialog-Scaling-DB");
-local scalingDB, customHeightDB, customPersonalDB;
+local customHeightDB, customPersonalDB;
 
 -- Constants
 local LINE_FEED_CODE = string.char(10);
@@ -734,8 +733,5 @@ function Storyline_API.addon.OnEnable()
 end
 
 function Storyline_API.openSettings()
-	InterfaceOptionsFrame_OpenToCategory("Storyline");
-	-- Need to be called twice due to a bug present in the game since 2009
-	-- See: https://www.wowace.com/projects/interfaceoptionsframe_opentocate
-	InterfaceOptionsFrame_OpenToCategory("Storyline");
+	Settings.OpenToCategory("Storyline");
 end
