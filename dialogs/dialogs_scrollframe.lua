@@ -124,7 +124,7 @@ function API.refreshMargins(width, height)
 	scrollFrame.container:SetWidth(frameWidth);
 end
 
-scrollFrame:HookScript("OnMousewheel", function(self, delta)
+scrollFrame:HookScript("OnMousewheel", function(self, delta) -- luacheck: ignore 212
 	local currentScroll = self:GetVerticalScroll();
 	local maxScroll = self:GetVerticalScrollRange();
 
