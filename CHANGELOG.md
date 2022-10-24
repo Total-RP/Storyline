@@ -1,7 +1,19 @@
-## Changelog for version 3.2.6
+# Changelog for version 3.3.0
 
-### Fixed
+## Added
 
-- Fixed the issue preventing from picking a reputation reward from the Oribos weekly dungeon quests. (Big thanks to Solanya for his help on this one).
-- Improved the scaling of more Shadowlands NPC models.
-- The Shadowlands zone specific backgrounds now uses nicer textures from the convenant choice UI.
+- Added support for Retail 10.0.0, including backgrounds and NPC scaling.
+- Added new coin textures for money reward.
+
+## Changed
+
+- Adjusted some UI elements positions to account for dragons being wide.
+- Adjusted the blue text color on some dialog options to be more readable.
+- Adjusted the default scaling of allied races and upright orcs to be more consistent.
+- Removed a very slight delay before displaying Storyline when interacting with NPCs.
+
+## Fixed
+
+- Fixed an issue with quest portraits.
+- Fixed the text displayed when completing a quest with a reward choice.
+- Fixed the resizing frame being invisible while resizing.
