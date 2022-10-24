@@ -1,4 +1,4 @@
-## Interface: 90002
+## Interface: 100000
 ## Title: Storyline
 ## Author: Ellypse and Telkostrasz
 ## Version: @project-version@
@@ -11,5 +11,6 @@
 
 ## X-Curse-Project-ID: 92398
 ## X-WoWI-ID: 23782
+## X-Wago-ID: rkGrYKyD
 
 ui.xml
