@@ -400,32 +400,40 @@ local function debugInit()
 	end
 
 	mainFrame.debug.dump.dump:SetScript("OnClick", function()
-		local info = [[
-["%s"] = {
-["scale"] = %s,
-["feet"] = %s,
-["offset"] = %s,
-["facing"] = %s,
-},]]
-		local formatted = info:format(
-			targetModel:GetModelFileIDAsString(),
-			mainFrame.models.you.scale, mainFrame.models.you.feet, mainFrame.models.you.offset, mainFrame.models.you.facing
-		);
-		mainFrame.debug.dump.scroll.text:SetText(formatted);
+		local info = string.format("[\"%s\"] = {\n", targetModel:GetModelFileIDAsString());
+		print(scalingLib.DEFAULT_PROPERTIES.scale)
+		print(mainFrame.models.you.scale)
+		if scalingLib.DEFAULT_PROPERTIES.scale ~= mainFrame.models.you.scale then
+			info = info .. string.format("[\"scale\"] = %s,\n", mainFrame.models.you.scale);
+		end
+		if scalingLib.DEFAULT_PROPERTIES.feet ~= mainFrame.models.you.feet then
+			info = info .. string.format("[\"feet\"] = %s,\n", mainFrame.models.you.feet);
+		end
+		if scalingLib.DEFAULT_PROPERTIES.offset ~= mainFrame.models.you.offset then
+			info = info .. string.format("[\"offset\"] = %s,\n", mainFrame.models.you.offset);
+		end
+		if scalingLib.DEFAULT_PROPERTIES.facing ~= mainFrame.models.you.facing then
+			info = info .. string.format("[\"facing\"] = %s,\n", mainFrame.models.you.facing);
+		end
+		info = info .. "},";
+		mainFrame.debug.dump.scroll.text:SetText(info);
 	end);
 	mainFrame.debug.dump.dumpMe:SetScript("OnClick", function()
-		local info = [[
-["%s"] = {
-["scale"] = %s,
-["feet"] = %s,
-["offset"] = %s,
-["facing"] = %s,
-},]]
-		local formatted = info:format(
-			playerModel:GetModelFileIDAsString(),
-			mainFrame.models.me.scale, mainFrame.models.me.feet, mainFrame.models.me.offset, mainFrame.models.me.facing
-		);
-		mainFrame.debug.dump.scroll.text:SetText(formatted);
+		local info = string.format("[\"%s\"] = {\n", playerModel:GetModelFileIDAsString());
+		if scalingLib.DEFAULT_PROPERTIES.scale ~= mainFrame.models.me.scale then
+			info = info .. string.format("[\"scale\"] = %s,\n", mainFrame.models.me.scale);
+		end
+		if scalingLib.DEFAULT_PROPERTIES.feet ~= mainFrame.models.me.feet then
+			info = info .. string.format("[\"feet\"] = %s,\n", mainFrame.models.me.feet);
+		end
+		if scalingLib.DEFAULT_PROPERTIES.offset ~= mainFrame.models.me.offset then
+			info = info .. string.format("[\"offset\"] = %s,\n", mainFrame.models.me.offset);
+		end
+		if scalingLib.DEFAULT_PROPERTIES.facing ~= mainFrame.models.me.facing then
+			info = info .. string.format("[\"facing\"] = %s,\n", mainFrame.models.me.facing);
+		end
+		info = info .. "},";
+		mainFrame.debug.dump.scroll.text:SetText(info);
 	end);
 
 	-- Debug for scaling
