@@ -779,6 +779,15 @@ function Storyline_API.initEventsStructure()
 	end)
 
 	Ellyb.GameEvents.registerCallback("QUEST_ITEM_UPDATE", RewardsButtons.refreshButtons);
+    Ellyb.GameEvents.registerCallback("PLAYER_INTERACTION_MANAGER_FRAME_HIDE", function()
+        storylineFrameShouldOpen = false;
+    end);
+    Ellyb.GameEvents.registerCallback("PLAYER_INTERACTION_MANAGER_FRAME_SHOW", function(...)
+		local playerInteractionType = ...;
+		if playerInteractionType ~= Enum.PlayerInteractionType.Gossip then
+			storylineFrameShouldOpen = false;
+		end
+    end);
 
 	-- UI
 	setTooltipAll(Storyline_NPCFrameChatPrevious, "BOTTOM", 0, 0, loc("SL_RESET"), loc("SL_RESET_TT"));
