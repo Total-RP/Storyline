@@ -86,7 +86,7 @@ local function decorateTextOptions(title, optionKey, affectedText)
 	setupListBox(StorylineTextOptionsPanel[optionKey].FontDropDown, fonts, function(fontIndex)
 		local dropdownTextFont = Storyline_API.lib.getFontPath(fontIndex);
 		local _, dropdownTextScale, dropdownTextOutline = affectedText:GetFont();
-		affectedText:SetFont(font, scale, outline);
+		affectedText:SetFont(dropdownTextFont, dropdownTextScale, dropdownTextOutline);
 		StorylineTextOptionsPanel[optionKey].TextSample:SetFont(dropdownTextFont, dropdownTextScale, dropdownTextOutline);
 		Storyline_Data.config[optionKey].Font = fontIndex;
 	end, nil, 100, true, true);
