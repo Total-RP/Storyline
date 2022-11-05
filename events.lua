@@ -735,6 +735,7 @@ function Storyline_API.initEventsStructure()
 
 				if tContains(SPECIAL_GOSSIP_FRAMES, textureId) then
 					CustomGossipFrameManager:OnEvent(event, ...);
+					return
 				end
 			end
 
