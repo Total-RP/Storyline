@@ -41,13 +41,15 @@ API.EVENT_TYPES = EVENT_TYPES;
 local function getGossipChoices()
 	local gossipChoices = {};
 
-	for _, optionInfo in ipairs(C_GossipInfo.GetOptions()) do
-		gossipChoices[optionInfo.orderIndex + 1] = {
+	for i, optionInfo in ipairs(C_GossipInfo.GetOptions()) do
+		gossipChoices[i] = {
 			id         = optionInfo.gossipOptionID,
 			title      = optionInfo.flags == Enum.GossipOptionRecFlags.QuestLabelPrepend and GOSSIP_QUEST_OPTION_PREPEND:format(optionInfo.name) or optionInfo.name,
-			gossipIcon = optionInfo.overrideIconID or optionInfo.icon
+			gossipIcon = optionInfo.overrideIconID or optionInfo.icon,
+			orderIndex = optionInfo.orderIndex or math.huge,
 		};
 	end
+	table.sort(gossipChoices, function(a,b) return a.orderIndex<b.orderIndex end)
 	return gossipChoices;
 end
 
