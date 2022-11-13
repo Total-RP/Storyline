@@ -141,15 +141,15 @@
 			<KeyValue key="name" value="Storyline" />
 		</KeyValues>
 		<Frames>
-			<CheckButton parentKey="ForceGossip" inherits="StorylineOptionsCheckboxWithTooltip">
+			<!--CheckButton parentKey="ForceGossip" inherits="StorylineOptionsCheckboxWithTooltip">
 				<Anchors>
 					<Anchor point="TOPLEFT" relativeKey="$parent.SubText" relativePoint="BOTTOMLEFT" y="-10"/>
 					<Anchor point="LEFT" x="10"/>
 				</Anchors>
-			</CheckButton>
+			</CheckButton-->
 			<CheckButton parentKey="HideOriginalFrames" inherits="StorylineOptionsCheckboxWithTooltip">
 				<Anchors>
-					<Anchor point="TOPLEFT" relativeKey="$parent.ForceGossip" relativePoint="BOTTOMLEFT" y="-10"/>
+					<Anchor point="TOPLEFT" relativeKey="$parent.SubText" relativePoint="BOTTOMLEFT" y="-10"/>
 				</Anchors>
 			</CheckButton>
 			<CheckButton parentKey="LockFrame" inherits="StorylineOptionsCheckboxWithTooltip">

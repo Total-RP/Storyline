@@ -157,15 +157,15 @@ Storyline_API.options.init = function()
 	init = false;
 
 	-- Force gossip option
-	StorylineOptionsPanel.ForceGossip.Text:SetText(loc("SL_CONFIG_FORCEGOSSIP"));
-	StorylineOptionsPanel.ForceGossip.tooltip = loc("SL_CONFIG_FORCEGOSSIP_TT");
-	StorylineOptionsPanel.ForceGossip:SetScript("OnClick", function(self)
-		Storyline_Data.config.forceGossip = self:GetChecked() == true;
-	end);
-	if Storyline_Data.config.forceGossip == nil then
-		Storyline_Data.config.forceGossip = false;
-	end
-	StorylineOptionsPanel.ForceGossip:SetChecked(Storyline_Data.config.forceGossip);
+	--StorylineOptionsPanel.ForceGossip.Text:SetText(loc("SL_CONFIG_FORCEGOSSIP"));
+	--StorylineOptionsPanel.ForceGossip.tooltip = loc("SL_CONFIG_FORCEGOSSIP_TT");
+	--StorylineOptionsPanel.ForceGossip:SetScript("OnClick", function(self)
+	--	Storyline_Data.config.forceGossip = self:GetChecked() == true;
+	--end);
+	--if Storyline_Data.config.forceGossip == nil then
+	--	Storyline_Data.config.forceGossip = false;
+	--end
+	--StorylineOptionsPanel.ForceGossip:SetChecked(Storyline_Data.config.forceGossip);
 
 	-- Hide original frames option
 	StorylineOptionsPanel.HideOriginalFrames.Text:SetText(loc("SL_CONFIG_HIDEORIGINALFRAMES"));

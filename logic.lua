@@ -558,12 +558,12 @@ function Storyline_API.addon.OnEnable()
 		return NPC_IDS_WITH_BROKEN_DIALOGS[Storyline_API.getNpcId()] ~= nil
 	end
 
-	C_GossipInfo.ForceGossip = function()
-		-- return if the option is enabled and check if the NPC's dialog is not buggy
-		local npcId = Storyline_API.getNpcId();
-		debug(("NPC ID – %s"):format(tostring(npcId)));
-		return Storyline_Data.config.forceGossip and not Storyline_API.isCurrentNPCBrokenGossip() and not Storyline_API.isCurrentNPCBlacklisted();
-	end
+	--C_GossipInfo.ForceGossip = function()
+	--	-- return if the option is enabled and check if the NPC's dialog is not buggy
+	--	local npcId = Storyline_API.getNpcId();
+	--	debug(("NPC ID – %s"):format(tostring(npcId)));
+	--	return Storyline_Data.config.forceGossip and not Storyline_API.isCurrentNPCBrokenGossip() and not Storyline_API.isCurrentNPCBlacklisted();
+	--end
 
 	Storyline_API.locale.init();
 

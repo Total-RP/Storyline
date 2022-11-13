@@ -285,9 +285,9 @@ end
 
 eventHandlers[Dialogs.EVENT_TYPES.GOSSIP_SHOW] = function()
 	gossipEventHandler(Dialogs.EVENT_TYPES.GOSSIP_SHOW);
-	if Storyline_Data.config.forceGossip and  not Storyline_API.isCurrentNPCBlacklisted() then
-		Storyline_NPCFrameBlacklistButton:Show()
-	end
+	--if Storyline_Data.config.forceGossip and  not Storyline_API.isCurrentNPCBlacklisted() then
+	--	Storyline_NPCFrameBlacklistButton:Show()
+	--end
 end;
 eventHandlers[Dialogs.EVENT_TYPES.QUEST_GREETING] = function()
 	gossipEventHandler(Dialogs.EVENT_TYPES.QUEST_GREETING);
