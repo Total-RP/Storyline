@@ -1,3 +1,18 @@
+# Changelog for version 3.3.1
+
+## Added
+
+- Added support for Retail 10.0.2 with additional NPC scaling for Dragonflight.
+
+## Fixed
+
+- Fixed the Storyline window showing on Torghast wing screens.
+- Fixed missing gossip options on some NPCs, like the daily trivia questgiver.
+
+## Removed
+
+- Removed "Show flavor texts" setting for now, as it can currently lead to quest items in objective tracker not being usable.
+
 # Changelog for version 3.3.0
 
 ## Added
