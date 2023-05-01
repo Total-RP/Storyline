@@ -19,8 +19,8 @@ local DEFAULT_PROPERTIES = {
 
 -- These models have incorrect animation timings and doesn't render correctly with this system
 local MODELS_WITH_BROKEN_ANIMATIONS = {
-	2173915, -- Male Kul'tirans
-	1721003, -- Male Kul'tirans
+	--2173915, -- Male Kul'tirans
+	--1721003, -- Male Kul'tirans
 }
 
 local MANUALLY_ANIMATED_MODELS = {
