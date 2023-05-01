@@ -1,3 +1,10 @@
+# Changelog for version 3.3.2
+
+## Added
+
+- Added support for Retail 10.1, including Zaralek Cavern background and NPC scaling.
+- Re-added male Kul Tiran animations as the issue they had might have been fixed.
+
 # Changelog for version 3.3.1
 
 ## Added
