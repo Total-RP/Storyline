@@ -6,6 +6,8 @@ local pop = table.remove;
 local GetTime = GetTime;
 local ANIMATIONS = Storyline_API.ANIMATIONS;
 
+local manualAnimTimer;
+
 local TRPDialogAnimationDB = LibStub:GetLibrary("TRP-Dialog-Animation-DB");
 
 local DEFAULT_PROPERTIES = {
@@ -154,6 +156,12 @@ end
 function Storyline_PlayerModelMixin:PlayAnimSequence(sequence)
 	assert(#sequence > 0, "Storyline_PlayerModelMixin:PlayAnimSequence(sequence) cannot play an empty animation sequence. Use Storyline_PlayerModelMixin:PlayIdleAnimation() instead.");
 
+	-- Prevent the previous manual animation sequence from firing on top of the current one
+	if manualAnimTimer then
+		manualAnimTimer:Cancel();
+		manualAnimTimer = nil;
+	end
+
 	-- Save the sequence table
 	self.sequence = sequence;
 	-- isPlayingIntersticeAnimation is true so next animation is one of the sequence
@@ -206,7 +214,7 @@ function Storyline_PlayerModelMixin:SetAnimationWithFailSafe(animationID)
 		self.animationStartedTime = GetTime();
 		self:SetAnimation(animationID);
 		if self:RequiresManualAnimationTiming() then
-			C_Timer.After(TRPDialogAnimationDB:GetAnimationDuration(self:GetModelFileIDAsString(), animationID), function()
+			manualAnimTimer = C_Timer.NewTimer(TRPDialogAnimationDB:GetAnimationDuration(self:GetModelFileIDAsString(), animationID), function()
 				self:OnAnimFinished(true)
 			end)
 		end
