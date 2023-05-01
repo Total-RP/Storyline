@@ -380,6 +380,10 @@ local STATIC_BACKGROUNDS_ALPHA = {
     ["2112"] = 0.5,
     ["2134"] = 0.5,
     ["2135"] = 0.5,
+
+    ["2133"] = 0.4,
+    ["2175"] = 0.4,
+    ["2184"] = 0.4,
 }
 
 -- Use the game's Map API to get a known map ID for the player, bubbling up the chain (cave level > sub-zone > zone > continent)
