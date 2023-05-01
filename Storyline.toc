@@ -2,6 +2,7 @@
 ## Title: Storyline
 ## Author: Ellypse and Telkostrasz
 ## Version: @project-version@
+## IconTexture: 982414
 ## Notes: Enhanced quest storytelling
 ## URL: https://www.curseforge.com/wow/addons/storyline
 ## X-Website: https://www.curseforge.com/wow/addons/storyline
