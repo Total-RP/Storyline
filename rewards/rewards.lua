@@ -55,7 +55,7 @@ end
 
 local REWARD_TYPES = {
 	XP = 1,
-	MONNEY = 2,
+	MONEY = 2,
 	PLAYER_TITLE = 3,
 	CURRENCY = 4,
 	REPUTATION = 5,	-- Dragonflight onwards
@@ -136,7 +136,7 @@ local REWARD_GETTERS = {
 			end
 			return rewards;
 		end,
-		[REWARD_TYPES.MONNEY] = function()
+		[REWARD_TYPES.MONEY] = function()
 			local rewards = {};
 			local money = GetRewardMoney();
 			if money > 0 then
@@ -482,7 +482,7 @@ function API.getRewards()
 end
 
 OBJECTIVES_GETTERS = {
-	[REWARD_TYPES.MONNEY] = function()
+	[REWARD_TYPES.MONEY] = function()
 		local money = {};
 		local moneyObjective = GetQuestMoneyToGet();
 		if moneyObjective > 0 then
