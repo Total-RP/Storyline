@@ -350,6 +350,10 @@ local STATIC_BACKGROUNDS = {
     ["2134"] = "Dragonflight-MajorFactions-Valdrakken-Background",
     ["2135"] = "Dragonflight-MajorFactions-Valdrakken-Background",
 
+    ["2133"] = "Dragonflight-MajorFactions-Niffen-Background",
+    ["2175"] = "Dragonflight-MajorFactions-Niffen-Background",
+    ["2184"] = "Dragonflight-MajorFactions-Niffen-Background",
+
     --endregion
 
 }
