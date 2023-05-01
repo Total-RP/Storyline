@@ -202,7 +202,9 @@ end
 local function refreshButton(button)
 	local rewards = Rewards.getRewardsForBucketTypeAndRewardType(button.rewardBucketType, button.rewardType);
 	local reward = rewards[button.rewardIndex];
-	decorateRewardButton(button, button.rewardType, reward);
+	if reward then
+		decorateRewardButton(button, button.rewardType, reward);
+	end
 end
 
 local REWARD_BUTTON_SHARED_SCRIPTS = {
