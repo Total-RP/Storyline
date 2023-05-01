@@ -265,6 +265,7 @@ local REWARD_GETTERS = {
 					[2507] = "Expedition",
 					[2510] = "Valdrakken",
 					[2511] = "Tuskarr",
+					[2564] = "Niffen",
 				};
 
 				local texture = string.format("Interface\\Icons\\UI_MajorFaction_%s", majorFactionTextureKits[majorFactionData.factionID]);
