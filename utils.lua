@@ -102,6 +102,17 @@ local function getQuestLevelColor()
 end
 Storyline_API.getQuestLevelColor = getQuestLevelColor;
 
+local function adjustTextContrast(text)
+	if not text then return end
+
+	-- Lightening the blue text to be more visible
+	text = text:gsub("|cFF0000FF", "|cFF8888FF");
+	text = text:gsub("|cnPURE_BLUE_COLOR:", "|cFF8888FF");
+
+	return text;
+end
+Storyline_API.adjustTextContrast = adjustTextContrast;
+
 --*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
 -- SOME ANIMATION
 --*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*

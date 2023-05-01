@@ -263,7 +263,7 @@ function Storyline_API.startDialog(targetType, fullText, event, eventInfo)
 	-- Don't use lines that just contains spaces (because of Blizzard's interns)
 	for _, text in pairs({ strsplit("\n", fullText) }) do
 		if strtrim(text) ~= "" then
-			text = text:gsub("|cFF0000FF", "|cFF8888FF"); -- Lightening the blue text to be more visible
+			text = Storyline_API.adjustTextContrast(text);
 			insert(texts, text);
 		end
 	end

@@ -585,8 +585,7 @@ function Storyline_API.initEventsStructure()
 				local firstChoice = Dialogs.getFirstChoice(Dialogs.EVENT_TYPES.QUEST_GREETING);
 
 				if firstChoice then
-					finishText = firstChoice.title;
-					finishText = finishText:gsub("|cFF0000FF", "|cFF8888FF"); -- Lightening the blue text to be more visible
+					finishText = Storyline_API.adjustTextContrast(firstChoice.title);
 					debug(("QUEST_GREETING – Finish text : Found first choice with text %s."):format(finishText));
 				else
 					debug(("QUEST_GREETING – Finish text : Could not find a first choice, using default finish text %s."):format(finishText));
@@ -700,8 +699,7 @@ function Storyline_API.initEventsStructure()
 				local firstChoice = Dialogs.getFirstChoice(Dialogs.EVENT_TYPES.GOSSIP_SHOW);
 
 				if firstChoice then
-					finishText = firstChoice.title;
-					finishText = finishText:gsub("|cFF0000FF", "|cFF8888FF"); -- Lightening the blue text to be more visible
+					finishText = Storyline_API.adjustTextContrast(firstChoice.title);
 					debug(("GOSSIP_SHOW – Finish text : Found first choice with text %s."):format(finishText));
 				else
 					debug(("GOSSIP_SHOW – Finish text : Could not find a first choice, using default finish text %s."):format(finishText));

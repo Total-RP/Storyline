@@ -89,7 +89,7 @@ local BUTTON_API = {
 	end,
 	-- Set the main text of the button
 	SetText = function(button, text)
-		text = text:gsub("|cFF0000FF", "|cFF8888FF"); -- Lightening the blue text to be more visible
+		text = Storyline_API.adjustTextContrast(text);
 		button.text:SetText(text);
 		-- We refresh the height of the button after change the text inside it to make sure
 		-- the text does not overflow
