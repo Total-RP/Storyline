@@ -125,10 +125,10 @@ local function decorateBonusButton(button, bonusAmount)
 	button.Count:SetFormattedText(PLUS_PERCENT_FORMAT, bonusAmount)
 end
 
-local function decorateSpellButton(button, texture, name, rewardSpellIndex)
+local function decorateSpellButton(button, texture, name, spellID)
 	button.Icon:SetTexture(texture);
 	button.Name:SetText(name);
-	button.rewardSpellIndex = rewardSpellIndex;
+	button.rewardSpellID = spellID;
 end
 
 local function decorateFollowerButton(button, garrFollowerID)
@@ -147,7 +147,7 @@ local function decorateRewardButton(button, rewardType, reward)
 	if rewardType == Rewards.REWARD_TYPES.CURRENCY then
 		decorateCurrencyButton(button, reward.index, reward.rewardType, reward.icon, reward.text, reward.count, reward.currencyID, reward.quality);
 	elseif rewardType == Rewards.REWARD_TYPES.SPELL then
-		decorateSpellButton(button, reward.icon, reward.text, reward.rewardSpellIndex);
+		decorateSpellButton(button, reward.icon, reward.text, reward.spellID);
 	elseif rewardType == Rewards.REWARD_TYPES.ITEMS then
 		decorateItemButton(button, reward.index, reward.rewardType, reward.icon, reward.text, reward.count, reward.isUsable, reward.quality, reward.itemId);
 	elseif rewardType == Rewards.REWARD_TYPES.FOLLOWER then

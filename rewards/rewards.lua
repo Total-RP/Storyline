@@ -339,21 +339,25 @@ local REWARD_GETTERS = {
 			local questID = GetQuestID();
 			local spellRewards = C_QuestInfoSystem.GetQuestRewardSpells(questID) or {};
 
-			for rewardSpellIndex, spellID in ipairs(spellRewards) do
+			for _, spellID in ipairs(spellRewards) do
 				if spellID and spellID > 0 then
-					--local texture, name, isTradeskillSpell, isSpellLearned, _, isBoostSpell, garrFollowerID, genericUnlock, spellID = GetRewardSpell(rewardSpellIndex);
 					local spellInfo = C_QuestInfoSystem.GetQuestRewardSpellInfo(questID, spellID);
 					local knownSpell = IsSpellKnownOrOverridesKnown(spellID);
 
 					-- Filter out already learned spell or garrison followers
 					if spellInfo and spellInfo.texture and not knownSpell and (not spellInfo.isBoostSpell or IsCharacterNewlyBoosted()) and (not spellInfo.garrFollowerID or not IsFollowerCollected(spellInfo.garrFollowerID)) then
 						-- Filter out tradeskill spells, boost spells, followers or spell learned, so we only have auras
-						if not spellInfo.isTradeskillSpell and not spellInfo.isBoostSpell and not spellInfo.garrFollowerID and not spellInfo.isSpellLearned then
+						local isAura;
+						if spellInfo.type == Enum.QuestCompleteSpellType.LegacyBehavior then
+							isAura = not spellInfo.isTradeskillSpell and not spellInfo.isBoostSpell and not spellInfo.garrFollowerID and not spellInfo.isSpellLearned and not spellInfo.genericUnlock;
+						else
+							isAura = spellInfo.type == Enum.QuestCompleteSpellType.Aura;
+						end
+						if isAura then
 							tinsert(auraRewards, {
 								text   			 = spellInfo.name,
 								icon   			 = spellInfo.texture,
-								spellID			 = spellID,
-								rewardSpellIndex = rewardSpellIndex
+								spellID			 = spellID
 							});
 						end
 					end
@@ -370,20 +374,24 @@ local REWARD_GETTERS = {
 			local questID = GetQuestID();
 			local spellRewards = C_QuestInfoSystem.GetQuestRewardSpells(questID) or {};
 
-			for rewardSpellIndex, spellID in ipairs(spellRewards) do
-				--local texture, name, isTradeskillSpell, isSpellLearned, _, isBoostSpell, garrFollowerID, genericUnlock, spellID = GetRewardSpell(rewardSpellIndex);
+			for _, spellID in ipairs(spellRewards) do
 				local spellInfo = C_QuestInfoSystem.GetQuestRewardSpellInfo(questID, spellID);
 				local knownSpell = IsSpellKnownOrOverridesKnown(spellID);
 
 				-- Filter out already learned spell or garrison followers
 				if spellInfo and spellInfo.texture and not knownSpell and (not spellInfo.isBoostSpell or IsCharacterNewlyBoosted()) and (not spellInfo.garrFollowerID or not IsFollowerCollected(spellInfo.garrFollowerID)) then
 					-- If we have a follower ID then it is a follower
-					if spellInfo.garrFollowerID then
+					local isFollower;
+					if spellInfo.type == Enum.QuestCompleteSpellType.LegacyBehavior then
+						isFollower = spellInfo.garrFollowerID;
+					else
+						isFollower = (spellInfo.type == Enum.QuestCompleteSpellType.Follower) or (spellInfo.type == Enum.QuestCompleteSpellType.Companion);
+					end
+					if isFollower then
 						tinsert(followerRewards, {
 							text   			 = spellInfo.name,
 							icon   			 = spellInfo.texture,
-							garrFollowerID   = spellInfo.garrFollowerID,
-							rewardSpellIndex = rewardSpellIndex
+							garrFollowerID   = spellInfo.garrFollowerID
 						});
 					end
 				end
@@ -398,19 +406,25 @@ local REWARD_GETTERS = {
 			local questID = GetQuestID();
 			local spellRewards = C_QuestInfoSystem.GetQuestRewardSpells(questID) or {};
 
-			for rewardSpellIndex, spellID in ipairs(spellRewards) do
-				--local texture, name, isTradeskillSpell, isSpellLearned, _, isBoostSpell, garrFollowerID, genericUnlock, spellID = GetRewardSpell(rewardSpellIndex);
+			for _, spellID in ipairs(spellRewards) do
 				local spellInfo = C_QuestInfoSystem.GetQuestRewardSpellInfo(questID, spellID);
 				local knownSpell = IsSpellKnownOrOverridesKnown(spellID);
 
 				-- Filter out already learned spell or garrison followers
-				if spellInfo and spellInfo.texture and spellInfo.genericUnlock and not knownSpell then
-					tinsert(auraRewards, {
-						text   			 = spellInfo.name,
-						icon   			 = spellInfo.texture,
-						spellID			 = spellID,
-						rewardSpellIndex = rewardSpellIndex
-					});
+				if spellInfo and spellInfo.texture and not knownSpell then
+					local isUnlock;
+					if spellInfo.type == Enum.QuestCompleteSpellType.LegacyBehavior then
+						isUnlock = spellInfo.genericUnlock;
+					else
+						isUnlock = spellInfo.type == Enum.QuestCompleteSpellType.Unlock;
+					end
+					if isUnlock then
+						tinsert(auraRewards, {
+							text   			 = spellInfo.name,
+							icon   			 = spellInfo.texture,
+							spellID			 = spellID
+						});
+					end
 				end
 			end
 
@@ -423,19 +437,25 @@ local REWARD_GETTERS = {
 			local questID = GetQuestID();
 			local spellRewards = C_QuestInfoSystem.GetQuestRewardSpells(questID) or {};
 
-			for rewardSpellIndex, spellID in ipairs(spellRewards) do
-				--local texture, name, isTradeskillSpell, isSpellLearned, _, isBoostSpell, garrFollowerID, genericUnlock, spellID = GetRewardSpell(rewardSpellIndex);
+			for _, spellID in ipairs(spellRewards) do
 				local spellInfo = C_QuestInfoSystem.GetQuestRewardSpellInfo(questID, spellID);
 				local knownSpell = IsSpellKnownOrOverridesKnown(spellID);
 
 				-- Filter out already learned spell or garrison followers
-				if spellInfo and spellInfo.texture and spellInfo.isSpellLearned and not knownSpell then
-					tinsert(auraRewards, {
-						text   			 = spellInfo.name,
-						icon   			 = spellInfo.texture,
-						spellID			 = spellID,
-						rewardSpellIndex = rewardSpellIndex
-					});
+				if spellInfo and spellInfo.texture and not knownSpell then
+					local isSpell;
+					if spellInfo.type == Enum.QuestCompleteSpellType.LegacyBehavior then
+						isSpell = spellInfo.isSpellLearned;
+					else
+						isSpell = (spellInfo.type == Enum.QuestCompleteSpellType.Spell) or (spellInfo.type == Enum.QuestCompleteSpellType.Ability) or (spellInfo.type == Enum.QuestCompleteSpellType.Tradeskill);
+					end
+					if isSpell then
+						tinsert(auraRewards, {
+							text   			 = spellInfo.name,
+							icon   			 = spellInfo.texture,
+							spellID			 = spellID
+						});
+					end
 				end
 			end
 
