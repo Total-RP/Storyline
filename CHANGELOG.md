@@ -1,3 +1,9 @@
+# Changelog for version 3.3.3
+
+## Fixed
+
+- Fixed an issue with dead quest NPCs.
+
 # Changelog for version 3.3.2
 
 ## Added
