@@ -388,7 +388,7 @@ local REWARD_GETTERS = {
 					else
 						isFollower = (spellInfo.type == Enum.QuestCompleteSpellType.Follower) or (spellInfo.type == Enum.QuestCompleteSpellType.Companion);
 					end
-					if isFollower then
+					if isFollower and spellInfo.garrFollowerID then
 						tinsert(followerRewards, {
 							text   			 = spellInfo.name,
 							icon   			 = spellInfo.texture,
