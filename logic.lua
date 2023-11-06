@@ -607,41 +607,55 @@ function Storyline_API.addon.OnEnable()
 
 	mainFrame:SetScript("OnKeyDown", function(self, key)
 		if not Storyline_Data.config.useKeyboard then
-			self:SetPropagateKeyboardInput(true);
+			if not InCombatLockdown() then
+				self:SetPropagateKeyboardInput(true);
+			end
 			return;
 		end
 
 		if key == "SPACE" then
-			self:SetPropagateKeyboardInput(false);
+			if not InCombatLockdown() then
+				self:SetPropagateKeyboardInput(false);
+			end
 			mainFrame.chat.next:Click(IsShiftKeyDown() and "RightButton" or "LeftButton");
 		elseif key == "BACKSPACE" then
-			self:SetPropagateKeyboardInput(false);
+			if not InCombatLockdown() then
+				self:SetPropagateKeyboardInput(false);
+			end
 			mainFrame.chat.previous:Click();
 		elseif key == "ESCAPE" then
 			closeDialog();
 		else
 			local keyNumber = tonumber(key);
 			if not keyNumber or not Storyline_API.dialogs.buttons.selectOptionAtIndex(keyNumber) then
-				self:SetPropagateKeyboardInput(true);
+				if not InCombatLockdown() then
+					self:SetPropagateKeyboardInput(true);
+				end
 			end
 		end
 	end);
 
 	Storyline_NPCFrameGossipChoices:SetScript("OnKeyDown", function(self, key)
 		if not Storyline_Data.config.useKeyboard then
-			self:SetPropagateKeyboardInput(true);
+			if not InCombatLockdown() then
+				self:SetPropagateKeyboardInput(true);
+			end
 			return;
 		end
 
 		if key == "ESCAPE" then
 			Storyline_NPCFrameGossipChoices:Hide();
-			self:SetPropagateKeyboardInput(false);
+			if not InCombatLockdown() then
+				self:SetPropagateKeyboardInput(false);
+			end
 			return;
 		end
 
 		local keyNumber = tonumber(key);
 		if not keyNumber then
-			self:SetPropagateKeyboardInput(true);
+			if not InCombatLockdown() then
+				self:SetPropagateKeyboardInput(true);
+			end
 			return;
 		end
 
@@ -655,13 +669,17 @@ function Storyline_API.addon.OnEnable()
 				foundFrames = foundFrames + 1;
 				if foundFrames == keyNumber then
 					_G["Storyline_ChoiceString" .. i]:Click();
-					self:SetPropagateKeyboardInput(false);
+					if not InCombatLockdown() then
+						self:SetPropagateKeyboardInput(false);
+					end
 					return;
 				end
 			end
 		end
 
-		self:SetPropagateKeyboardInput(true);
+		if not InCombatLockdown() then
+			self:SetPropagateKeyboardInput(true);
+		end
 		return;
 
 	end);
