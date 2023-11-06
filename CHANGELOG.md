@@ -1,3 +1,13 @@
+# Changelog for version 3.3.4
+
+## Added
+
+- Added support for Retail 10.2, including Emerald Dream background and NPC scaling.
+
+## Fixed
+
+- Fixed a rare issue trying to display a follower reward that doesn't exist.
+
 # Changelog for version 3.3.3
 
 ## Fixed
