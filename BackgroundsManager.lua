@@ -354,6 +354,9 @@ local STATIC_BACKGROUNDS = {
     ["2175"] = "Dragonflight-MajorFactions-Niffen-Background",
     ["2184"] = "Dragonflight-MajorFactions-Niffen-Background",
 
+    ["2200"] = "Dragonflight-MajorFactions-Dream-Background",
+    ["2241"] = "Dragonflight-MajorFactions-Dream-Background",
+
     --endregion
 
 }
@@ -384,6 +387,9 @@ local STATIC_BACKGROUNDS_ALPHA = {
     ["2133"] = 0.4,
     ["2175"] = 0.4,
     ["2184"] = 0.4,
+
+    ["2200"] = 0.5,
+    ["2241"] = 0.5,
 }
 
 -- Use the game's Map API to get a known map ID for the player, bubbling up the chain (cave level > sub-zone > zone > continent)
