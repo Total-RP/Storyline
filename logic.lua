@@ -351,6 +351,8 @@ end
 local function saveCustomIndependantScaling(meYou, field, value)
 	local model = meYou == "me" and playerModel:GetModelFileIDAsString() or targetModel:GetModelFileIDAsString();
 
+	if not model then return end
+
 	if not customPersonalDB[model] then
 		customPersonalDB[model] = {};
 	end
