@@ -23,42 +23,15 @@ local Ellyb = Ellyb(...);
 -- Storyline API
 local configureHoverFrame = Storyline_API.lib.configureHoverFrame;
 local setTooltipForSameFrame, setTooltipAll = Storyline_API.lib.setTooltipForSameFrame, Storyline_API.lib.setTooltipAll;
-local refreshTooltipForFrame = Storyline_RefreshTooltipForFrame;
-local Storyline_MainTooltip = Storyline_MainTooltip;
 local log = Storyline_API.lib.log;
 local getTextureString = Storyline_API.lib.getTextureString;
 local loc = Storyline_API.locale.getText;
-local format = format;
 local hideStorylineFrame = Storyline_API.layout.hideStorylineFrame;
 local hideQuestRewardFrameIfNeed = Storyline_API.layout.hideQuestRewardFrameIfNeed;
 local debug = Storyline_API.debug;
 local tsize = Storyline_API.lib.tsize;
 
--- WOW API
-local pairs, wipe, type, after, select, huge = pairs, wipe, type, C_Timer.After, select, math.huge;
-local ChatTypeInfo = ChatTypeInfo;
-local UnitIsUnit, UnitExists, DeclineQuest, AcceptQuest, AcknowledgeAutoAcceptQuest = UnitIsUnit, UnitExists, DeclineQuest, AcceptQuest, AcknowledgeAutoAcceptQuest;
-local IsQuestCompletable, CompleteQuest, CloseQuest = IsQuestCompletable, CompleteQuest, CloseQuest;
-local GetNumQuestChoices, GetQuestReward = GetNumQuestChoices, GetQuestReward;
-local GetQuestItemInfo, GetNumQuestItems = GetQuestItemInfo, GetNumQuestItems;
-local GetObjectiveText = GetObjectiveText;
-local GetQuestItemLink, GetNumQuestRewards = GetQuestItemLink, GetNumQuestRewards;
-local GetProgressText, GetTitleText, GetGreetingText = GetProgressText, GetTitleText, GetGreetingText;
-local GetRewardText, GetQuestText = GetRewardText, GetQuestText;
-local GetItemInfo, GetContainerNumSlots, GetContainerItemLink, EquipItemByName = GetItemInfo, GetContainerNumSlots, GetContainerItemLink, EquipItemByName;
-local InCombatLockdown, GetInventorySlotInfo, GetInventoryItemLink = InCombatLockdown, GetInventorySlotInfo, GetInventoryItemLink;
-
-local UnitIsDead = UnitIsDead;
-local QuestIsFromAreaTrigger, QuestGetAutoAccept = QuestIsFromAreaTrigger, QuestGetAutoAccept;
 -- UI
-local Storyline_NPCFrameObjectives, Storyline_NPCFrameObjectivesNo, Storyline_NPCFrameObjectivesYes = Storyline_NPCFrameObjectives, Storyline_NPCFrameObjectivesNo, Storyline_NPCFrameObjectivesYes;
-local Storyline_NPCFrameObjectivesImage = Storyline_NPCFrameObjectivesImage;
-local Storyline_NPCFrameRewardsItemIcon, Storyline_NPCFrameRewardsItem, Storyline_NPCFrameRewards = Storyline_NPCFrameRewardsItemIcon, Storyline_NPCFrameRewardsItem, Storyline_NPCFrameRewards;
-local Storyline_NPCFrame, Storyline_NPCFrameChatNextText = Storyline_NPCFrame, Storyline_NPCFrameChatNextText;
-local Storyline_NPCFrameChat, Storyline_NPCFrameChatText = Storyline_NPCFrameChat, Storyline_NPCFrameChatText;
-local Storyline_NPCFrameChatNext, Storyline_NPCFrameChatPrevious = Storyline_NPCFrameChatNext, Storyline_NPCFrameChatPrevious;
-local Storyline_NPCFrameObjectivesContent = Storyline_NPCFrameObjectivesContent;
-local Storyline_NPCFrameGossipChoices = Storyline_NPCFrameGossipChoices;
 local Dialogs = Storyline_API.dialogs;
 local DialogsButtons = Storyline_API.dialogs.buttons;
 local DialogsScrollFrame = Storyline_API.dialogs.scrollFrame;
@@ -68,7 +41,6 @@ local RewardsButtons = Storyline_API.rewards.buttons;
 -- Constants
 local EVENT_INFO;
 local eventHandlers = {};
-local QUEST_SUGGESTED_GROUP_NUM, QUEST_OBJECTIVES = QUEST_SUGGESTED_GROUP_NUM, QUEST_OBJECTIVES;
 
 --region Sealed quest info
 local SEAL_QUESTS = {
@@ -132,7 +104,7 @@ local function getItemLevel(itemLink)
 	end
 	-- 7 for heirloom http://wowprogramming.com/docs/api_types#itemQuality
 	local invQuality, invLevel = select(3, GetItemInfo(itemLink));
-	return (invQuality == 7) and huge or invLevel;
+	return (invQuality == 7) and math.huge or invLevel;
 end
 
 local AUTO_EQUIP_DELAY = 2;
@@ -183,7 +155,7 @@ local function autoEquip(itemLink)
 
 	if shouldAutoEquip then
 		log(("Will auto equip %s on slot %s"):format(name, equipOn));
-		after(AUTO_EQUIP_DELAY, function()
+		C_Timer.After(AUTO_EQUIP_DELAY, function()
 			if InCombatLockdown() then
 				return;
 			end
@@ -564,15 +536,8 @@ function Storyline_API.initEventsStructure()
 	local startDialog = Storyline_API.startDialog;
 
 	EVENT_INFO = {
-		--[[
-		TODO REMOVE
-		["SCALING_DEBUG"] = {
-			text = function() return "DEBUG TEXT" end,
-			cancelMethod = function() end,
-			titleGetter = function() return "DEBUG TITLE" end,
-		},]]
 		["QUEST_GREETING"] = {
-			text = GetGreetingText,
+			text = function() GetGreetingText() end,
 			finishMethod = function()
 				local _, bucketType, index = Dialogs.getFirstChoice(Dialogs.EVENT_TYPES.QUEST_GREETING);
 
@@ -597,13 +562,13 @@ function Storyline_API.initEventsStructure()
 
 				return finishText;
 			end,
-			cancelMethod = CloseQuest,
-			titleGetter = GetTitleText,
+			cancelMethod = function() CloseQuest() end,
+			titleGetter = function() GetTitleText() end,
 		},
 		["QUEST_DETAIL"] = {
-			text = GetQuestText,
-			cancelMethod = CloseQuest,
-			titleGetter = GetTitleText,
+			text = function() GetQuestText() end,
+			cancelMethod = function() CloseQuest() end,
+			titleGetter = function() GetTitleText() end,
 			finishText = loc("SL_CHECK_OBJ"),
 			finishMethod = function()
 				if not Storyline_NPCFrameObjectivesContent:IsVisible() then
@@ -620,7 +585,7 @@ function Storyline_API.initEventsStructure()
 			end,
 		},
 		["QUEST_PROGRESS"] = {
-			text = GetProgressText,
+			text = function() GetProgressText() end,
 			finishMethod = function()
 				if not Storyline_NPCFrameObjectivesContent:IsVisible() then
 					configureHoverFrame(Storyline_NPCFrameObjectivesContent, Storyline_NPCFrameObjectives, "TOP");
@@ -643,11 +608,11 @@ function Storyline_API.initEventsStructure()
 			finishText = function()
 				return loc("SL_CHECK_OBJ");
 			end,
-			cancelMethod = CloseQuest,
-			titleGetter = GetTitleText,
+			cancelMethod = function() CloseQuest() end,
+			titleGetter = function() GetTitleText() end,
 		},
 		["QUEST_COMPLETE"] = {
-			text = GetRewardText,
+			text = function() GetRewardText() end,
 			finishMethod = function()
 				local _, _, totalNumberOfRewards = Rewards.getRewards();
 
@@ -682,11 +647,11 @@ function Storyline_API.initEventsStructure()
 
 				return totalNumberOfRewards > 0 and loc("SL_GET_REWARD") or Storyline_NPCFrameChatNextText:SetText(loc("SL_CONTINUE"));
 			end,
-			cancelMethod = CloseQuest,
-			titleGetter = GetTitleText,
+			cancelMethod = function() CloseQuest() end,
+			titleGetter = function() GetTitleText() end,
 		},
 		["GOSSIP_SHOW"] = {
-			text = C_GossipInfo.GetText,
+			text = function() C_GossipInfo.GetText() end,
 			finishMethod = function()
 				local firstChoice, bucketType, index = Dialogs.getFirstChoice(Dialogs.EVENT_TYPES.GOSSIP_SHOW);
 
@@ -711,19 +676,8 @@ function Storyline_API.initEventsStructure()
 
 				return finishText;
 			end,
-			cancelMethod = C_GossipInfo.CloseGossip,
+			cancelMethod = function() C_GossipInfo.CloseGossip() end,
 		},
-		--[[ TODO REMOVE
-		["REPLAY"] = {
-			titleGetter = function()
-				local questTitle = GetQuestLogTitle(GetQuestLogSelection());
-				return questTitle;
-			end,
-			nameGetter = function()
-				return QUEST_LOG;
-			end,
-			finishText = CLOSE,
-		}]]
 	};
 	Storyline_API.EVENT_INFO = EVENT_INFO;
 
@@ -799,12 +753,12 @@ function Storyline_API.initEventsStructure()
 	Storyline_NPCFrameObjectivesYes:SetScript("OnClick", acceptQuest);
 	Storyline_NPCFrameObjectivesYes:SetScript("OnEnter", function(self)
 		playerModel:PlayAnimation(ANIMATIONS.CHEER);
-		refreshTooltipForFrame(self);
+		Storyline_RefreshTooltipForFrame(self);
 	end);
 	Storyline_NPCFrameObjectivesNo:SetScript("OnClick", DeclineQuest);
 	Storyline_NPCFrameObjectivesNo:SetScript("OnEnter", function(self)
 		playerModel:PlayAnimation(ANIMATIONS.NO);
-		refreshTooltipForFrame(self);
+		Storyline_RefreshTooltipForFrame(self);
 	end);
 
 	Storyline_NPCFrameObjectives:SetScript("OnClick", function() EVENT_INFO["QUEST_PROGRESS"].finishMethod(); end);
