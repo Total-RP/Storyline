@@ -323,6 +323,13 @@
 							</Anchors>
 							<Color r="1" g="1" b="0.4"/>
 						</FontString>
+						<FontString name="Storyline_NPCFrameChatCountText" text="0/0" inherits="GameFontNormal" justifyH="RIGHT" justifyV="BOTTOM" wordwrap="false">
+							<Anchors>
+								<Anchor point="BOTTOM" x="0" y="17"/>
+								<Anchor point="RIGHT"  x="-40" />
+							</Anchors>
+							<Color r="0.4" g="0.4" b="0.4"/>
+						</FontString>
 					</Layer>
 				</Layers>
 				<Frames>

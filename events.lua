@@ -514,8 +514,10 @@ function Storyline_API.playNext(targetModel)
 	Storyline_NPCFrameChatNext:Enable();
 	Storyline_NPCFrameChat.currentIndex = Storyline_NPCFrameChat.currentIndex + 1;
 
+	local textsCount = #Storyline_NPCFrameChat.texts;
+
 	Storyline_NPCFrameChatNextText:SetText(loc("SL_NEXT"));
-	if Storyline_NPCFrameChat.currentIndex >= #Storyline_NPCFrameChat.texts then
+	if Storyline_NPCFrameChat.currentIndex >= textsCount then
 		if Storyline_NPCFrameChat.eventInfo.finishText and (type(Storyline_NPCFrameChat.eventInfo.finishText) ~= "function" or Storyline_NPCFrameChat.eventInfo.finishText()) then
 			if type(Storyline_NPCFrameChat.eventInfo.finishText) == "function" then
 				Storyline_NPCFrameChatNextText:SetText(Storyline_NPCFrameChat.eventInfo.finishText());
@@ -525,7 +527,9 @@ function Storyline_API.playNext(targetModel)
 		end
 	end
 
-	if Storyline_NPCFrameChat.currentIndex <= #Storyline_NPCFrameChat.texts then
+	Storyline_NPCFrameChatCountText:SetText(Storyline_NPCFrameChat.currentIndex .. "/" .. textsCount);
+
+	if Storyline_NPCFrameChat.currentIndex <= textsCount then
 		playText(Storyline_NPCFrameChat.currentIndex, targetModel);
 	else
 		if Storyline_NPCFrameChat.eventInfo.finishMethod then

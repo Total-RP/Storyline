@@ -22,11 +22,6 @@ local loc = Storyline_API.locale.getText;
 local setupListBox = Storyline_API.lib.setupListBox;
 local setTooltipForSameFrame = Storyline_API.lib.setTooltipForSameFrame;
 
-local StorylineOptionsPanel = StorylineOptionsPanel;
-local StorylineTextOptionsPanel = StorylineTextOptionsPanel;
-local StorylineMiscellaneousOptionsPanel = StorylineMiscellaneousOptionsPanel;
-local Storyline_NPCFrameChatName, Storyline_NPCFrameChatText, Storyline_NPCFrameChatNextText = Storyline_NPCFrameChatName, Storyline_NPCFrameChatText, Storyline_NPCFrameChatNextText;
-
 Storyline_API.options = {}
 
 local function hideOriginalFrames()
@@ -267,6 +262,27 @@ Storyline_API.options.init = function()
 		end
 	end);
 	StorylineOptionsPanel.DisableInDMF:SetChecked(Storyline_Data.config.disableInDMF);
+
+	-- Hide dialog count
+	if Storyline_Data.config.hideCount == nil then
+		Storyline_Data.config.hideCount = false; -- By default, this option is disabled
+	end
+	StorylineOptionsPanel.HideCount.Text:SetText(loc("SL_CONFIG_HIDE_COUNT"));
+	StorylineOptionsPanel.HideCount.tooltip = loc("SL_CONFIG_HIDE_COUNT_TT");
+	StorylineOptionsPanel.HideCount:SetScript("OnClick", function(self)
+		Storyline_Data.config.hideCount = self:GetChecked() == true;
+		if Storyline_Data.config.hideCount then
+			Storyline_NPCFrameChatCountText:Hide();
+		else
+			Storyline_NPCFrameChatCountText:Show();
+		end
+	end);
+	StorylineOptionsPanel.HideCount:SetChecked(Storyline_Data.config.hideCount);
+	if Storyline_Data.config.hideCount then
+		Storyline_NPCFrameChatCountText:Hide();
+	else
+		Storyline_NPCFrameChatCountText:Show();
+	end
 
 	-- Text speed slider
 	local textSpeedFactor = Storyline_Data.config.textSpeedFactor or 0.5;
