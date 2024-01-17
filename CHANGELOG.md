@@ -1,3 +1,9 @@
+# Changelog for version 3.4.1
+
+## Fixed
+
+- Fixed the addon.
+
 # Changelog for version 3.4.0
 
 ## Added
