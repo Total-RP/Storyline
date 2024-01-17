@@ -537,7 +537,7 @@ function Storyline_API.initEventsStructure()
 
 	EVENT_INFO = {
 		["QUEST_GREETING"] = {
-			text = function() GetGreetingText() end,
+			text = function() return GetGreetingText() end,
 			finishMethod = function()
 				local _, bucketType, index = Dialogs.getFirstChoice(Dialogs.EVENT_TYPES.QUEST_GREETING);
 
@@ -563,12 +563,12 @@ function Storyline_API.initEventsStructure()
 				return finishText;
 			end,
 			cancelMethod = function() CloseQuest() end,
-			titleGetter = function() GetTitleText() end,
+			titleGetter = function() return GetTitleText() end,
 		},
 		["QUEST_DETAIL"] = {
-			text = function() GetQuestText() end,
+			text = function() return GetQuestText() end,
 			cancelMethod = function() CloseQuest() end,
-			titleGetter = function() GetTitleText() end,
+			titleGetter = function() return GetTitleText() end,
 			finishText = loc("SL_CHECK_OBJ"),
 			finishMethod = function()
 				if not Storyline_NPCFrameObjectivesContent:IsVisible() then
@@ -585,7 +585,7 @@ function Storyline_API.initEventsStructure()
 			end,
 		},
 		["QUEST_PROGRESS"] = {
-			text = function() GetProgressText() end,
+			text = function() return GetProgressText() end,
 			finishMethod = function()
 				if not Storyline_NPCFrameObjectivesContent:IsVisible() then
 					configureHoverFrame(Storyline_NPCFrameObjectivesContent, Storyline_NPCFrameObjectives, "TOP");
@@ -609,10 +609,10 @@ function Storyline_API.initEventsStructure()
 				return loc("SL_CHECK_OBJ");
 			end,
 			cancelMethod = function() CloseQuest() end,
-			titleGetter = function() GetTitleText() end,
+			titleGetter = function() return GetTitleText() end,
 		},
 		["QUEST_COMPLETE"] = {
-			text = function() GetRewardText() end,
+			text = function() return GetRewardText() end,
 			finishMethod = function()
 				local _, _, totalNumberOfRewards = Rewards.getRewards();
 
@@ -648,10 +648,10 @@ function Storyline_API.initEventsStructure()
 				return totalNumberOfRewards > 0 and loc("SL_GET_REWARD") or Storyline_NPCFrameChatNextText:SetText(loc("SL_CONTINUE"));
 			end,
 			cancelMethod = function() CloseQuest() end,
-			titleGetter = function() GetTitleText() end,
+			titleGetter = function() return GetTitleText() end,
 		},
 		["GOSSIP_SHOW"] = {
-			text = function() C_GossipInfo.GetText() end,
+			text = function() return C_GossipInfo.GetText() end,
 			finishMethod = function()
 				local firstChoice, bucketType, index = Dialogs.getFirstChoice(Dialogs.EVENT_TYPES.GOSSIP_SHOW);
 
