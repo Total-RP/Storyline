@@ -499,7 +499,12 @@ function Storyline_API.playNext(targetModel)
 		end
 	end
 
-	Storyline_NPCFrameChatCountText:SetText(Storyline_NPCFrameChat.currentIndex .. "/" .. textsCount);
+    -- Current index goes higher than the amount of texts when showing the objectives / rewards popup
+    local currentIndexDisplayed = Storyline_NPCFrameChat.currentIndex;
+    if currentIndexDisplayed > textsCount then
+        currentIndexDisplayed = textsCount;
+    end
+	Storyline_NPCFrameChatCountText:SetText(currentIndexDisplayed .. "/" .. textsCount);
 
 	if Storyline_NPCFrameChat.currentIndex <= textsCount then
 		playText(Storyline_NPCFrameChat.currentIndex, targetModel);
