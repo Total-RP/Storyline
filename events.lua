@@ -537,6 +537,7 @@ local ANIMATIONS = Storyline_API.ANIMATIONS;
 
 -- Sadly this list is not exposed, so we will have to maintain it.
 local SPECIAL_GOSSIP_FRAMES = {
+	-- Torghast
 	"npe-guide",
 	"skoldushall",
 	"mortregar",
@@ -545,6 +546,8 @@ local SPECIAL_GOSSIP_FRAMES = {
 	"soulforges",
 	"theupperreaches",
 	"twistingcorridors",
+	-- Delves
+	"delves-difficulty-picker"
 }
 
 function Storyline_API.initEventsStructure()
