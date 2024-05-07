@@ -85,6 +85,12 @@ stds.wow = {
                 "IsWarModeDesired",
             },
         },
+        C_QuestInfoSystem = {
+            fields = {
+                "GetQuestRewardSpells",
+                "GetQuestRewardSpellInfo",
+            },
+        },
         C_QuestLog = {
             fields = {
                 "GetQuestDetailsTheme",
@@ -106,6 +112,7 @@ stds.wow = {
         C_Timer = {
             fields = {
                 "After",
+                "NewTimer"
             },
         },
         CurrencyContainerUtil = {
