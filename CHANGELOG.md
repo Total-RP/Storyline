@@ -1,3 +1,9 @@
+# Changelog for version 3.4.2
+
+## Fixed
+
+- Current text index will no longer go over the total amount of texts when displaying objectives/rewards.
+
 # Changelog for version 3.4.1
 
 ## Fixed
