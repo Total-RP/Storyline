@@ -19,21 +19,12 @@
 local Ellyb = Ellyb(...);
 
 -- Storyline API
-local wipe = wipe;
-local UnitGUID = UnitGUID;
 local setTooltipAll = Storyline_API.lib.setTooltipAll;
 local loc = Storyline_API.locale.getText;
 local playNext = Storyline_API.playNext;
 local showStorylineFrame = Storyline_API.layout.showStorylineFrame;
 local hideStorylineFrame = Storyline_API.layout.hideStorylineFrame;
-local strtrim = strtrim;
 local insert = table.insert;
-local debug = Storyline_API.debug;
-
--- WOW API
-local strsplit, pairs, tostring = strsplit, pairs, tostring;
-local UnitIsUnit, UnitExists, UnitName = UnitIsUnit, UnitExists, UnitName;
-local IsAltKeyDown, IsShiftKeyDown, IsControlKeyDown = IsAltKeyDown, IsShiftKeyDown, IsControlKeyDown;
 
 -- UI
 local mainFrame = Storyline_NPCFrame;
