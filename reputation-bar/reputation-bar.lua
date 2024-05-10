@@ -33,7 +33,7 @@ local customReputationFactionID = {
 }
 
 local function OnReputationBarEnter(self)
-	ReputationBarMixin.ShowFriendshipReputationTooltip(self, self.friendshipFactionID, self, "ANCHOR_TOPRIGHT")
+	ReputationEntryMixin.ShowFriendshipReputationTooltip(self, self.friendshipFactionID, self, "ANCHOR_TOPRIGHT")
 end
 
 StorylineReputationBar:SetScript("OnEnter", OnReputationBarEnter);
