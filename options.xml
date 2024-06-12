@@ -43,9 +43,6 @@
 				</FontString>
 			</Layer>
 		</Layers>
-		<Scripts>
-			<OnLoad function="InterfaceOptions_AddCategory" />
-		</Scripts>
 	</Frame>
 
 	<FontString name="StorylineTextOptionsSample" inherits="GameFontHighlight" virtual="true" justifyH="LEFT">
@@ -137,9 +134,6 @@
 	</CheckButton>
 
 	<Frame name="StorylineOptionsPanel" inherits="StorylineOptionFrameTemplate" hidden="false">
-		<KeyValues>
-			<KeyValue key="name" value="Storyline" />
-		</KeyValues>
 		<Frames>
 			<!--CheckButton parentKey="ForceGossip" inherits="StorylineOptionsCheckboxWithTooltip">
 				<Anchors>
@@ -228,9 +222,6 @@
 	</Frame>
 
 	<Frame name="StorylineTextOptionsPanel" inherits="StorylineOptionFrameChildTemplate">
-		<KeyValues>
-			<KeyValue key="name" value="Text options" />
-		</KeyValues>
 		<Frames>
 			<Frame name="$parentQuestTitle" parentKey="QuestTitle" inherits="StorylineTextOptionsTemplate">
 				<Anchors>
@@ -266,9 +257,6 @@
 	</Frame>
 
 	<Frame name="StorylineMiscellaneousOptionsPanel" inherits="StorylineOptionFrameChildTemplate">
-		<KeyValues>
-			<KeyValue key="name" value="Miscellaneous options" />
-		</KeyValues>
 		<Frames>
 			<CheckButton parentKey="AutoEquip" inherits="StorylineOptionsCheckboxWithTooltip">
 				<Anchors>
