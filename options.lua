@@ -130,6 +130,15 @@ end
 
 Storyline_API.options.init = function()
 
+	local mainCategory = Settings.RegisterCanvasLayoutCategory(StorylineOptionsPanel, "Storyline", "Storyline");
+	mainCategory.ID = "Storyline";
+	Settings.RegisterAddOnCategory(mainCategory);
+
+	local subCategoryTextOptions = Settings.RegisterCanvasLayoutSubcategory(mainCategory, StorylineTextOptionsPanel, "Text options", "Text options");
+	subCategoryTextOptions.ID = "Text options";
+	local subCategoryMiscOptions = Settings.RegisterCanvasLayoutSubcategory(mainCategory, StorylineMiscellaneousOptionsPanel, "Miscellaneous options", "Miscellaneous options");
+	subCategoryMiscOptions.ID = "Miscellaneous options";
+
 	-- Options main panel
 	StorylineOptionsPanel.Title:SetText(loc("SL_CONFIG"));
 	StorylineOptionsPanel.SubText:SetText(loc("SL_CONFIG_WELCOME"));
