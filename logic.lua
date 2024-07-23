@@ -217,6 +217,12 @@ function Storyline_API.startDialog(targetType, fullText, event, eventInfo)
 		if (not targetName or targetName:len() > 0 or targetName ~= UNKNOWN) and eventInfo.nameGetter and eventInfo.nameGetter() then
 			targetName = eventInfo.nameGetter()
 		end
+		-- Removing inserted color codes from name (for delve looted chests for instance)
+		if targetName then
+			targetName = targetName:gsub("|c%x%x%x%x%x%x%x%x", "");
+			targetName = targetName:gsub("|cn[^:]+:", "");
+			targetName = targetName:gsub("|r", "");
+		end
 		mainFrame.chat.name:SetText(targetName)
 		mainFrame.chat.name:Show()
 	end
