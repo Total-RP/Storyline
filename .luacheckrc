@@ -95,6 +95,7 @@ stds.wow = {
             fields = {
                 "GetQuestDetailsTheme",
                 "IsQuestCalling",
+                "IsQuestFlaggedCompletedOnAccount",
                 "QuestHasQuestSessionBonus",
                 "QuestHasWarModeBonus",
             },
@@ -151,6 +152,9 @@ stds.wow = {
         Settings = {
             fields = {
                 "OpenToCategory",
+                "RegisterAddOnCategory",
+                "RegisterCanvasLayoutCategory",
+                "RegisterCanvasLayoutSubcategory",
             },
         },
 
@@ -233,7 +237,7 @@ stds.wow = {
         "QuestIsFromAreaTrigger",
         "QuestModelScene",
         "ReloadUI",
-        "ReputationBarMixin",
+        "ReputationEntryMixin",
         "ResetCursor",
         "SelectActiveQuest",
         "SelectAvailableQuest",
@@ -255,6 +259,7 @@ stds.wow = {
         "wipe",
 
         -- Global variables
+        "ACCOUNT_COMPLETED_QUEST_NOTICE",
         "BONUS_SKILLPOINTS",
         "BONUS_SKILLPOINTS_TOOLTIP",
         "ChatTypeInfo",

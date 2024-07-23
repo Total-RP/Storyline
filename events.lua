@@ -311,7 +311,7 @@ eventHandlers["QUEST_DETAIL"] = function()
     local warbandCompleted = C_QuestLog.IsQuestFlaggedCompletedOnAccount(questID);
     if warbandCompleted then
         contentHeight = contentHeight + setObjectiveText(Storyline_NPCFrameObjectivesContent.WarbandCompleted, ACCOUNT_COMPLETED_QUEST_NOTICE, previousText);
-        previousText = Storyline_NPCFrameObjectivesContent.WarbandCompleted;
+        --previousText = Storyline_NPCFrameObjectivesContent.WarbandCompleted;
 		contentHeight = contentHeight + HOVERED_FRAME_TEXT_MARGIN;
     end
 
