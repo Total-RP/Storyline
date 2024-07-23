@@ -35,6 +35,7 @@ local MANUALLY_ANIMATED_MODELS = {
 	4039116, -- Hanu (tuskarr)
 	4207724, -- Dracthyr Dragon
 	4198151, -- Tyrande
+	1721003, -- Kul Tiran male
 }
 
 ---@class Storyline_PlayerModelMixin : CinematicModel
