@@ -294,7 +294,7 @@ eventHandlers["QUEST_DETAIL"] = function()
 
 	local groupNum = GetSuggestedGroupSize();
 	if groupNum > 0 then
-		contentHeight = contentHeight +  setObjectiveText(Storyline_NPCFrameObjectivesContent.GroupSuggestion, format(QUEST_SUGGESTED_GROUP_NUM, groupNum), previousText);
+		contentHeight = contentHeight + setObjectiveText(Storyline_NPCFrameObjectivesContent.GroupSuggestion, format(QUEST_SUGGESTED_GROUP_NUM, groupNum), previousText);
 		previousText = Storyline_NPCFrameObjectivesContent.GroupSuggestion;
 	end
 
@@ -305,6 +305,15 @@ eventHandlers["QUEST_DETAIL"] = function()
 			contentHeight = contentHeight + RewardsButtons.displayRewardsOnGrid(bucketType, bucket, Storyline_NPCFrameObjectivesContent, previousText);
 		end
 	end
+	previousText = Storyline_API.rewards.buttons.getPreviousElementOnTheLeft();
+
+    local questID = GetQuestID();
+    local warbandCompleted = C_QuestLog.IsQuestFlaggedCompletedOnAccount(questID);
+    if warbandCompleted then
+        contentHeight = contentHeight + setObjectiveText(Storyline_NPCFrameObjectivesContent.WarbandCompleted, ACCOUNT_COMPLETED_QUEST_NOTICE, previousText);
+        --previousText = Storyline_NPCFrameObjectivesContent.WarbandCompleted;
+		contentHeight = contentHeight + HOVERED_FRAME_TEXT_MARGIN;
+    end
 
 	-- Add some margin on the bottom
 	contentHeight = contentHeight + HOVERED_FRAME_TEXT_MARGIN;
@@ -405,6 +414,7 @@ local function handleEventSpecifics(event, texts, textIndex, eventInfo)
 	Storyline_NPCFrameObjectives.OK:Hide();
 	Storyline_NPCFrameObjectivesContent.RequiredItemText:Hide();
 	Storyline_NPCFrameObjectivesContent.GroupSuggestion:Hide();
+	Storyline_NPCFrameObjectivesContent.WarbandCompleted:Hide();
 	Storyline_NPCFrameObjectivesContent.Objectives:SetText('');
 	Storyline_NPCFrameObjectivesContent.Objectives:Hide();
 	Storyline_NPCFrameRewards.Content:Hide();
@@ -527,6 +537,7 @@ local ANIMATIONS = Storyline_API.ANIMATIONS;
 
 -- Sadly this list is not exposed, so we will have to maintain it.
 local SPECIAL_GOSSIP_FRAMES = {
+	-- Torghast
 	"npe-guide",
 	"skoldushall",
 	"mortregar",
@@ -535,6 +546,8 @@ local SPECIAL_GOSSIP_FRAMES = {
 	"soulforges",
 	"theupperreaches",
 	"twistingcorridors",
+	-- Delves
+	"delves-difficulty-picker"
 }
 
 function Storyline_API.initEventsStructure()
