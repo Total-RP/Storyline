@@ -166,21 +166,20 @@ local REWARD_GETTERS = {
 		end,
 		[REWARD_TYPES.CURRENCY] = function()
 			local rewards = {};
-			local currencyCount = GetNumRewardCurrencies();
-			for i = 1, currencyCount, 1 do
-				local name, texture, numItems, quality = GetQuestCurrencyInfo("reward", i);
-				if name and texture and numItems then
-					local currencyID = GetQuestCurrencyID("reward", i);
-					local currencyName, currencyTexture, _, currencyQuality = CurrencyContainerUtil.GetCurrencyContainerInfo(currencyID, numItems, name, texture, quality);
+			local currencyRewards = C_QuestInfoSystem.GetQuestRewardCurrencies(GetQuestID());
+			for i, currencyReward in ipairs(currencyRewards) do
+				local name, texture, amount, quality = CurrencyContainerUtil.GetCurrencyContainerInfo(currencyReward.currencyID, currencyReward.totalRewardAmount, currencyReward.name, currencyReward.texture, currencyReward.quality);
+				if name and texture and amount then
+					--local currencyID = GetQuestCurrencyID("reward", i);
 					tinsert(rewards, {
-						text  = currencyName,
-						icon  = currencyTexture,
-						count = numItems,
+						text  = name,
+						icon  = texture,
+						count = amount,
 						index = i,
 						type  = "currency",
 						rewardType = "reward",
-						quality = currencyQuality,
-						currencyID = currencyID
+						quality = quality,
+						currencyID = currencyReward.currencyID
 					});
 				end
 			end
@@ -310,7 +309,7 @@ local REWARD_GETTERS = {
 			for i = 1, numberOfItemChoices do
 				local lootType = GetQuestItemInfoLootType("choice", i);
 				if (lootType == 1) then -- LOOT_LIST_CURRENCY
-					local _name, _texture, _amount, _quality = GetQuestCurrencyInfo("choice", i);
+					local _name, _texture, _amount, _quality = C_QuestLog.GetQuestRewardCurrencyInfo("choice", i);
 					local currencyID = GetQuestCurrencyID("choice", i);
 					local name, texture, amount, quality = CurrencyContainerUtil.GetCurrencyContainerInfo(currencyID, _amount, _name, _texture, _quality);
 					tinsert(choices, {
