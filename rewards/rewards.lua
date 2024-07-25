@@ -23,12 +23,6 @@
 
 local Ellyb = Ellyb(...);
 
-local tinsert, pairs = tinsert, pairs;
-local GetQuestItemInfo, GetNumQuestChoices = GetQuestItemInfo, GetNumQuestChoices;
-local IsFollowerCollected, IsCharacterNewlyBoosted, IsSpellKnownOrOverridesKnown = C_Garrison.IsFollowerCollected, IsCharacterNewlyBoosted, IsSpellKnownOrOverridesKnown;
-local GetQuestMoneyToGet, GetNumQuestItems, GetQuestCurrencyInfo, GetNumQuestCurrencies, GetMoney = GetQuestMoneyToGet, GetNumQuestItems, GetQuestCurrencyInfo, GetNumQuestCurrencies, GetMoney;
-local BreakUpLargeNumbers, GetRewardXP, GetNumRewardCurrencies, GetRewardTitle, GetRewardMoney, GetNumQuestRewards, GetRewardSkillPoints = BreakUpLargeNumbers, GetRewardXP, GetNumRewardCurrencies, GetRewardTitle, GetRewardMoney, GetNumQuestRewards, GetRewardSkillPoints;
-
 Storyline_API.rewards = {};
 local API = Storyline_API.rewards;
 
@@ -346,7 +340,7 @@ local REWARD_GETTERS = {
 					local knownSpell = IsSpellKnownOrOverridesKnown(spellID);
 
 					-- Filter out already learned spell or garrison followers
-					if spellInfo and spellInfo.texture and not knownSpell and (not spellInfo.isBoostSpell or IsCharacterNewlyBoosted()) and (not spellInfo.garrFollowerID or not IsFollowerCollected(spellInfo.garrFollowerID)) then
+					if spellInfo and spellInfo.texture and not knownSpell and (not spellInfo.isBoostSpell or IsCharacterNewlyBoosted()) and (not spellInfo.garrFollowerID or not C_Garrison.IsFollowerCollected(spellInfo.garrFollowerID)) then
 						-- Filter out tradeskill spells, boost spells, followers or spell learned, so we only have auras
 						local isAura;
 						if spellInfo.type == Enum.QuestCompleteSpellType.LegacyBehavior then
@@ -380,7 +374,7 @@ local REWARD_GETTERS = {
 				local knownSpell = IsSpellKnownOrOverridesKnown(spellID);
 
 				-- Filter out already learned spell or garrison followers
-				if spellInfo and spellInfo.texture and not knownSpell and (not spellInfo.isBoostSpell or IsCharacterNewlyBoosted()) and (not spellInfo.garrFollowerID or not IsFollowerCollected(spellInfo.garrFollowerID)) then
+				if spellInfo and spellInfo.texture and not knownSpell and (not spellInfo.isBoostSpell or IsCharacterNewlyBoosted()) and (not spellInfo.garrFollowerID or not C_Garrison.IsFollowerCollected(spellInfo.garrFollowerID)) then
 					-- If we have a follower ID then it is a follower
 					local isFollower;
 					if spellInfo.type == Enum.QuestCompleteSpellType.LegacyBehavior then
