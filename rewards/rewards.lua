@@ -548,11 +548,11 @@ OBJECTIVES_GETTERS = {
 	[REWARD_TYPES.CURRENCY] = function()
 		local currencies = {};
 		for i = 1, GetNumQuestCurrencies() do
-			local name, texture, numItems = GetQuestCurrencyInfo("required", i);
+			local requiredCurrencyInfo = C_QuestOffer.GetQuestRequiredCurrencyInfo(i);
 			tinsert(currencies, {
-				text = name,
-				icon = texture,
-				count = numItems,
+				text = requiredCurrencyInfo.name,
+				icon = requiredCurrencyInfo.texture,
+				count = requiredCurrencyInfo.requiredAmount,
 				index = i,
 				type = "currency",
 				rewardType = "required",
