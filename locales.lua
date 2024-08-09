@@ -247,6 +247,19 @@ Expérience: |cffffffff%s xp|r
 	},
 
 	--*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
+	-- LOCALE_ZHCN
+	--*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
+
+
+	["zhCN"] = {
+		localeText = "Simplified Chinese",
+		--@localization(locale="zhCN", format="lua_table", table-name="localeContent", handle-unlocalized="ignore")@
+		--@do-not-package@
+		localeContent = {}
+		--@end-do-not-package@
+	},
+
+	--*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
 	-- LOCALE_ZHTW
 	--*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
 
