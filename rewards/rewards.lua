@@ -309,18 +309,17 @@ local REWARD_GETTERS = {
 			for i = 1, numberOfItemChoices do
 				local lootType = GetQuestItemInfoLootType("choice", i);
 				if (lootType == 1) then -- LOOT_LIST_CURRENCY
-					local _name, _texture, _amount, _quality = C_QuestLog.GetQuestRewardCurrencyInfo("choice", i);
-					local currencyID = GetQuestCurrencyID("choice", i);
-					local name, texture, amount, quality = CurrencyContainerUtil.GetCurrencyContainerInfo(currencyID, _amount, _name, _texture, _quality);
+					local questID = GetQuestID();
+					local questRewardCurrencyInfo = C_QuestLog.GetQuestRewardCurrencyInfo(questID, i, true);
 					tinsert(choices, {
-						text  = name,
-						icon  = texture,
-						count = amount,
+						text  = questRewardCurrencyInfo.name,
+						icon  = questRewardCurrencyInfo.texture,
+						count = questRewardCurrencyInfo.totalRewardAmount,
 						index = i,
 						type  = "currency",
 						rewardType = "choice",
-						quality = quality,
-						currencyID = currencyID
+						quality = questRewardCurrencyInfo.quality,
+						currencyID = questRewardCurrencyInfo.currencyID
 					});
 				end
 			end
