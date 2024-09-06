@@ -311,6 +311,13 @@ local REWARD_GETTERS = {
 				if (lootType == 1) then -- LOOT_LIST_CURRENCY
 					local questID = GetQuestID();
 					local questRewardCurrencyInfo = C_QuestLog.GetQuestRewardCurrencyInfo(questID, i, true);
+					-- Sometimes Blizz decides we can't get the info?
+					if not questRewardCurrencyInfo then
+						questRewardCurrencyInfo = {
+							name = "?",
+							texture = 134400, -- inv_misc_questionmark
+						};
+					end
 					tinsert(choices, {
 						text  = questRewardCurrencyInfo.name,
 						icon  = questRewardCurrencyInfo.texture,

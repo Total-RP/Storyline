@@ -143,6 +143,8 @@ local function decorateFollowerButton(button, garrFollowerID)
 	end)
 end
 
+local refreshTimer;
+
 local function decorateRewardButton(button, rewardType, reward)
 	if rewardType == Rewards.REWARD_TYPES.CURRENCY then
 		decorateCurrencyButton(button, reward.index, reward.rewardType, reward.icon, reward.text, reward.count, reward.currencyID, reward.quality);
@@ -160,6 +162,14 @@ local function decorateRewardButton(button, rewardType, reward)
 		decorateReputationButton(button, reward.icon, reward.text, reward.count, reward.tooltipTitle, reward.tooltipSub)
 	else
 		decorateStandardButton(button, reward.icon, reward.text, reward.tooltipTitle, reward.tooltipSub);
+	end
+
+	-- Workaround to Blizzard not returning the info for the rewards on some quests, we just keep trying to refresh until it works
+	if reward.text == "?" and not refreshTimer then
+		refreshTimer = C_Timer.After(0.2, function()
+			Storyline_API.rewards.buttons.refreshButtons();
+			refreshTimer = nil;
+		end);
 	end
 end
 
