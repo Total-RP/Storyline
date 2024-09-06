@@ -359,6 +359,21 @@ local STATIC_BACKGROUNDS = {
 
     --endregion
 
+    --region The War Within
+    ["2248"] = "thewarwithin-majorfactions-storm-background",
+    ["2271"] = "thewarwithin-majorfactions-storm-background",
+
+    ["2214"] = "thewarwithin-majorfactions-candle-background",
+    ["2272"] = "thewarwithin-majorfactions-candle-background",
+
+    ["2215"] = "thewarwithin-majorfactions-flame-background",
+    ["2273"] = "thewarwithin-majorfactions-flame-background",
+
+    ["2255"] = "thewarwithin-majorfactions-web-background",
+    ["2256"] = "thewarwithin-majorfactions-web-background",
+    ["2270"] = "thewarwithin-majorfactions-web-background",
+    --endregion
+
 }
 
 local STATIC_BACKGROUNDS_ALPHA = {
@@ -390,6 +405,19 @@ local STATIC_BACKGROUNDS_ALPHA = {
 
     ["2200"] = 0.5,
     ["2241"] = 0.5,
+
+    ["2248"] = 0.4,
+    ["2271"] = 0.4,
+
+    ["2214"] = 0.4,
+    ["2272"] = 0.4,
+
+    ["2215"] = 0.4,
+    ["2273"] = 0.4,
+
+    ["2255"] = 0.4,
+    ["2256"] = 0.4,
+    ["2270"] = 0.4,
 }
 
 -- Use the game's Map API to get a known map ID for the player, bubbling up the chain (cave level > sub-zone > zone > continent)
