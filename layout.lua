@@ -103,25 +103,29 @@ Storyline_API.layout.unregisterFromUILayoutEngine = unregisterFromUILayoutEngine
 local framesUILayoutEngineSettings = {};
 
 local removeFrameFromUILayoutEngine = function(frameName)
+	local frame = _G[frameName];
+	frame:SetParent(hiddenFrames);
 	local info = UIPanelWindows[frameName];
 	if not info then return end
 
 	framesUILayoutEngineSettings[frameName] = info;
 
-	local frame = _G[frameName];
 	frame:SetAttribute("UIPanelLayout-defined", false);
 	UIPanelWindows[frameName] = nil;
-	frame:SetParent(hiddenFrames);
 end
 
 local addToLayoutEngine = function(frameName)
 	local frame = _G[frameName];
-	UIPanelWindows[frameName] = framesUILayoutEngineSettings[frameName];
+	frame:SetParent(UIParent);
+	local info = framesUILayoutEngineSettings[frameName];
+	if not info then return end
+
+	UIPanelWindows[frameName] = info;
+
 	frame:SetAttribute("UIPanelLayout-defined", true);
 	for name, value in pairs(UIPanelWindows[frameName]) do
 		frame:SetAttribute("UIPanelLayout-" .. name, value);
 	end
-	frame:SetParent(UIParent);
 end
 
 ---
