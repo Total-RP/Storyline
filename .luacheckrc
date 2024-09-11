@@ -87,6 +87,7 @@ stds.wow = {
         },
         C_QuestInfoSystem = {
             fields = {
+                "GetQuestRewardCurrencies",
                 "GetQuestRewardSpells",
                 "GetQuestRewardSpellInfo",
             },
@@ -94,6 +95,7 @@ stds.wow = {
         C_QuestLog = {
             fields = {
                 "GetQuestDetailsTheme",
+                "GetQuestRewardCurrencyInfo",
                 "IsQuestCalling",
                 "IsQuestFlaggedCompletedOnAccount",
                 "QuestHasQuestSessionBonus",
@@ -103,6 +105,7 @@ stds.wow = {
         C_QuestOffer = {
             fields = {
                 "GetQuestOfferMajorFactionReputationRewards",
+                "GetQuestRequiredCurrencyInfo",
             },
         },
         C_Texture = {
