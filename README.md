@@ -22,7 +22,5 @@ Storyline frame adds 3D animated models for you and your quest giver. Also it "c
 - **Disable Storyline for daily quests**. We want to add a blacklist system where you would be able to mark a NPC so Storyline doesn't show up. Also, we want to add an option to only show Storyline once for daily quests, so that you can still read them comfortably the first time. We will implement these features over time.
 - **Voice acting**. We know a lot of people would like voice acting, but that would require a HUGE amount of work and money. We are currently focusing on other important bug fixes and improvements for the add-on. We are however interested in the matter and we are looking for options to implement voice acting capabilities into Storyline in the more efficient way.
 
-[KajiSensei]: https://twitter.com/Telkostrasz
-[Ellypse]: https://twitter.com/EllypseCelwe
 [Immersion]: https://mods.curse.com/addons/wow/257550-immersion
-[Discord]: http://discord.totalrp3.info/
+[Discord]: http://discord.totalrp.com/

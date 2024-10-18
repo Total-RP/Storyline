@@ -60,7 +60,7 @@ Storyline_API.locale.info = {
 			SL_CONFIG = "Settings",
 			SL_CONFIG_WELCOME = [[Thank you for using Storyline!
 
-You can follow Storyline developers on Twitter |cff55acee@EllypseCelwe|r and |cff55acee@Telkostrasz|r to get news about the add-on and sneek peaks of its development.
+Join us on discord.totalrp.com to get news about the add-on.
 ]],
 			SL_CONFIG_LANGUAGE = "Language",
 			SL_CONFIG_TEXTSPEED_TITLE = "Text animation speed",
@@ -171,7 +171,7 @@ La fenêtre ne peut plus être déplacée dans ce mode. Cette option requière u
 			["SL_CONFIG_USE_KEYBOARD_TT"] = "Utiliser les raccourcis clavier pour naviguer dans les dialogues (barre espace pour avancer, touche retour pour revenir en arrière, touches 1 à 0 pour sélectionner une option de dialogue).",
 			["SL_CONFIG_WELCOME"] = [=[Merci d'utiliser Storyline!
 
-Vous pouvez suivre les développeurs de Storyline sur Twitter, |cff55acee@EllypseCelwe|r et |cff55acee@Telkostrasz|r, pour recevoir des informations sur les mise-à-jour de l'add-on et des aperçu de son développement.]=],
+Rejoignez-nous sur discord.totalrp.com pour recevoir des informations sur les mises à jour de l'add-on.]=],
 			["SL_CONTINUE"] = "Terminer la quête",
 			["SL_DECLINE"] = "Je refuse.",
 			["SL_GET_REWARD"] = "Prenez votre récompense",
