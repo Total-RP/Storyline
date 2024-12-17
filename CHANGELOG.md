@@ -1,3 +1,7 @@
+# Changelog for version 3.4.6
+
+- Added scaling data for Azj'Kahet sidequests.
+
 # Changelog for version 3.4.5
 
 - Added TWW zone backgrounds.
