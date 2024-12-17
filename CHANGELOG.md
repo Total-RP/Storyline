@@ -1,6 +1,7 @@
 # Changelog for version 3.4.6
 
 - Added scaling data for Azj'Kahet sidequests.
+- Fixed compatibility with addons like NoAutoClose.
 
 # Changelog for version 3.4.5
 
