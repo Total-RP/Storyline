@@ -1,3 +1,7 @@
+# Changelog for version 3.4.7
+
+- Added scaling data for Undermine
+
 # Changelog for version 3.4.6
 
 - Added scaling data for Azj'Kahet sidequests.
