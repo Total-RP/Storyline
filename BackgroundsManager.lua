@@ -372,6 +372,9 @@ local STATIC_BACKGROUNDS = {
     ["2255"] = "thewarwithin-majorfactions-web-background",
     ["2256"] = "thewarwithin-majorfactions-web-background",
     ["2270"] = "thewarwithin-majorfactions-web-background",
+
+    ["2346"] = "thewarwithin-majorfactions-rocket-background",
+    ["2374"] = "thewarwithin-majorfactions-rocket-background",
     --endregion
 
 }
@@ -418,6 +421,9 @@ local STATIC_BACKGROUNDS_ALPHA = {
     ["2255"] = 0.4,
     ["2256"] = 0.4,
     ["2270"] = 0.4,
+    
+    ["2346"] = 0.4,
+    ["2374"] = 0.4,
 }
 
 -- Use the game's Map API to get a known map ID for the player, bubbling up the chain (cave level > sub-zone > zone > continent)
