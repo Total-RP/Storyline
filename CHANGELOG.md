@@ -1,3 +1,8 @@
+# Changelog for version 3.4.8
+
+- Added Undermine quest background
+- Added more Undermine scaling data
+
 # Changelog for version 3.4.7
 
 - Added scaling data for Undermine
