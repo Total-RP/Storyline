@@ -1,4 +1,4 @@
-## Interface: 110100
+## Interface: 110105
 ## Title: Storyline
 ## Author: Ellypse and Telkostrasz
 ## Version: @project-version@
@@ -9,6 +9,18 @@
 ## DefaultState: Enabled
 ## LoadOnDemand: 0
 ## SavedVariables: Storyline_Data
+
+## Category-enUS: Quests
+## Category-deDE: Quests
+## Category-esES: Misiones
+## Category-esMX: Misiones
+## Category-frFR: Quêtes
+## Category-itIT: Missioni
+## Category-koKR: 퀘스트
+## Category-ptBR: Missões
+## Category-ruRU: Задания
+## Category-zhCN: 任务
+## Category-zhTW: 任務
 
 ## X-Curse-Project-ID: 92398
 ## X-WoWI-ID: 23782
