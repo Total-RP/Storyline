@@ -1,3 +1,8 @@
+# Changelog for version 3.4.9
+
+- Fixed GlowBorderTemplate error from patch 11.1.5
+- Moved Storyline to the Quests addon category
+
 # Changelog for version 3.4.8
 
 - Added Undermine quest background
