@@ -375,6 +375,9 @@ local STATIC_BACKGROUNDS = {
 
     ["2346"] = "thewarwithin-majorfactions-rocket-background",
     ["2374"] = "thewarwithin-majorfactions-rocket-background",
+
+    ["2371"] = "thewarwithin-majorfactions-Karesh-background",
+    ["2398"] = "thewarwithin-majorfactions-Karesh-background",
     --endregion
 
 }
@@ -424,6 +427,9 @@ local STATIC_BACKGROUNDS_ALPHA = {
     
     ["2346"] = 0.4,
     ["2374"] = 0.4,
+    
+    ["2371"] = 0.4,
+    ["2398"] = 0.4,
 }
 
 -- Use the game's Map API to get a known map ID for the player, bubbling up the chain (cave level > sub-zone > zone > continent)
