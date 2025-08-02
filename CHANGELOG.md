@@ -1,3 +1,9 @@
+# Changelog for version 3.4.10
+
+- Added scaling data for K'aresh
+- Added K'aresh quest background
+- Fixed dead animation bug
+
 # Changelog for version 3.4.9
 
 - Fixed GlowBorderTemplate error from patch 11.1.5
