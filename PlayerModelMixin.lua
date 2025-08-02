@@ -108,7 +108,7 @@ end
 
 function Storyline_PlayerModelMixin:DisplayDead()
 	-- Pick a dead animation. Some NPC only has stand and dead, so dead is actually the ID 1, because Blizzard.
-	local deadAnimation = self:HasAnimation(ANIMATIONS.DEAD) or 1;
+	local deadAnimation = self:HasAnimation(ANIMATIONS.DEAD) and ANIMATIONS.DEAD or 1;
 	-- Freeze the dead animation on the last frame
 	self:FreezeAnimation(deadAnimation, 0, 10000)
 end
