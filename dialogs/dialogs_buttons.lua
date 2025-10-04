@@ -45,7 +45,7 @@ local Dialogs = Storyline_API.dialogs;
 local buttonsBag = {};
 
 local DIALOG_CHOICE_BUTTON_MARGIN = 5;
-local DIALOG_CHOICE_BUTTON_PADDING = 25;
+local DIALOG_CHOICE_BUTTON_PADDING = 35;
 
 local BUTTON_TEMPLATE = "Storyline_DialogChoiceButton";
 local defaultButton = CreateFrame("Button", nil, nil, BUTTON_TEMPLATE);

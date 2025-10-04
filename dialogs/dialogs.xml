@@ -33,20 +33,24 @@
                         <Anchor point="LEFT" relativePoint="LEFT" x="80"/>
                     </Anchors>
                 </Texture>
-				<FontString parentKey="text" inherits="GameFontNormal" justifyH="LEFT" text="[CHOICE]">
-					<Size x="0" y="10" />
+				<FontString parentKey="text" inherits="GameFontNormalMed1" justifyH="LEFT" justifyV="MIDDLE" wordwrap="true">
+					<Size x="0" y="0" />
 					<Anchors>
 						<Anchor point="LEFT" relativePoint="RIGHT" relativeKey="$parent.icon" x="10" y="0" />
-						<Anchor point="RIGHT" x="-15" y="0" />
+						<Anchor point="RIGHT" x="-45" y="0" />
 					</Anchors>
-					<Color r="0.95" g="0.95" b="0.95" />
 				</FontString>
 			</Layer>
 		</Layers>
 		<Frames>
 			<Button parentKey="Click" setAllPoints="true">
-				<HighlightTexture alphaMode="ADD" file="Interface\FriendsFrame\UI-FriendsFrame-HighlightBar">
-					<TexCoords bottom="0" left="0.25" top="1" right="1" />
+				<HighlightTexture alphaMode="ADD" atlas="AdventureMap-textlabelglow">
+                    <Anchors>
+                        <Anchor point="LEFT" x="30" y="0" />
+                        <Anchor point="RIGHT" x="-30" y="0" />
+                        <Anchor point="TOP" x="0" y="-5" />
+                        <Anchor point="BOTTOM" x="0" y="5" />
+					</Anchors>
 				</HighlightTexture>
                 <Animations>
                     <AnimationGroup parentKey="onClickedAnimation">
