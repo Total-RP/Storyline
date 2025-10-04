@@ -43,7 +43,7 @@ local FRAME_PROPORTIONS = {
 	},
 	WIDTH = {
 		MAX = 650,
-		MIN = 300
+		MIN = 320
 	}
 }
 
@@ -110,7 +110,7 @@ function API.refreshMargins(width, height)
 		marginBottom = FRAME_PROPORTIONS.BOTTOM.MIN
 	end
 
-	local frameWidth = 35 * width / 100;
+	local frameWidth = 33 * width / 100;
 
 	if frameWidth > FRAME_PROPORTIONS.WIDTH.MAX then
 		frameWidth = FRAME_PROPORTIONS.WIDTH.MAX
