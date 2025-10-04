@@ -66,7 +66,7 @@ local function getGossipAvailableQuestsChoices()
 			isRepeatable = questInfo.repeatable,
 			isLegendary  = questInfo.isLegendary,
 			isIgnored    = questInfo.isIgnored,
-			isCampaign = QuestUtil.ShouldQuestIconsUseCampaignAppearance(questInfo.questID),
+			isCampaign = C_QuestInfoSystem.GetQuestClassification(questInfo.questID) == Enum.QuestClassification.Campaign,
 			isCalling = C_QuestLog.IsQuestCalling(questInfo.questID)
 		};
 	end
@@ -87,7 +87,7 @@ local function getGossipActiveQuestsChoices()
 			isCompleted  = questInfo.isComplete,
 			isLegendary  = questInfo.isLegendary,
 			isIgnored    = questInfo.isIgnored,
-			isCampaign = QuestUtil.ShouldQuestIconsUseCampaignAppearance(questInfo.questID),
+			isCampaign = C_QuestInfoSystem.GetQuestClassification(questInfo.questID) == Enum.QuestClassification.Campaign,
 			isCalling = C_QuestLog.IsQuestCalling(questInfo.questID)
 		};
 		-- Place the choice in the appropriate bucket
@@ -115,7 +115,7 @@ local function getAvailableQuestsChoices()
 			frequency    = frequency,
 			isRepeatable = isRepeatable,
 			isLegendary  = isLegendary,
-			isCampaign = QuestUtil.ShouldQuestIconsUseCampaignAppearance(questID),
+			isCampaign = C_QuestInfoSystem.GetQuestClassification(questID) == Enum.QuestClassification.Campaign,
 			isCalling = C_QuestLog.IsQuestCalling(questID)
 		};
 	end
@@ -140,7 +140,7 @@ local function getActiveQuestsChoices()
 			isCompleted  = isComplete,
 			isRepeatable = isRepeatable,
 			isIgnored    = isLegendary,
-			isCampaign = QuestUtil.ShouldQuestIconsUseCampaignAppearance(activeQuestID),
+			isCampaign = C_QuestInfoSystem.GetQuestClassification(activeQuestID) == Enum.QuestClassification.Campaign,
 			isCalling = C_QuestLog.IsQuestCalling(activeQuestID)
 		};
 		-- Place the choice in the appropriate bucket
