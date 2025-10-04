@@ -636,6 +636,10 @@ function Storyline_API.addon.OnEnable()
 				if not InCombatLockdown() then
 					self:SetPropagateKeyboardInput(true);
 				end
+			else
+				if not InCombatLockdown() then
+					self:SetPropagateKeyboardInput(false);
+				end
 			end
 		end
 	end);
