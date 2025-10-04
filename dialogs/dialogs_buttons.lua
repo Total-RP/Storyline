@@ -111,15 +111,22 @@ local BUTTON_API = {
 	UnGreyOutIcon = function(button)
 		button.icon:SetVertexColor(1, 1, 1);
 	end,
-	-- Set the biding text, on the left of the button
-	SetBindingText = function(button, bindingText)
-		button.binding:SetText(bindingText);
-		button.binding:Show();
-	end,
-	-- Hide the binding text
-	HideBidingText = function(button)
-		button.binding:SetText("");
-		button.binding:Hide();
+	-- Set the binding text, on the left of the button
+	SetBindingIndex = function(button, bindingIndex)
+		if bindingIndex then
+			-- Set number texture
+			local iconIndex = bindingIndex - 1;
+			local yOffset = 0.5 + floor(iconIndex / 8) * 0.125;
+			local xOffset = mod(iconIndex, 8) * 0.125;
+
+			button.binding.Display.Icon:SetTexture("Interface/WorldMap/UI-QuestPoi-NumberIcons");
+			button.binding.Display.Icon:SetTexCoord(xOffset, xOffset + 0.125, yOffset, yOffset + 0.125);
+			local scale = button.binding.Display.Icon:GetParent():GetPinScale();
+			button.binding.Display.Icon:SetSize(scale * 32, scale * 32);
+			button.binding:Show();
+		else
+			button.binding:Hide();
+		end
 	end,
 	-- When the cursor is over a dialog choice we will play this dialog animation
 	PlayPlayerModelAnimation = function(button)
@@ -143,10 +150,10 @@ local BUTTON_API = {
 		-- If the button index is withing the keyboard shortcuts limit and keyboard shortcuts are enabled
 		-- we display the shortcut on the binding text.
 		if buttonIndex < 10 and Storyline_Data.config.useKeyboard then
-			self:SetBindingText(buttonIndex);
+			self:SetBindingIndex(buttonIndex);
 			self.bindingKey = buttonIndex;
 		else
-			self:HideBidingText();
+			self:SetBindingIndex();
 		end
 
 		-- Use the appropriate decorator for the bucket type to display the data on the button
@@ -155,7 +162,7 @@ local BUTTON_API = {
 		self:RefreshHeight();
 
 
-		self:SetScript("OnClick", function()
+		self.Click:SetScript("OnClick", function()
 			Dialogs.getDialogChoiceSelectorForEventType(eventType, bucketType)(data.id or choiceIndex);
 		end)
 
@@ -231,7 +238,7 @@ function API.selectOptionAtIndex(buttonIndex)
 	local foundOptionForIndex = false;
 	for _, existingButton in pairs(buttonsBag) do
 		if existingButton.bindingKey == buttonIndex and existingButton:IsShown() then
-			existingButton:Click();
+			existingButton.Click:Click();
 			foundOptionForIndex = true;
 		end
 	end

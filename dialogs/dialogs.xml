@@ -19,104 +19,80 @@
         limitations under the License.
     -->
 
-    <Button name="Storyline_DialogChoiceButton" virtual="true" hidden="true">
-        <Anchors>
-            <Anchor point="LEFT" relativePoint="LEFT" />
-            <Anchor point="RIGHT" relativePoint="RIGHT" />
-        </Anchors>
-        <Layers>
-            <Layer level="BACKGROUND">
-                <!-- TOP BORDER -->
-                <Texture file="Interface/AdventureMap/AdventureMap">
-                    <Size y="13" />
-                    <Anchors>
-                        <Anchor point="TOP" />
-                        <Anchor point="LEFT" />
-                        <Anchor point="RIGHT" />
-                    </Anchors>
-                    <TexCoords left="0.34" right="0.78" top="0.30" bottom="0.325"/>
-                </Texture>
-                <!-- MIDDLE -->
-                <Texture file="Interface/AdventureMap/AdventureMap">
-                    <Anchors>
-                        <Anchor point="TOP" y="-13"/>
-                        <Anchor point="BOTTOM" y="13"/>
-                        <Anchor point="LEFT" />
-                        <Anchor point="RIGHT" />
-                    </Anchors>
-                    <TexCoords left="0.34" right="0.78" top="0.33" bottom="0.34"/>
-                </Texture>
-                <!-- BOTTOM BORDER -->
-                <Texture file="Interface/AdventureMap/AdventureMap">
-                    <Size y="13" />
-                    <Anchors>
-                        <Anchor point="BOTTOM"/>
-                        <Anchor point="LEFT" />
-                        <Anchor point="RIGHT" />
-                    </Anchors>
-                    <TexCoords left="0.34" right="0.78" top="0.34" bottom="0.36"/>
-                </Texture>
-            </Layer>
-            <Layer>
+    <Frame name="Storyline_DialogChoiceButton" hidden="true" virtual="true">
+		<Size x="400" y="18" />
+		<Layers>
+			<Layer level="BACKGROUND">
+				<Texture alphaMode="BLEND" atlas="AdventureMapLabel-Large" setAllPoints="true">
+				</Texture>
+			</Layer>
+			<Layer level="OVERLAY">
                 <Texture parentKey="icon" file="Interface/GOSSIPFRAME/ChatBubbleGossipIcon">
                     <Size x="16" y="16"/>
                     <Anchors>
-                        <Anchor point="LEFT" relativePoint="LEFT" x="50"/>
+                        <Anchor point="LEFT" relativePoint="LEFT" x="80"/>
                     </Anchors>
                 </Texture>
-                <FontString parentKey="text" inherits="GameFontNormalMed1" justifyH="LEFT" justifyV="MIDDLE" wordwrap="true">
-                    <Anchors>
-                        <Anchor point="LEFT" relativePoint="RIGHT" relativeKey="$parent.icon" x="10"/>
-                        <Anchor point="RIGHT" relativePoint="RIGHT"  x="-70"/>
-                    </Anchors>
-                </FontString>
-                <FontString parentKey="binding" inherits="GameFontNormal" justifyH="RIGHT" justifyV="MIDDLE">
-                    <Size x="50"/>
-                    <Anchors>
-                        <Anchor point="RIGHT" relativePoint="LEFT" relativeKey="$parent.icon" x="-5"/>
-                    </Anchors>
-                </FontString>
-            </Layer>
-            <Layer level="OVERLAY">
-                <Texture parentKey="highlight" file="Interface/FriendsFrame/UI-FriendsFrame-HighlightBar" alpha="0" alphaMode="ADD">
-                    <Anchors>
-                        <Anchor point="TOPLEFT" y="-9" x="20"/>
-                        <Anchor point="BOTTOMRIGHT" y="3" x="-20"/>
-                    </Anchors>
-                </Texture>
-            </Layer>
-        </Layers>
+				<FontString parentKey="text" inherits="GameFontNormal" justifyH="LEFT" text="[CHOICE]">
+					<Size x="0" y="10" />
+					<Anchors>
+						<Anchor point="LEFT" relativePoint="RIGHT" relativeKey="$parent.icon" x="10" y="0" />
+						<Anchor point="RIGHT" x="-15" y="0" />
+					</Anchors>
+					<Color r="0.95" g="0.95" b="0.95" />
+				</FontString>
+			</Layer>
+		</Layers>
+		<Frames>
+			<Button parentKey="Click" setAllPoints="true">
+				<HighlightTexture alphaMode="ADD" file="Interface\FriendsFrame\UI-FriendsFrame-HighlightBar">
+					<TexCoords bottom="0" left="0.25" top="1" right="1" />
+				</HighlightTexture>
+                <Animations>
+                    <AnimationGroup parentKey="onClickedAnimation">
+                        <Translation offsetX="0" offsetY="-3" duration="0.1" />
+                    </AnimationGroup>
+                    <AnimationGroup parentKey="onEnterAnimation" setToFinalAlpha="true">
+                        <Alpha childKey="highlight" fromAlpha="0.0" toAlpha="0.4" duration="0.1" smoothing="OUT"/>
+                    </AnimationGroup>
+                    <AnimationGroup parentKey="onLeaveAnimation" setToFinalAlpha="true">
+                        <Alpha childKey="highlight" fromAlpha="0.4" toAlpha="0.0" duration="0.1" smoothing="OUT"/>
+                    </AnimationGroup>
+                </Animations>
+                <Scripts>
+                    <OnEnter>
+                        self.onEnterAnimation:Play();
+                        self:GetParent():PlayPlayerModelAnimation();
+                    </OnEnter>
+                    <OnLeave>
+                        self.onLeaveAnimation:Play();
+                    </OnLeave>
+                    <PreClick>
+                        self.onClickedAnimation:Stop();
+                        self.onClickedAnimation:Play();
+                    </PreClick>
+                    <PostClick>
+                        Storyline_API.PlaySound("igMainMenuOptionCheckBoxOn");
+                    </PostClick>
+                </Scripts>
+			</Button>
+			<Button parentKey="binding" inherits="POIButtonTemplate" hidden="false" frameLevel="5">
+				<Anchors>
+					<Anchor point="LEFT" relativePoint="LEFT" x="50" y="0" />
+				</Anchors>
+				<Scripts>
+					<OnMouseDown function=""/>
+					<OnMouseUp function=""/>
+					<OnClick function=""/>
+				</Scripts>
+			</Button>
+		</Frames>
         <Animations>
             <AnimationGroup parentKey="fadeIn">
                 <Alpha fromAlpha="0.0" toAlpha="1" duration="0.2" smoothing="OUT"/>
             </AnimationGroup>
-            <AnimationGroup parentKey="onClickedAnimation">
-                <Translation offsetX="0" offsetY="-3" duration="0.1" />
-            </AnimationGroup>
-            <AnimationGroup parentKey="onEnterAnimation" setToFinalAlpha="true">
-                <Alpha childKey="highlight" fromAlpha="0.0" toAlpha="0.4" duration="0.1" smoothing="OUT"/>
-            </AnimationGroup>
-            <AnimationGroup parentKey="onLeaveAnimation" setToFinalAlpha="true">
-                <Alpha childKey="highlight" fromAlpha="0.4" toAlpha="0.0" duration="0.1" smoothing="OUT"/>
-            </AnimationGroup>
         </Animations>
-        <Scripts>
-            <OnEnter>
-                    self.onEnterAnimation:Play();
-                    self:PlayPlayerModelAnimation();
-            </OnEnter>
-            <OnLeave>
-                    self.onLeaveAnimation:Play();
-            </OnLeave>
-            <PreClick>
-                self.onClickedAnimation:Stop();
-                self.onClickedAnimation:Play();
-            </PreClick>
-            <PostClick>
-                Storyline_API.PlaySound("igMainMenuOptionCheckBoxOn");
-            </PostClick>
-        </Scripts>
-    </Button>
+	</Frame>
 
     <ScrollFrame name="Storyline_DialogChoicesScrollFrame" inherits="UIPanelScrollFrameCodeTemplate" frameStrata="HIGH" parent="Storyline_NPCFrame">
         <Size x="450" />
