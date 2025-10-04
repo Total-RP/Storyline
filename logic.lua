@@ -215,7 +215,7 @@ function Storyline_API.startDialog(targetType, fullText, event, eventInfo)
 	if Storyline_API.isASealedQuest(questId) then
 		mainFrame.chat.name:Hide()
 	else
-		local targetName = UnitName(targetType) or ""
+		local targetName = UnitName(targetType)
 		-- if it's a secret value we can't fix it so whatever
 		if issecretvalue(targetName) == false then
 			if (not targetName or targetName:len() > 0 or targetName ~= UNKNOWN) and eventInfo.nameGetter and eventInfo.nameGetter() then
