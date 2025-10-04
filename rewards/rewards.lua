@@ -342,7 +342,7 @@ local REWARD_GETTERS = {
 			for _, spellID in ipairs(spellRewards) do
 				if spellID and spellID > 0 then
 					local spellInfo = C_QuestInfoSystem.GetQuestRewardSpellInfo(questID, spellID);
-					local knownSpell = IsSpellKnownOrOverridesKnown(spellID);
+					local knownSpell = C_SpellBook.IsSpellInSpellBook(spellID);
 
 					-- Filter out already learned spell or garrison followers
 					if spellInfo and spellInfo.texture and not knownSpell and (not spellInfo.isBoostSpell or IsCharacterNewlyBoosted()) and (not spellInfo.garrFollowerID or not C_Garrison.IsFollowerCollected(spellInfo.garrFollowerID)) then
@@ -376,7 +376,7 @@ local REWARD_GETTERS = {
 
 			for _, spellID in ipairs(spellRewards) do
 				local spellInfo = C_QuestInfoSystem.GetQuestRewardSpellInfo(questID, spellID);
-				local knownSpell = IsSpellKnownOrOverridesKnown(spellID);
+				local knownSpell = C_SpellBook.IsSpellInSpellBook(spellID);
 
 				-- Filter out already learned spell or garrison followers
 				if spellInfo and spellInfo.texture and not knownSpell and (not spellInfo.isBoostSpell or IsCharacterNewlyBoosted()) and (not spellInfo.garrFollowerID or not C_Garrison.IsFollowerCollected(spellInfo.garrFollowerID)) then
@@ -408,7 +408,7 @@ local REWARD_GETTERS = {
 
 			for _, spellID in ipairs(spellRewards) do
 				local spellInfo = C_QuestInfoSystem.GetQuestRewardSpellInfo(questID, spellID);
-				local knownSpell = IsSpellKnownOrOverridesKnown(spellID);
+				local knownSpell = C_SpellBook.IsSpellInSpellBook(spellID);
 
 				-- Filter out already learned spell or garrison followers
 				if spellInfo and spellInfo.texture and not knownSpell then
@@ -439,7 +439,7 @@ local REWARD_GETTERS = {
 
 			for _, spellID in ipairs(spellRewards) do
 				local spellInfo = C_QuestInfoSystem.GetQuestRewardSpellInfo(questID, spellID);
-				local knownSpell = IsSpellKnownOrOverridesKnown(spellID);
+				local knownSpell = C_SpellBook.IsSpellInSpellBook(spellID);
 
 				-- Filter out already learned spell or garrison followers
 				if spellInfo and spellInfo.texture and not knownSpell then
