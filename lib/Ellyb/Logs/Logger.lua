@@ -65,7 +65,7 @@ function Logger:Log(level, ...)
 	end
 
 	local ChatFrame;
-	for i = 0, NUM_CHAT_WINDOWS do
+	for i = 0, Constants.ChatFrameConstants.MaxChatWindows do
 		if GetChatWindowInfo(i) == "Logs" then
 			ChatFrame = _G["ChatFrame"..i]
 		end
