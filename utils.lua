@@ -20,6 +20,9 @@
 -- Storyline API
 local getId = Storyline_API.lib.generateID;
 
+-- Ellyb
+local Logger = Ellyb.Logger("Storyline debug");
+
 -- WOW API
 local tostring, print = tostring, print;
 
@@ -30,12 +33,11 @@ local tostring, print = tostring, print;
 --
 -- @param message
 --
-local debug = function(message, ...)
+local debug = function(message)
 	local DEFAULT_DEBUG_MESSAGE = "Debug function called, but message was empty ¯\\_(^_^)_/¯";
-	local header = "|cffffa500[Storyline debug]|r: %s"
 
 	if Storyline_Data.config.debug then
-		print(header:format(message or DEFAULT_DEBUG_MESSAGE), ...);
+		Logger:Info(message or DEFAULT_DEBUG_MESSAGE);
 	end
 end
 Storyline_API.debug = debug;
