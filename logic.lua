@@ -214,14 +214,17 @@ function Storyline_API.startDialog(targetType, fullText, event, eventInfo)
 		mainFrame.chat.name:Hide()
 	else
 		local targetName = UnitName(targetType) or ""
-		if (not targetName or targetName:len() > 0 or targetName ~= UNKNOWN) and eventInfo.nameGetter and eventInfo.nameGetter() then
-			targetName = eventInfo.nameGetter()
-		end
-		-- Removing inserted color codes from name (for delve looted chests for instance)
-		if targetName then
-			targetName = targetName:gsub("|c%x%x%x%x%x%x%x%x", "");
-			targetName = targetName:gsub("|cn[^:]+:", "");
-			targetName = targetName:gsub("|r", "");
+		-- if it's a secret value we can't fix it so whatever
+		if issecretvalue(targetName) == false then
+			if (not targetName or targetName:len() > 0 or targetName ~= UNKNOWN) and eventInfo.nameGetter and eventInfo.nameGetter() then
+				targetName = eventInfo.nameGetter()
+			end
+			-- Removing inserted color codes from name (for delve looted chests for instance)
+			if targetName then
+				targetName = targetName:gsub("|c%x%x%x%x%x%x%x%x", "");
+				targetName = targetName:gsub("|cn[^:]+:", "");
+				targetName = targetName:gsub("|r", "");
+			end
 		end
 		mainFrame.chat.name:SetText(targetName)
 		mainFrame.chat.name:Show()
@@ -470,7 +473,10 @@ Storyline_API.addon = LibStub("AceAddon-3.0"):NewAddon("Storyline", "AceConsole-
 
 ---@return string Returns the NPC ID of the current "npc" unit
 function Storyline_API.getNpcId()
-	local npcId = select(6, strsplit("-", UnitGUID("npc") or ""));
+	local npcGUID = UnitGUID("npc");
+	if issecretvalue(npcGUID) then return ""; end -- can't retrieve the ID from the GUID if it's secret
+
+	local npcId = select(6, strsplit("-", npcGUID or ""));
 	return npcId;
 end
 
