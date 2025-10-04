@@ -157,6 +157,7 @@ local function modelsLoaded()
 		mainFrame.debug.me:SetText(playerModel:GetModelFileIDAsString());
 	end
 
+	if not InCombatLockdown() then
 	AuraUtil.ForEachAura("player", "HELPFUL", 50,function(...)
 		local args = { ... }
 		local auraId = args[10]
@@ -166,6 +167,7 @@ local function modelsLoaded()
 
 		return false;
 	end)
+	end
 
 	mainFrame.debug.recorded:Hide();
 	if scalingLib:IsRecorded(playerModel:GetModelFileIDAsString(), targetModel:GetModelFileIDAsString()) then
