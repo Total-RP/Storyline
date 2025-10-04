@@ -103,7 +103,7 @@ local function getItemLevel(itemLink)
 		return 0
 	end
 	-- 7 for heirloom http://wowprogramming.com/docs/api_types#itemQuality
-	local invQuality, invLevel = select(3, GetItemInfo(itemLink));
+	local invQuality, invLevel = select(3, C_Item.GetItemInfo(itemLink));
 	return (invQuality == 7) and math.huge or invLevel;
 end
 
@@ -118,7 +118,7 @@ local function autoEquip(itemLink)
 	-- Hotfix for a weir bug introduced with world scaling in 7.3.5: some quests rewards doesn't have item link (Blizz please…)
 	if not itemLink then return end;
 
-	local name, _, _, lootLevel, _, _, _, _, equipSlot, _, _ = GetItemInfo(itemLink);
+	local name, _, _, lootLevel, _, _, _, _, equipSlot, _, _ = C_Item.GetItemInfo(itemLink);
 	log(("autoEquip %s on slot %s"):format(name, equipSlot));
 
 	-- First, determine if we should auto equip
@@ -163,10 +163,10 @@ local function autoEquip(itemLink)
 				for slot=1, GetContainerNumSlots(container) do
 					local link = GetContainerItemLink (container, slot);
 					if link then
-						local itemName = GetItemInfo(link);
+						local itemName = C_Item.GetItemInfo(link);
 						if itemName == name then
 							log(("Found and trying to auto equip %s"):format(itemName, equipOn));
-							EquipItemByName(name, equipOn);
+							C_Item.EquipItemByName(name, equipOn);
 							return;
 						end
 					end
