@@ -405,8 +405,6 @@ local function debugInit()
 
 	mainFrame.debug.dump.dump:SetScript("OnClick", function()
 		local info = string.format("[\"%s\"] = {\n", targetModel:GetModelFileIDAsString());
-		print(scalingLib.DEFAULT_PROPERTIES.scale)
-		print(mainFrame.models.you.scale)
 		if scalingLib.DEFAULT_PROPERTIES.scale ~= mainFrame.models.you.scale then
 			info = info .. string.format("[\"scale\"] = %s,\n", mainFrame.models.you.scale);
 		end
