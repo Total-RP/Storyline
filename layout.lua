@@ -116,6 +116,7 @@ end
 
 local addToLayoutEngine = function(frameName)
 	local frame = _G[frameName];
+	frame:SetScale(1);
 	frame:SetParent(UIParent);
 	local info = framesUILayoutEngineSettings[frameName];
 	if not info then return end
@@ -191,7 +192,8 @@ Storyline_API.layout.toggleStorylineFrame = toggleStorylineFrame;
 Storyline_API.layout.showDefaultFrames = function()
 	hideStorylineFrame();
 	for _, frame in pairs(defaultFramesWeWantToReplace) do
-		addToLayoutEngine(frame);
+		_G[frame]:SetScale(1);
+		--addToLayoutEngine(frame);
 	end
 end
 
@@ -204,8 +206,8 @@ end
 local hideDefaultFrames = function()
 	hideStorylineFrame();
 	for _, frame in pairs(defaultFramesWeWantToReplace) do
-		_G[frame]:Hide();
-		removeFrameFromUILayoutEngine(frame)
+		_G[frame]:SetScale(0.001);
+		--removeFrameFromUILayoutEngine(frame)
 	end
 end
 Storyline_API.layout.hideDefaultFrames = hideDefaultFrames;
