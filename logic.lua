@@ -192,6 +192,21 @@ local function animateInModels()
 	alphaTransitionator:RunValue(0, 1, 0.5, setModelsAlpha)
 end
 
+function Storyline_API.CheckUnitValidity(unitType, checkIfAlive)
+	local isValidUnit = true;
+	if not UnitExists(unitType) then
+		isValidUnit = false;
+	elseif checkIfAlive and UnitIsDead(unitType) then
+		isValidUnit = false;
+	else
+		local isUnitPlayer = UnitIsUnit("player", unitType);
+		if not issecretvalue(isUnitPlayer) and isUnitPlayer then
+			isValidUnit = false;
+		end
+	end
+	return isValidUnit;
+end
+
 ---@type StorylineBackgroundTexture
 local background = mainFrame.Background
 ---
@@ -250,7 +265,7 @@ function Storyline_API.startDialog(targetType, fullText, event, eventInfo)
 
 	-- Load unit in the right model
 	local targetModelLoading;
-	if UnitExists(targetType) and not UnitIsUnit("player", "npc") then
+	if Storyline_API.CheckUnitValidity(targetType) then
 		targetModelLoading = targetModel:SetModelUnit(targetType, false);
 	else
 		targetModelLoading = targetModel:SetModelUnit("none", false);

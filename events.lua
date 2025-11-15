@@ -449,9 +449,9 @@ local function playText(textIndex, targetModel)
 	Storyline_NPCFrameChatText:SetTextColor(ChatTypeInfo["MONSTER_SAY"].r, ChatTypeInfo["MONSTER_SAY"].g, ChatTypeInfo["MONSTER_SAY"].b);
 
 	local stillEmote = Storyline_NPCFrameChat.stillEmote[textIndex];
-	if text:byte() == 60 or not UnitExists("npc") or UnitIsUnit("player", "npc") or UnitIsDead("npc") or stillEmote then -- Emote if begins with <
+	if text:byte() == 60 or not Storyline_API.CheckUnitValidity("npc", true) or stillEmote then -- Emote if begins with <
 		-- Blizzard is now coloring part of the text in some cases.
-	    -- We will look for colosing color tags and add an opening color tag for our color right after it
+	    -- We will look for closing color tags and add an opening color tag for our color right after it
 		local colorCodeStart = EMOTE_COLOR:GetColorCodeStartSequence();
 		local displayedText = text:gsub("|r", "|r" .. colorCodeStart)
 		displayedText = displayedText:gsub("<", colorCodeStart .. "<");
