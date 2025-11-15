@@ -440,7 +440,11 @@ local function debugInit()
 
 	-- Debug for scaling
 	Storyline_API.addon:RegisterChatCommand("storydebug", function()
-		Storyline_API.startDialog("target", "Pouic", "SCALING_DEBUG", Storyline_API.EVENT_INFO.SCALING_DEBUG);
+		local eventInfo = {
+			text = function() return "Debug Text" end,
+			titleGetter = function() return "Debug Title" end
+		};
+		Storyline_API.startDialog("target", "Pouic", "SCALING_DEBUG", eventInfo);
 	end);
 
 	setTooltipAll(Storyline_NPCFrameDebugMeResetButton, "TOP", 0, 0, "Reset values for these models"); -- Debug, not localized
