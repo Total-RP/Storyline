@@ -158,15 +158,15 @@ local function modelsLoaded()
 	end
 
 	if not InCombatLockdown() then
-	AuraUtil.ForEachAura("player", "HELPFUL", 50,function(...)
-		local args = { ... }
-		local auraId = args[10]
-		if AURA_TO_DISPLAY_KIT[auraId] then
-			playerModel:ApplySpellVisualKit(AURA_TO_DISPLAY_KIT[auraId], false)
-		end
+		AuraUtil.ForEachAura("player", "HELPFUL", 50,function(...)
+			local args = { ... }
+			local auraId = args[10]
+			if AURA_TO_DISPLAY_KIT[auraId] then
+				playerModel:ApplySpellVisualKit(AURA_TO_DISPLAY_KIT[auraId], false)
+			end
 
-		return false;
-	end)
+			return false;
+		end)
 	end
 
 	mainFrame.debug.recorded:Hide();
