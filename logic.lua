@@ -200,7 +200,7 @@ function Storyline_API.CheckUnitValidity(unitType, checkIfAlive)
 		isValidUnit = false;
 	else
 		local isUnitPlayer = UnitIsUnit("player", unitType);
-		if not issecretvalue(isUnitPlayer) and isUnitPlayer then
+		if canaccessvalue(isUnitPlayer) and isUnitPlayer then
 			isValidUnit = false;
 		end
 	end
@@ -232,7 +232,7 @@ function Storyline_API.startDialog(targetType, fullText, event, eventInfo)
 	else
 		local targetName = UnitName(targetType)
 		-- if it's a secret value we can't fix it so whatever
-		if issecretvalue(targetName) == false then
+		if canaccessvalue(targetName) then
 			if (not targetName or targetName:len() > 0 or targetName ~= UNKNOWN) and eventInfo.nameGetter and eventInfo.nameGetter() then
 				targetName = eventInfo.nameGetter()
 			end
@@ -493,7 +493,7 @@ Storyline_API.addon = LibStub("AceAddon-3.0"):NewAddon("Storyline", "AceConsole-
 ---@return string Returns the NPC ID of the current "npc" unit
 function Storyline_API.getNpcId()
 	local npcGUID = UnitGUID("npc");
-	if issecretvalue(npcGUID) then return ""; end -- can't retrieve the ID from the GUID if it's secret
+	if not canaccessvalue(npcGUID) then return ""; end -- can't retrieve the ID from the GUID if it's secret
 
 	local npcId = select(6, strsplit("-", npcGUID or ""));
 	return npcId;
