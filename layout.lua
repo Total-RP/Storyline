@@ -102,33 +102,6 @@ Storyline_API.layout.unregisterFromUILayoutEngine = unregisterFromUILayoutEngine
 
 local framesUILayoutEngineSettings = {};
 
-local removeFrameFromUILayoutEngine = function(frameName)
-	local frame = _G[frameName];
-	frame:SetParent(hiddenFrames);
-	local info = UIPanelWindows[frameName];
-	if not info then return end
-
-	framesUILayoutEngineSettings[frameName] = info;
-
-	frame:SetAttribute("UIPanelLayout-defined", false);
-	UIPanelWindows[frameName] = nil;
-end
-
-local addToLayoutEngine = function(frameName)
-	local frame = _G[frameName];
-	frame:SetScale(1);
-	frame:SetParent(UIParent);
-	local info = framesUILayoutEngineSettings[frameName];
-	if not info then return end
-
-	UIPanelWindows[frameName] = info;
-
-	frame:SetAttribute("UIPanelLayout-defined", true);
-	for name, value in pairs(UIPanelWindows[frameName]) do
-		frame:SetAttribute("UIPanelLayout-" .. name, value);
-	end
-end
-
 ---
 -- The quest reward frame is somehow decoupled from the quest frame
 -- and is still shown out of the frame.
@@ -193,7 +166,6 @@ Storyline_API.layout.showDefaultFrames = function()
 	hideStorylineFrame();
 	for _, frame in pairs(defaultFramesWeWantToReplace) do
 		_G[frame]:SetScale(1);
-		--addToLayoutEngine(frame);
 	end
 end
 
@@ -207,7 +179,6 @@ local hideDefaultFrames = function()
 	hideStorylineFrame();
 	for _, frame in pairs(defaultFramesWeWantToReplace) do
 		_G[frame]:SetScale(0.001);
-		--removeFrameFromUILayoutEngine(frame)
 	end
 end
 Storyline_API.layout.hideDefaultFrames = hideDefaultFrames;

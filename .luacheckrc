@@ -49,6 +49,10 @@ stds.wow = {
                 "IsCampaignQuest",
             },
         },
+        C_Container = {
+            "GetContainerItemLink",
+            "GetContainerNumSlots",
+        },
         C_Garrison = {
             fields = {
                 "GetFollowerInfo",
@@ -66,6 +70,10 @@ stds.wow = {
                 "SelectAvailableQuest",
                 "SelectOption",
             },
+        },
+        C_Item = {
+            "EquipItemByName",
+            "GetItemInfo",
         },
         C_MajorFactions = {
             fields = {
@@ -87,6 +95,7 @@ stds.wow = {
         },
         C_QuestInfoSystem = {
             fields = {
+                "GetQuestClassification",
                 "GetQuestRewardCurrencies",
                 "GetQuestRewardSpells",
                 "GetQuestRewardSpellInfo",
@@ -106,6 +115,11 @@ stds.wow = {
             fields = {
                 "GetQuestOfferMajorFactionReputationRewards",
                 "GetQuestRequiredCurrencyInfo",
+            },
+        },
+        C_SpellBook = {
+            fields = {
+                "IsSpellInSpellBook",
             },
         },
         C_Texture = {
@@ -164,6 +178,7 @@ stds.wow = {
         "AcceptQuest",
         "AcknowledgeAutoAcceptQuest",
         "BreakUpLargeNumbers",
+        "canaccessvalue",
         "CloseQuest",
         "CompleteQuest",
         "CreateColor",

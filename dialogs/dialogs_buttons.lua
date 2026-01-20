@@ -116,8 +116,8 @@ local BUTTON_API = {
 		if bindingIndex then
 			-- Set number texture
 			local iconIndex = bindingIndex - 1;
-			local yOffset = 0.5 + floor(iconIndex / 8) * 0.125;
-			local xOffset = mod(iconIndex, 8) * 0.125;
+			local yOffset = 0.5 + math.floor(iconIndex / 8) * 0.125;
+			local xOffset = math.fmod(iconIndex, 8) * 0.125;
 
 			button.binding.Display.Icon:SetTexture("Interface/WorldMap/UI-QuestPoi-NumberIcons");
 			button.binding.Display.Icon:SetTexCoord(xOffset, xOffset + 0.125, yOffset, yOffset + 0.125);

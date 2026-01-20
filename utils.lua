@@ -24,7 +24,7 @@ local getId = Storyline_API.lib.generateID;
 local Logger = Ellyb.Logger("Storyline debug");
 
 -- WOW API
-local tostring, print = tostring, print;
+local tostring = tostring;
 
 ---
 -- I am using this little local function because I always forget a print or two :P
