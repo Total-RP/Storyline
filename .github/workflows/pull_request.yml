@@ -23,7 +23,7 @@ jobs:
         with:
           args: -d -z
 
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v4
         with:
           name: Storyline-PR-${{ github.event.number }}
           path: .release/
