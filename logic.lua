@@ -200,7 +200,7 @@ function Storyline_API.CheckUnitValidity(unitType, checkIfAlive)
 		isValidUnit = false;
 	else
 		local isUnitPlayer = UnitIsUnit("player", unitType);
-		if canaccessvalue(isUnitPlayer) and isUnitPlayer then
+		if isUnitPlayer then
 			isValidUnit = false;
 		end
 	end
