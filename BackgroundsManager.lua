@@ -502,7 +502,6 @@ local EXCEPTION_QUESTS = {
 
 function StorylineBackgroundTexture:OnLoad()
     self.dimmingLayer:SetVertexColor(0.7, 0.7, 0.7, 1)
-    self.SealText:SetFontObjectsToTry("QuestFont_Huge", "QuestFont_Large", "Fancy14Font", "Fancy12Font");
 end
 
 function StorylineBackgroundTexture:RefreshBackground()
