@@ -115,7 +115,7 @@
 					</Layer>
 					<Layer level="ARTWORK">
 						<Texture parentKey="SealTexture" atlas="Quest-Alliance-WaxSeal" useAtlasSize="true" />
-						<FontString parentKey="SealText" inherits="QuestFont_Huge" mixin="ShrinkUntilTruncateFontStringMixin" justifyH="LEFT">
+						<FontString parentKey="SealText" inherits="QuestFont_Huge" mixin="AutoScalingFontStringMixin" justifyH="LEFT">
 							<Size x="160" y="44"/>
 						</FontString>
 					</Layer>
