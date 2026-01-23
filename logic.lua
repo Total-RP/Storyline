@@ -787,5 +787,5 @@ function Storyline_API.addon.OnEnable()
 end
 
 function Storyline_API.openSettings()
-	Settings.OpenToCategory("Storyline");
+	Settings.OpenToCategory(Storyline_API.options.getCategory():GetID());
 end

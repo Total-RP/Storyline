@@ -128,15 +128,19 @@ local function decorateTextTemplateOptions(title, optionKey, defaultTextOptions,
 	callback(Storyline_Data.config[optionKey]);
 end
 
+local settingsCategory;
+Storyline_API.options.getCategory = function()
+	return settingsCategory;
+end
+
 Storyline_API.options.init = function()
 
-	local mainCategory = Settings.RegisterCanvasLayoutCategory(StorylineOptionsPanel, "Storyline", "Storyline");
-	mainCategory.ID = "Storyline";
-	Settings.RegisterAddOnCategory(mainCategory);
+	settingsCategory = Settings.RegisterCanvasLayoutCategory(StorylineOptionsPanel, "Storyline", "Storyline");
+	Settings.RegisterAddOnCategory(settingsCategory);
 
-	local subCategoryTextOptions = Settings.RegisterCanvasLayoutSubcategory(mainCategory, StorylineTextOptionsPanel, "Text options", "Text options");
+	local subCategoryTextOptions = Settings.RegisterCanvasLayoutSubcategory(settingsCategory, StorylineTextOptionsPanel, "Text options", "Text options");
 	subCategoryTextOptions.ID = "Text options";
-	local subCategoryMiscOptions = Settings.RegisterCanvasLayoutSubcategory(mainCategory, StorylineMiscellaneousOptionsPanel, "Miscellaneous options", "Miscellaneous options");
+	local subCategoryMiscOptions = Settings.RegisterCanvasLayoutSubcategory(settingsCategory, StorylineMiscellaneousOptionsPanel, "Miscellaneous options", "Miscellaneous options");
 	subCategoryMiscOptions.ID = "Miscellaneous options";
 
 	-- Options main panel
