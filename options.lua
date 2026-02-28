@@ -63,7 +63,14 @@ local function decorateTextOptions(title, optionKey, affectedText)
 		affectedText:SetFont(font, scale, outline);
 		StorylineTextOptionsPanel[optionKey].TextSample:SetFont(font, scale, outline);
 		Storyline_Data.config[optionKey].Size = scale;
-		Storyline_NPCFrameChat:SetHeight(Storyline_NPCFrameChatText:GetHeight() + Storyline_NPCFrameChatName:GetHeight() + Storyline_NPCFrameChatNextText:GetHeight() + 50);
+
+		-- Name can be secret, just use font size if that happens
+		local nameHeight = Storyline_NPCFrameChatName:GetHeight();
+		if issecretvalue(nameHeight) then
+			nameHeight = Storyline_Data.config["NPCName"].Size;
+		end
+
+		Storyline_NPCFrameChat:SetHeight(Storyline_NPCFrameChatText:GetHeight() + nameHeight + Storyline_NPCFrameChatNextText:GetHeight() + 50);
 	end);
 	StorylineTextOptionsPanel[optionKey].SizeSlider:SetValue(Storyline_Data.config[optionKey].Size or select(2, affectedText:GetFont()));
 

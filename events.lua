@@ -488,7 +488,13 @@ local function playText(textIndex, targetModel)
 
 	handleEventSpecifics(Storyline_NPCFrameChat.event, Storyline_NPCFrameChat.texts, textIndex, Storyline_NPCFrameChat.eventInfo);
 
-	Storyline_NPCFrameChat:SetHeight(Storyline_NPCFrameChatText:GetHeight() + Storyline_NPCFrameChatName:GetHeight() + Storyline_NPCFrameChatNextText:GetHeight() + 50);
+	-- Name can be secret, just use font size if that happens
+	local nameHeight = Storyline_NPCFrameChatName:GetHeight();
+	if issecretvalue(nameHeight) then
+		nameHeight = Storyline_Data.config["NPCName"].Size;
+	end
+
+	Storyline_NPCFrameChat:SetHeight(Storyline_NPCFrameChatText:GetHeight() + nameHeight + Storyline_NPCFrameChatNextText:GetHeight() + 50);
 end
 
 ---@param targetModel Storyline_PlayerModelMixin
