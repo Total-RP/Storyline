@@ -17,11 +17,24 @@
 --	limitations under the License.
 ----------------------------------------------------------------------------------
 
----@class Storyline_API
-Storyline_API = {
-	lib = {},
-	locale = {},
-};
+_G.Storyline_API = select(2, ...);
+
+local EventFrame = CreateFrame("Frame")
+local EventCallbacks = {};
+function Storyline_API.registerCallback(event, callback)
+	EventFrame:RegisterEvent(event)
+	EventCallbacks[event] = callback
+end
+
+function EventFrame:OnEvent(event, ...)
+	if EventCallbacks[event] then
+		EventCallbacks[event](...)
+	end
+end
+EventFrame:SetScript("OnEvent", EventFrame.OnEvent)
+
+Storyline_API.lib = {};
+Storyline_API.locale = {};
 
 STORYLINE_BACKDROP_MIXED_DIALOG_TOOLTIP_400_24_5555 = {
 	bgFile   = "Interface\\DialogFrame\\UI-DialogBox-Background",

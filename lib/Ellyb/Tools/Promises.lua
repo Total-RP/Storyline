@@ -1,5 +1,5 @@
----@type Ellyb
-local Ellyb = Ellyb:GetInstance(...);
+local Storyline_API = select(2, ...);
+local Ellyb = Storyline_API.Ellyb;
 
 --- Helpers to handle one or more promises
 local Promises = {};

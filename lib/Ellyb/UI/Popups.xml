@@ -1,6 +1,9 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/">
 
-	<Frame name="Ellyb_StaticPopOpenUrl" hidden="true" parent="UIParent" frameStrata="FULLSCREEN_DIALOG">
+	<Frame name="Ellyb_StaticPopOpenUrl" hidden="true" parent="UIParent" inherits="BackdropTemplate" frameStrata="FULLSCREEN_DIALOG">
+		<KeyValues>
+			<KeyValue key="backdropInfo" value="BACKDROP_DIALOG_32_32" type="global"/>
+		</KeyValues>
 		<Anchors>
 			<Anchor point="CENTER" y="30" />
 		</Anchors>
@@ -20,9 +23,7 @@
 			<Button parentKey="CloseButton" inherits="UIPanelCloseButton">
 				<Anchors>
 					<Anchor point="TOPRIGHT">
-						<Offset>
-							<AbsDimension x="-3" y="-3" />
-						</Offset>
+						<Offset x="-3" y="-3"/>
 					</Anchor>
 				</Anchors>
 			</Button>
@@ -36,35 +37,25 @@
 				<Layers>
 					<Layer level="BACKGROUND">
 						<Texture parentKey="Left" file="Interface\ChatFrame\UI-ChatInputBorder-Left2">
-							<Size>
-								<AbsDimension x="32" y="32" />
-							</Size>
+							<Size x="32" y="32"/>
 							<Anchors>
 								<Anchor point="LEFT" x="-10" y="0" />
 							</Anchors>
 						</Texture>
 						<Texture parentKey="Right" file="Interface\ChatFrame\UI-ChatInputBorder-Right2">
-							<Size>
-								<AbsDimension x="32" y="32" />
-							</Size>
+							<Size x="32" y="32"/>
 							<Anchors>
 								<Anchor point="RIGHT" x="10" y="0" />
 							</Anchors>
 						</Texture>
 						<Texture parentKey="Mid" file="Interface\ChatFrame\UI-ChatInputBorder-Mid2" horizTile="true">
-							<Size>
-								<AbsDimension x="0" y="32" />
-							</Size>
+							<Size x="0" y="32"/>
 							<Anchors>
 								<Anchor point="TOPLEFT" relativeKey="$parent.Left" relativePoint="TOPRIGHT">
-									<Offset>
-										<AbsDimension x="0" y="0" />
-									</Offset>
+									<Offset x="0" y="0"/>
 								</Anchor>
 								<Anchor point="TOPRIGHT" relativeKey="$parent.Right" relativePoint="TOPLEFT">
-									<Offset>
-										<AbsDimension x="0" y="0" />
-									</Offset>
+									<Offset x="0" y="0"/>
 								</Anchor>
 							</Anchors>
 						</Texture>
@@ -106,30 +97,6 @@
 				</Scripts>
 			</Button>
 		</Frames>
-		<Scripts>
-			<OnLoad>
-				-- 9.x: Set backdrop at load time as the XML Backdrop element
-				--      is no longer supported. A mixin could be used, but
-				--      this is the simplest case for now that should work
-				--      on all clients.
-
-				if BackdropTemplateMixin then
-					Mixin(self, BackdropTemplateMixin);
-					self:SetScript("OnSizeChanged", self.OnBackdropSizeChanged);
-					BackdropTemplateMixin.OnBackdropLoaded(self);
-				end
-
-				self:SetBackdrop(BACKDROP_DIALOG_32_32 or {
-					bgFile = "Interface\\DialogFrame\\UI-DialogBox-Background",
-					edgeFile = "Interface\\DialogFrame\\UI-DialogBox-Border",
-					tile = true,
-					tileEdge = true,
-					tileSize = 32,
-					edgeSize = 32,
-					insets = { left = 11, right = 12, top = 12, bottom = 11 },
-				});
-			</OnLoad>
-		</Scripts>
 	</Frame>
 
 	<Script file="Popups.lua"/>

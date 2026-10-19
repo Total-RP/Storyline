@@ -1,5 +1,5 @@
----@type Ellyb
-local Ellyb = Ellyb(...);
+local Storyline_API = select(2, ...);
+local Ellyb = Storyline_API.Ellyb;
 
 if Ellyb.EditBoxes then
 	return
@@ -36,12 +36,12 @@ end
 
 ---@param editBox EditBox|ScriptObject
 function EditBoxes.selectAllTextOnFocus(editBox)
-	editBox:HookScript("OnEditFocusGained", editBox.HighlightText);
+	editBox:HookScript("OnEditFocusGained", function(self) self:HighlightText(); end);
 end
 
 ---@param editBox EditBox|ScriptObject
 function EditBoxes.looseFocusOnEscape(editBox)
-	editBox:HookScript("OnEscapePressed", editBox.ClearFocus);
+	editBox:HookScript("OnEscapePressed", function(self) self:ClearFocus(); end);
 end
 
 --- Mixin for edit boxes that will handle serialized data.
@@ -69,7 +69,7 @@ function EditBoxes.setupTabKeyNavigation(...)
 	for index, editbox in ipairs(editBoxes) do
 		editbox:HookScript("OnTabPressed", function()
 			local nextEditBoxIndex = index + (IsShiftKeyDown() and -1 or 1)
-			Ellyb.Maths.wrap(nextEditBoxIndex, #editBoxes)
+			Wrap(nextEditBoxIndex, #editBoxes)
 			editBoxes[nextEditBoxIndex]:SetFocus();
 		end)
 	end

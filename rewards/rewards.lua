@@ -21,7 +21,7 @@
 --- Rewards getters
 ---------------------------------------------
 
-local Ellyb = Ellyb(...);
+local Ellyb = Storyline_API.Ellyb;
 
 Storyline_API.rewards = {};
 local API = Storyline_API.rewards;
@@ -271,7 +271,7 @@ local REWARD_GETTERS = {
 					type  = "reputation",
 					rewardType = "reward",
 					tooltipTitle = rewardText,
-					tooltipSub = Ellyb.ColorManager.YELLOW(rewardTooltip)
+					tooltipSub = WrapTextInColor(rewardTooltip, NORMAL_FONT_COLOR)
 				});
 			end
 			return rewards;

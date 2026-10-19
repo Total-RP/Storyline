@@ -1,5 +1,5 @@
----@type Ellyb
-local Ellyb = Ellyb(...);
+local Storyline_API = select(2, ...);
+local Ellyb = Storyline_API.Ellyb;
 
 ---@class Ellyb_Locale
 local Locale = Ellyb.Class("Locale");
@@ -79,4 +79,8 @@ end
 ---@return boolean
 function Locale:LocalizationKeyExists(localizationKey)
 	return self:GetText(localizationKey) ~= nil;
+end
+
+function Locale:EnumerateTexts()
+	return pairs(private[self].content);
 end

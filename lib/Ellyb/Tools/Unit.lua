@@ -1,5 +1,5 @@
----@type Ellyb
-local Ellyb = Ellyb(...);
+local Storyline_API = select(2, ...);
+local Ellyb = Storyline_API.Ellyb;
 
 if Ellyb.Unit then
 	return
@@ -7,11 +7,9 @@ end
 
 -- WoW imports
 local UnitGUID = UnitGUID;
-local UnitIsPlayer = UnitIsPlayer;
 local UnitVehicleSeatCount = UnitVehicleSeatCount;
 local UnitExists = UnitExists;
 local UnitCanAttack = UnitCanAttack;
-local UnitFullName = UnitFullName;
 local UnitInParty = UnitInParty;
 local UnitInRaid = UnitInRaid;
 local strsplit = strsplit;
@@ -46,24 +44,12 @@ end
 
 ---@return string unitID @ Returns the unit ID in the format PlayerName-ServerName
 function Unit:GetUnitID()
-	local playerName, realm = UnitFullName(_private[self].rawUnitID);
-	if not playerName or playerName:len() == 0 or playerName == UNKNOWNOBJECT then
-		return nil;
-	end
-	if not realm then
-		local _, playerRealmName = UnitFullName("player");
-		realm = playerRealmName;
-	end
-	if not realm then
-		return playerName;
-	else
-		return playerName .. "-" .. realm;
-	end
+	return TRP3_NameUtil.GetQualifiedName(_private[self].rawUnitID);
 end
 
 ---@return boolean unitIsPlayer @ Returns true if the unit is a player, false if it is an NPC
 function Unit:IsPlayer()
-	return UnitIsPlayer(_private[self].rawUnitID)
+	return UnitIsHumanPlayer(_private[self].rawUnitID)
 end
 
 --- Check if the unit exists (useful for mouseover or target unit)
@@ -82,7 +68,7 @@ end
 --- Will always return false on Classic client, as no unit are mountable in patch 1.13
 --- @return boolean Returns true if the unit can be mounted
 function Unit:IsMountable()
-	if Ellyb.System:IsClassic() then
+	if not UnitVehicleSeatCount then
 		return false
 	end
 	return UnitVehicleSeatCount(_private[self].rawUnitID) and UnitVehicleSeatCount(_private[self].rawUnitID) > 0 and (UnitInParty(_private[self].rawUnitID) or UnitInRaid(_private[self].rawUnitID))

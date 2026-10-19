@@ -18,7 +18,7 @@
 ----------------------------------------------------------------------------------
 
 local animationLib = LibStub:GetLibrary("TRP-Dialog-Animation-DB");
-local Ellyb = Ellyb(...);
+local Ellyb = Storyline_API.Ellyb;
 
 -- Storyline API
 local configureHoverFrame = Storyline_API.lib.configureHoverFrame;
@@ -441,7 +441,7 @@ local function playText(textIndex, targetModel)
 	wipe(animTab);
 
 	if not EMOTE_COLOR then
-		EMOTE_COLOR = Ellyb.Color(ChatTypeInfo["MONSTER_EMOTE"]):Freeze()
+		EMOTE_COLOR = ChatTypeInfo["MONSTER_EMOTE"]
 	end
 
 	local text = Storyline_NPCFrameChat.texts[textIndex];
@@ -708,7 +708,7 @@ function Storyline_API.initEventsStructure()
     local storylineFrameShouldOpen = false;
 
 	for event, info in pairs(EVENT_INFO) do
-		Ellyb.GameEvents.registerCallback(event, function(...)
+		Storyline_API.registerCallback(event, function(...)
 
 			if event == "GOSSIP_SHOW" then
 				local textureId = ...;
@@ -753,17 +753,17 @@ function Storyline_API.initEventsStructure()
 		end);
 	end
 
-	Ellyb.GameEvents.registerCallback("UNIT_PORTRAIT_UPDATE", function(unit)
+	Storyline_API.registerCallback("UNIT_PORTRAIT_UPDATE", function(unit)
 		if unit == "player" and Storyline_NPCFrame:IsVisible() then
 			playerModel:SetModelUnit("player", false):Success(Storyline_API.onModelsLoaded);
 		end
 	end)
 
-	Ellyb.GameEvents.registerCallback("QUEST_ITEM_UPDATE", RewardsButtons.refreshButtons);
-    Ellyb.GameEvents.registerCallback("PLAYER_INTERACTION_MANAGER_FRAME_HIDE", function()
+	Storyline_API.registerCallback("QUEST_ITEM_UPDATE", RewardsButtons.refreshButtons);
+    Storyline_API.registerCallback("PLAYER_INTERACTION_MANAGER_FRAME_HIDE", function()
         storylineFrameShouldOpen = false;
     end);
-    Ellyb.GameEvents.registerCallback("PLAYER_INTERACTION_MANAGER_FRAME_SHOW", function(...)
+    Storyline_API.registerCallback("PLAYER_INTERACTION_MANAGER_FRAME_SHOW", function(...)
 		local playerInteractionType = ...;
 		if playerInteractionType ~= Enum.PlayerInteractionType.Gossip then
 			storylineFrameShouldOpen = false;
@@ -809,8 +809,8 @@ function Storyline_API.initEventsStructure()
 	Storyline_API.Tutorials.register("RewardChoice", {
 		{
 			text = loc("TUTORIAL_REWARD_CHOICES"):format(
-				Ellyb.System:FormatKeyboardShortcut(Ellyb.System.MODIFIERS.CTRL, Ellyb.System.CLICKS.CLICK),
-				Ellyb.System:FormatKeyboardShortcut(Ellyb.System.MODIFIERS.SHIFT, Ellyb.System.CLICKS.CLICK)
+				IsMacClient() and "Command" or "Ctrl" .. "-Click",
+				"Shift-Click"
 			),
 			point = 'LEFT',
 			relPoint = 'RIGHT',

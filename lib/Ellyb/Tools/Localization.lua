@@ -1,5 +1,5 @@
----@type Ellyb
-local Ellyb = Ellyb(...);
+local Storyline_API = select(2, ...);
+local Ellyb = Storyline_API.Ellyb;
 
 -- We will remember if the locale is French or not, as French has some special cases we need to handle
 -- local IS_FRENCH_LOCALE = _G.GetLocale() == "frFR";
@@ -143,4 +143,8 @@ function Localization:GetText(localizationKey)
 		(self:GetLocale(DEFAULT_LOCALE_CODE) and self:GetLocale(DEFAULT_LOCALE_CODE):GetText(localizationKey)) or -- Look in the English locale from Curse
 		self:GetDefaultLocale():GetText(localizationKey) or -- Look in the default locale
 		localizationKey; -- As a last resort, to avoid nil strings, return the key itself
+end
+
+function Localization:EnumerateTexts()
+	return self:GetActiveLocale():EnumerateTexts();
 end

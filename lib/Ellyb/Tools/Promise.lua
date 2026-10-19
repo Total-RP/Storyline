@@ -1,5 +1,5 @@
----@type Ellyb
-local Ellyb = Ellyb(...);
+local Storyline_API = select(2, ...);
+local Ellyb = Storyline_API.Ellyb;
 
 ---@class Promise : MiddleClass_Class
 local Promise= Ellyb.Class("Promise");

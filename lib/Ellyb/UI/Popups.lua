@@ -1,12 +1,9 @@
----@type Ellyb
-local Ellyb = Ellyb(...);
+local Storyline_API = select(2, ...);
+local Ellyb = Storyline_API.Ellyb;
 
 if Ellyb.Popups then
 	return
 end
-
--- Ellyb imports
-local ORANGE = Ellyb.ColorManager.ORANGE;
 
 local Popups = {};
 Ellyb.Popups = Popups;
@@ -22,10 +19,18 @@ Ellyb.EditBoxes.looseFocusOnEscape(URLPopup.Url);
 _G["Ellyb_StaticPopOpenUrl"] = nil;
 
 local function dismissPopup()
-	HideUIPanel(URLPopup);
+	URLPopup:Hide();
 end
 URLPopup.Url:HookScript("OnEnterPressed", dismissPopup);
 URLPopup.Url:HookScript("OnEscapePressed", dismissPopup);
+URLPopup.Url:HookScript("OnKeyDown", function(_, key)
+	if key == "C" and IsControlKeyDown() then
+		local systemInfo = ChatTypeInfo["SYSTEM"];
+		UIErrorsFrame:AddMessage(URLPopup.alertMessage, systemInfo.r, systemInfo.g, systemInfo.b);
+		PlaySound(TRP3_InterfaceSounds.PopupClose);
+		dismissPopup();
+	end
+end);
 
 --- Open a popup with an autofocused text field to let the user copy the URL
 ---@param url string The URL we want to let the user copy
@@ -33,14 +38,22 @@ URLPopup.Url:HookScript("OnEscapePressed", dismissPopup);
 ---@param customShortcutInstructions string A custom text for the copy and paste shortcut instructions.
 ---@overload fun(url: string)
 ---@overload fun(url: string, customText: string)
-function Popups:OpenURL(url, customText, customShortcutInstructions)
+function Popups:OpenURL(url, customText, customShortcutInstructions, customAlertOnClose)
 	local popupText = customText and (customText .. "\n\n") or "";
 	if not customShortcutInstructions then
-		customShortcutInstructions = Ellyb.loc.COPY_URL_POPUP_TEXT;
+		customShortcutInstructions = Storyline_API.loc.COPY_URL_POPUP_TEXT;
 	end
-	popupText = popupText .. customShortcutInstructions:format(ORANGE(Ellyb.System.SHORTCUTS.COPY), ORANGE(Ellyb.System.SHORTCUTS.PASTE));
+
+	local copyShortcut = Storyline_API.FormatShortcut("CTRL-C", Storyline_API.ShortcutType.System);
+	local pasteShortcut = Storyline_API.FormatShortcut("CTRL-V", Storyline_API.ShortcutType.System);
+
+	popupText = popupText .. customShortcutInstructions:format(Storyline_API.Colors.Green(copyShortcut), Storyline_API.Colors.Green(pasteShortcut));
 	URLPopup.Text:SetText(popupText);
 	URLPopup.Url:SetText(url);
+	if not customAlertOnClose then
+		customAlertOnClose = Storyline_API.loc.COPY_SYSTEM_MESSAGE;
+	end
+	URLPopup.alertMessage = customAlertOnClose;
 	URLPopup:SetHeight(120 + URLPopup.Text:GetHeight());
 	URLPopup:Show();
 end

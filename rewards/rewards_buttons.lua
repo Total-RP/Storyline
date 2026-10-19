@@ -20,7 +20,7 @@
 -- limitations under the License.
 ----------------------------------------------------------------------------------
 
-local Ellyb = Ellyb(...)
+local Ellyb = Storyline_API.Ellyb
 
 local assert, tinsert, pairs = assert, tinsert, pairs;
 local CreateFrame = CreateFrame;
@@ -69,7 +69,7 @@ local function decorateCurrencyButton(button, index, type, texture, name, numIte
 	button.Icon:SetTexture(texture);
 	button.Name:SetText(name);
 	button.Count:SetText(numItems > 1 and numItems or "");
-	local currencyColor = currencyID and numItems and GetColorForCurrencyReward(currencyID, numItems) or Ellyb.ColorManager.WHITE
+	local currencyColor = currencyID and numItems and GetColorForCurrencyReward(currencyID, numItems) or WHITE_FONT_COLOR
 	button.Count:SetTextColor(currencyColor:GetRGB());
 	SetItemButtonQuality(button, quality, currencyID);
 	button:SetScript("OnEnter", function(self)

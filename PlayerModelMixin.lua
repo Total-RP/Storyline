@@ -1,5 +1,4 @@
-local Ellyb = Ellyb(...);
-
+local Ellyb = Storyline_API.Ellyb;
 local Promise = Ellyb.Promise;
 local After = C_Timer.After;
 local pop = table.remove;
@@ -46,10 +45,10 @@ function Storyline_PlayerModelMixin:OnLoad()
 	self.idleAnimationID = ANIMATIONS.STANDING;
 
 	-- Create a callback-able function of the OnAnimFinished method bound to self, so we can call it manually
-	self.bindedOnAnimFinished = Ellyb.Functions.bind(self.OnAnimFinished, self);
-	self.boundSetModelHeight = Ellyb.Functions.bind(self.SetModelHeight, self);
-	self.boundSetModelOffset = Ellyb.Functions.bind(self.SetModelOffset, self);
-	self.boundSetModelFeet = Ellyb.Functions.bind(self.SetModelFeet, self);
+	self.bindedOnAnimFinished = GenerateClosure(self.OnAnimFinished, self);
+	self.boundSetModelHeight = GenerateClosure(self.SetModelHeight, self);
+	self.boundSetModelOffset = GenerateClosure(self.SetModelOffset, self);
+	self.boundSetModelFeet = GenerateClosure(self.SetModelFeet, self);
 
 	self.modelHeightTransitionator = Ellyb.Transitionator();
 	self.modelFeetTransitionator = Ellyb.Transitionator();

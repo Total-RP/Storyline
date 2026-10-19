@@ -20,7 +20,7 @@ local ShowUIPanel = ShowUIPanel;
 local HideUIPanel = HideUIPanel;
 
 local Storyline_NPCFrame = Storyline_NPCFrame;
-
+local Ellyb = Storyline_API.Ellyb;
 
 local defaultFramesWeWantToReplace = {
 	"QuestFrame",
@@ -183,7 +183,7 @@ local hideDefaultFrames = function()
 end
 Storyline_API.layout.hideDefaultFrames = hideDefaultFrames;
 
-Ellyb.GameEvents.registerCallback("PLAYER_ENTERING_WORLD", function()
+Storyline_API.registerCallback("PLAYER_ENTERING_WORLD", function()
 	if Storyline_Data.config.hideOriginalFrames then
 		Storyline_API.layout.hideDefaultFrames();
 		if Storyline_Data.config.disableInInstances then

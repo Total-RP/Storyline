@@ -16,7 +16,7 @@
 -- See the License for the specific language governing permissions and
 -- limitations under the License.
 ----------------------------------------------------------------------------------
-local Ellyb = Ellyb(...);
+local Ellyb = Storyline_API.Ellyb;
 
 -- Storyline API
 local setTooltipAll = Storyline_API.lib.setTooltipAll;
@@ -724,16 +724,16 @@ function Storyline_API.addon.OnEnable()
 	Storyline_API.initEventsStructure();
 
 	-- Closing
-	Ellyb.GameEvents.registerCallback("PLAYER_INTERACTION_MANAGER_FRAME_HIDE", function()
+	Storyline_API.registerCallback("PLAYER_INTERACTION_MANAGER_FRAME_HIDE", function()
 		hideStorylineFrame();
 	end);
-	Ellyb.GameEvents.registerCallback("PLAYER_INTERACTION_MANAGER_FRAME_SHOW", function(...)
+	Storyline_API.registerCallback("PLAYER_INTERACTION_MANAGER_FRAME_SHOW", function(...)
 		local playerInteractionType = ...;
 		if playerInteractionType ~= Enum.PlayerInteractionType.Gossip then
 			hideStorylineFrame();
 		end
 	end);
-	Ellyb.GameEvents.registerCallback("QUEST_FINISHED", function()
+	Storyline_API.registerCallback("QUEST_FINISHED", function()
 		hideStorylineFrame();
 	end);
 
