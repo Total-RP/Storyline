@@ -1,12 +1,7 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/">
 
-	<Script file="Assertions.lua"/>
 	<Script file="Promise.lua"/>
 	<Script file="Promises.lua"/>
 	<Script file="Transitionators.lua"/>
-	<Script file="Locale.lua"/>
-	<Script file="Localization.lua"/>
-	<Script file="Strings\Strings.lua"/>
-	<Script file="Unit.lua"/>
 
 </Ui>

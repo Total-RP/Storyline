@@ -5,7 +5,4 @@
 	<Include file="Internals\Internals.xml" />
 	<Include file="Tools\Tools.xml" />
 	<Include file="UI\UI.xml" />
-
-	<Script file="Textures\Texture.lua" />
-	<Script file="Tools\Icon.lua" />
 </Ui>
