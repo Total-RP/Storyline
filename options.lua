@@ -115,7 +115,8 @@ local function decorateTextTemplateOptions(title, optionKey, defaultTextOptions,
 	StorylineTextOptionsPanel[optionKey].SizeSlider:SetScript("OnValueChanged", function(self, scale)
 		_G["StorylineTextOptionsPanel" .. optionKey .. "SizeSliderText"]:SetText(scale);
 		Storyline_Data.config[optionKey].Size = scale;
-		StorylineTextOptionsPanel[optionKey].TextSample:SetFont(Storyline_Data.config[optionKey].Font, Storyline_Data.config[optionKey].Size, Storyline_Data.config[optionKey].Outline);
+		local font = Storyline_API.lib.getFontPath(Storyline_Data.config[optionKey].Font);
+		StorylineTextOptionsPanel[optionKey].TextSample:SetFont(font, Storyline_Data.config[optionKey].Size, Storyline_Data.config[optionKey].Outline);
 		callback(Storyline_Data.config[optionKey]);
 	end);
 	StorylineTextOptionsPanel[optionKey].SizeSlider:SetValue(Storyline_Data.config[optionKey].Size);
