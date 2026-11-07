@@ -1,4 +1,3 @@
-# Changelog for version 3.5.2
+# Changelog for version 3.5.3
 
-- Added support for Forever
-- Fixed font Lua error
+- Fixed an issue with NPC emotes in quest text.
