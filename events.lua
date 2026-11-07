@@ -18,7 +18,6 @@
 ----------------------------------------------------------------------------------
 
 local animationLib = LibStub:GetLibrary("TRP-Dialog-Animation-DB");
-local Ellyb = Storyline_API.Ellyb;
 
 -- Storyline API
 local configureHoverFrame = Storyline_API.lib.configureHoverFrame;
