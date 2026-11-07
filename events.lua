@@ -441,7 +441,8 @@ local function playText(textIndex, targetModel)
 	wipe(animTab);
 
 	if not EMOTE_COLOR then
-		EMOTE_COLOR = ChatTypeInfo["MONSTER_EMOTE"]
+		local monsterEmoteInfo = ChatTypeInfo["MONSTER_EMOTE"];
+		EMOTE_COLOR = CreateColor(monsterEmoteInfo.r, monsterEmoteInfo.g, monsterEmoteInfo.b);
 	end
 
 	local text = Storyline_NPCFrameChat.texts[textIndex];
@@ -452,13 +453,13 @@ local function playText(textIndex, targetModel)
 	if text:byte() == 60 or not Storyline_API.CheckUnitValidity("npc", true) or stillEmote then -- Emote if begins with <
 		-- Blizzard is now coloring part of the text in some cases.
 	    -- We will look for closing color tags and add an opening color tag for our color right after it
-		local colorCodeStart = EMOTE_COLOR:GetColorCodeStartSequence();
+		local colorCodeStart = EMOTE_COLOR:GenerateHexColorMarkup();
 		local displayedText = text:gsub("|r", "|r" .. colorCodeStart)
 		displayedText = displayedText:gsub("<", colorCodeStart .. "<");
 		displayedText = displayedText:gsub(">", ">|r");
 
 		if stillEmote then
-			displayedText = EMOTE_COLOR(displayedText);
+			displayedText = EMOTE_COLOR:WrapTextInColorCode(displayedText);
 		end
 
 		Storyline_NPCFrameChatText:SetText(displayedText);
