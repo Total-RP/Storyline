@@ -20,8 +20,6 @@
 -- limitations under the License.
 ----------------------------------------------------------------------------------
 
-local Ellyb = Storyline_API.Ellyb
-
 local assert, tinsert, pairs = assert, tinsert, pairs;
 local CreateFrame = CreateFrame;
 local format = format;

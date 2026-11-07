@@ -50,8 +50,10 @@ stds.wow = {
             },
         },
         C_Container = {
-            "GetContainerItemLink",
-            "GetContainerNumSlots",
+            fields = {
+                "GetContainerItemLink",
+                "GetContainerNumSlots",
+            },
         },
         C_Garrison = {
             fields = {
@@ -72,8 +74,10 @@ stds.wow = {
             },
         },
         C_Item = {
-            "EquipItemByName",
-            "GetItemInfo",
+            fields = {
+                "EquipItemByName",
+                "GetItemInfo",
+            },
         },
         C_MajorFactions = {
             fields = {
@@ -189,6 +193,7 @@ stds.wow = {
         "EquipItemByName",
         "format",
         "GameTooltip_ShowCompareItem",
+        "GenerateClosure",
         "GetActiveQuestID",
         "GetActiveTitle",
         "GetAvailableQuestInfo",
@@ -243,8 +248,10 @@ stds.wow = {
         "InCombatLockdown",
         "IsControlKeyDown",
         "IsInInstance",
+        "IsMacClient",
         "IsModifiedClick",
         "IsQuestCompletable",
+        "issecretvalue",
         "IsShiftKeyDown",
         "IsSpellKnownOrOverridesKnown",
         "PlayAutoAcceptQuestSound",
@@ -275,6 +282,7 @@ stds.wow = {
         "UnitName",
         "UnitPosition",
         "wipe",
+        "WrapTextInColor",
 
         -- Global variables
         "ACCOUNT_COMPLETED_QUEST_NOTICE",
@@ -291,6 +299,7 @@ stds.wow = {
         "GossipFrame",
         "LE_QUEST_FREQUENCY_DAILY",
         "LE_QUEST_FREQUENCY_WEEKLY",
+        "NORMAL_FONT_COLOR",
         "NUM_BAG_SLOTS",
         "PLUS_PERCENT_FORMAT",
         "QUEST_KING_ANDUIN_WRYNN",
@@ -316,6 +325,7 @@ stds.wow = {
         "TURN_IN_ITEMS",
         "UIParent",
         "UNKNOWN",
+        "WHITE_FONT_COLOR",
         "XP",
     },
 };

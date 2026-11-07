@@ -20,7 +20,6 @@ local ShowUIPanel = ShowUIPanel;
 local HideUIPanel = HideUIPanel;
 
 local Storyline_NPCFrame = Storyline_NPCFrame;
-local Ellyb = Storyline_API.Ellyb;
 
 local defaultFramesWeWantToReplace = {
 	"QuestFrame",
