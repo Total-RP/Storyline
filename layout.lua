@@ -99,8 +99,6 @@ local unregisterFromUILayoutEngine = function()
 end
 Storyline_API.layout.unregisterFromUILayoutEngine = unregisterFromUILayoutEngine;
 
-local framesUILayoutEngineSettings = {};
-
 ---
 -- The quest reward frame is somehow decoupled from the quest frame
 -- and is still shown out of the frame.

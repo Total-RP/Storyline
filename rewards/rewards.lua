@@ -21,8 +21,6 @@
 --- Rewards getters
 ---------------------------------------------
 
-local Ellyb = Storyline_API.Ellyb;
-
 Storyline_API.rewards = {};
 local API = Storyline_API.rewards;
 
